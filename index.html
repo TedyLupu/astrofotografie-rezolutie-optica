@@ -20,18 +20,26 @@
       box-sizing: border-box;
     }
 
-    body {
+    html, body {
       margin: 0;
       padding: 0;
+      width: 100%;
+      height: var(--app-height, 100dvh);
+      max-height: var(--app-height, 100dvh);
       background-color: #03060e;
       color: #f1f5f9;
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       overflow: hidden;
-      height: 100vh;
-      height: 100dvh;
-      user-select: none;
-      perspective: 1600px;
+      display: flex;
+      flex-direction: column;
       -webkit-tap-highlight-color: transparent;
+    }
+
+    @media (min-width: 1024px) {
+      body {
+        user-select: none;
+        perspective: 1600px;
+      }
     }
 
     .font-mono-code {
@@ -91,19 +99,28 @@
       background: linear-gradient(
         135deg,
         rgba(255, 255, 255, 0.09) 0%,
-        rgba(15, 23, 42, 0.58) 45%,
-        rgba(30, 58, 138, 0.22) 100%
+        rgba(15, 23, 42, 0.78) 45%,
+        rgba(30, 58, 138, 0.28) 100%
       );
-      backdrop-filter: url(#liquid-refraction) blur(22px) saturate(190%) brightness(1.06);
-      -webkit-backdrop-filter: blur(22px) saturate(190%) brightness(1.06);
       border: 1px solid rgba(255, 255, 255, 0.18);
       box-shadow:
-        0 24px 60px -12px rgba(0, 0, 0, 0.65),
-        inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35),
-        inset 0 -1.5px 2px rgba(56, 189, 248, 0.22),
-        inset 1.5px 0 2px rgba(244, 63, 94, 0.10),
-        inset -1.5px 0 2px rgba(129, 140, 248, 0.18);
+        0 20px 50px -12px rgba(0, 0, 0, 0.65),
+        inset 0 1.5px 1.5px rgba(255, 255, 255, 0.32),
+        inset 0 -1.5px 2px rgba(56, 189, 248, 0.20);
       overflow: hidden;
+    }
+
+    @media (min-width: 1024px) {
+      .glass-panel {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.09) 0%,
+          rgba(15, 23, 42, 0.58) 45%,
+          rgba(30, 58, 138, 0.22) 100%
+        );
+        backdrop-filter: url(#liquid-refraction) blur(22px) saturate(190%) brightness(1.06);
+        -webkit-backdrop-filter: blur(22px) saturate(190%) brightness(1.06);
+      }
     }
 
     /* Liquid Glass Specular Sheen Overlay */
@@ -154,47 +171,58 @@
       background: linear-gradient(
         145deg,
         rgba(255, 255, 255, 0.11) 0%,
-        rgba(15, 23, 42, 0.48) 52%,
-        rgba(56, 189, 248, 0.10) 100%
+        rgba(15, 23, 42, 0.76) 52%,
+        rgba(56, 189, 248, 0.14) 100%
       );
-      backdrop-filter: blur(18px) saturate(180%) contrast(1.05);
-      -webkit-backdrop-filter: blur(18px) saturate(180%) contrast(1.05);
-      border: 1px solid rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       box-shadow:
-        0 14px 34px -8px rgba(0, 0, 0, 0.55),
-        inset 0 1px 1px rgba(255, 255, 255, 0.32),
-        inset 0 -1px 2px rgba(56, 189, 248, 0.18);
-      transform-style: preserve-3d;
-      will-change: transform, box-shadow;
-      transition:
-        transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
-        box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-        border-color 0.3s ease;
+        0 12px 28px -8px rgba(0, 0, 0, 0.55),
+        inset 0 1px 1px rgba(255, 255, 255, 0.28),
+        inset 0 -1px 2px rgba(56, 189, 248, 0.16);
     }
 
-    .glass-card:hover {
-      border-color: rgba(56, 189, 248, 0.55);
-      box-shadow:
-        0 24px 48px -10px rgba(56, 189, 248, 0.28),
-        0 0 25px rgba(129, 140, 248, 0.18),
-        inset 0 1.5px 2px rgba(255, 255, 255, 0.55),
-        inset 0 -2px 4px rgba(56, 189, 248, 0.35);
-    }
+    @media (min-width: 1024px) {
+      .glass-card {
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.11) 0%,
+          rgba(15, 23, 42, 0.48) 52%,
+          rgba(56, 189, 248, 0.10) 100%
+        );
+        backdrop-filter: blur(18px) saturate(180%) contrast(1.05);
+        -webkit-backdrop-filter: blur(18px) saturate(180%) contrast(1.05);
+        transform-style: preserve-3d;
+        will-change: transform, box-shadow;
+        transition:
+          transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+          box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+          border-color 0.3s ease;
+      }
 
-    /* 2.5D Depth Pop for inner content when hovering 3D cards */
-    .tilt-3d {
-      transform-style: preserve-3d;
-      perspective: 1100px;
-    }
+      .glass-card:hover {
+        border-color: rgba(56, 189, 248, 0.55);
+        box-shadow:
+          0 24px 48px -10px rgba(56, 189, 248, 0.28),
+          0 0 25px rgba(129, 140, 248, 0.18),
+          inset 0 1.5px 2px rgba(255, 255, 255, 0.55),
+          inset 0 -2px 4px rgba(56, 189, 248, 0.35);
+      }
 
-    .tilt-3d > * {
-      position: relative;
-      z-index: 2;
-      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-    }
+      /* 2.5D Depth Pop for inner content when hovering 3D cards on desktop */
+      .tilt-3d {
+        transform-style: preserve-3d;
+        perspective: 1100px;
+      }
 
-    .tilt-3d:hover > * {
-      transform: translateZ(22px);
+      .tilt-3d > * {
+        position: relative;
+        z-index: 2;
+        transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .tilt-3d:hover > * {
+        transform: translateZ(22px);
+      }
     }
 
     /* Narrator Highlight Pulse when storyteller talks about a card */
@@ -213,70 +241,128 @@
     }
 
     /* ===================================================================== */
-    /* BOLD 3D MORPHING SLIDE TRANSITIONS & MOBILE RESPONSIVE SCROLLING      */
+    /* MOBILE-FIRST NATIVE SCROLL + DESKTOP 3D MORPHING SLIDE TRANSITIONS    */
     /* ===================================================================== */
-    .slide-section {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      pointer-events: none;
-      transform-style: preserve-3d;
-      transform: perspective(1400px) translate3d(80px, 28px, -240px) rotateY(-12deg) rotateX(6deg) scale(0.88);
-      filter: blur(14px) saturate(1.6);
-      transition:
-        opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.95s cubic-bezier(0.16, 1, 0.3, 1),
-        filter 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
+    #deckContainer {
+      flex: 1 1 0%;
+      min-height: 0;
+      width: 100%;
+      position: relative;
+      z-index: 10;
       overflow-y: auto;
       overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain;
-      padding: 4.4rem 0.95rem 9.6rem 0.95rem;
+      touch-action: pan-y;
     }
 
-    @media (min-width: 640px) {
+    /* On Mobile & Tablet (< 1024px): clean block layout, zero 3D/filter GPU flicker */
+    @media (max-width: 1023px) {
+      .liquid-ambient-blob,
+      .liquid-ambient-blob-2,
+      #transitionWave {
+        display: none !important;
+      }
+
+      .alive-float {
+        animation: none !important;
+      }
+
       .slide-section {
-        padding: 4.8rem 2rem 8.5rem 2rem;
+        display: none;
+        position: relative;
+        width: 100%;
+        padding: 0.9rem 0.9rem 1.4rem 0.9rem;
+      }
+
+      .slide-section.active {
+        display: block;
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .slide-section .stagger-1,
+      .slide-section .stagger-2,
+      .slide-section .stagger-3,
+      .slide-section .stagger-4 {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
       }
     }
 
+    /* On Desktop (>= 1024px): full 3D spatial warp transitions & staggered reveals */
     @media (min-width: 1024px) {
+      #deckContainer {
+        overflow: hidden;
+      }
+
       .slide-section {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+        transform-style: preserve-3d;
+        transform: perspective(1400px) translate3d(80px, 28px, -240px) rotateY(-12deg) rotateX(6deg) scale(0.88);
+        filter: blur(14px) saturate(1.6);
+        transition:
+          opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+          filter 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex;
+        flex-direction: column;
         justify-content: center;
         overflow-y: auto;
-        padding: 4.5rem 3.5rem 6.2rem 3.5rem;
+        overflow-x: hidden;
+        padding: 1.25rem 3.5rem;
       }
+
+      .slide-section.prev-slide {
+        transform: perspective(1400px) translate3d(-90px, -22px, -260px) rotateY(12deg) rotateX(-5deg) scale(0.86);
+        filter: blur(14px) saturate(1.6);
+      }
+
+      .slide-section.active {
+        opacity: 1;
+        pointer-events: auto;
+        transform: perspective(1400px) translate3d(0, 0, 0) rotateY(0deg) rotateX(0deg) scale(1);
+        filter: blur(0px) saturate(1);
+        z-index: 10;
+      }
+
+      .slide-section .stagger-1,
+      .slide-section .stagger-2,
+      .slide-section .stagger-3,
+      .slide-section .stagger-4 {
+        opacity: 0;
+        transform: perspective(900px) translate3d(0, 32px, -60px) rotateX(10deg) scale(0.94);
+        transition:
+          opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .slide-section.active .stagger-1 { opacity: 1; transform: perspective(900px) translate3d(0, 0, 0) rotateX(0) scale(1); transition-delay: 0.10s; }
+      .slide-section.active .stagger-2 { opacity: 1; transform: perspective(900px) translate3d(0, 0, 0) rotateX(0) scale(1); transition-delay: 0.22s; }
+      .slide-section.active .stagger-3 { opacity: 1; transform: perspective(900px) translate3d(0, 0, 0) rotateX(0) scale(1); transition-delay: 0.34s; }
+      .slide-section.active .stagger-4 { opacity: 1; transform: perspective(900px) translate3d(0, 0, 0) rotateX(0) scale(1); transition-delay: 0.46s; }
     }
 
-    /* Subtle custom scrollbar for mobile/tablet vertical scroll */
+    /* Subtle custom scrollbar */
+    #deckContainer::-webkit-scrollbar,
     .slide-section::-webkit-scrollbar {
-      width: 4px;
+      width: 5px;
     }
+    #deckContainer::-webkit-scrollbar-track,
     .slide-section::-webkit-scrollbar-track {
       background: transparent;
     }
+    #deckContainer::-webkit-scrollbar-thumb,
     .slide-section::-webkit-scrollbar-thumb {
-      background: rgba(56, 189, 248, 0.3);
+      background: rgba(56, 189, 248, 0.35);
       border-radius: 999px;
     }
 
-    .slide-section.prev-slide {
-      transform: perspective(1400px) translate3d(-90px, -22px, -260px) rotateY(12deg) rotateX(-5deg) scale(0.86);
-      filter: blur(14px) saturate(1.6);
-    }
-
-    .slide-section.active {
-      opacity: 1;
-      pointer-events: auto;
-      transform: perspective(1400px) translate3d(0, 0, 0) rotateY(0deg) rotateX(0deg) scale(1);
-      filter: blur(0px) saturate(1);
-      z-index: 10;
-    }
-
-    /* Liquid Refraction Wave Sweep on Slide Change */
+    /* Liquid Refraction Wave Sweep on Slide Change (Desktop) */
     #transitionWave {
       position: fixed;
       inset: 0;
@@ -289,29 +375,11 @@
         rgba(129, 140, 248, 0.14) 35%,
         transparent 70%
       );
-      backdrop-filter: url(#liquid-refraction) blur(6px);
       transition: opacity 0.45s ease;
     }
     #transitionWave.wave-active {
       opacity: 1;
     }
-
-    /* Staggered 3D spring reveal inside active slide */
-    .slide-section .stagger-1,
-    .slide-section .stagger-2,
-    .slide-section .stagger-3,
-    .slide-section .stagger-4 {
-      opacity: 0;
-      transform: perspective(900px) translate3d(0, 32px, -60px) rotateX(10deg) scale(0.94);
-      transition:
-        opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .slide-section.active .stagger-1 { opacity: 1; transform: perspective(900px) translate3d(0, 0, 0) rotateX(0) scale(1); transition-delay: 0.10s; }
-    .slide-section.active .stagger-2 { opacity: 1; transform: perspective(900px) translate3d(0, 0, 0) rotateX(0) scale(1); transition-delay: 0.22s; }
-    .slide-section.active .stagger-3 { opacity: 1; transform: perspective(900px) translate3d(0, 0, 0) rotateX(0) scale(1); transition-delay: 0.34s; }
-    .slide-section.active .stagger-4 { opacity: 1; transform: perspective(900px) translate3d(0, 0, 0) rotateX(0) scale(1); transition-delay: 0.46s; }
 
     /* ===================================================================== */
     /* DISCRETE INTERACTIVE AFFORDANCE HINTS                                 */
@@ -428,17 +496,15 @@
     }
   </style>
 </head>
-<body class="relative w-screen h-screen overflow-hidden select-none">
+<body class="relative">
 
   <!-- ===================================================================== -->
-  <!-- SVG LIQUID GLASS OPTICAL REFRACTION FILTER                            -->
+  <!-- SVG LIQUID GLASS OPTICAL REFRACTION FILTER (DESKTOP ONLY, STATIC)     -->
   <!-- ===================================================================== -->
   <svg class="hidden" width="0" height="0" aria-hidden="true">
     <defs>
       <filter id="liquid-refraction" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
-        <feTurbulence type="fractalNoise" baseFrequency="0.012 0.016" numOctaves="2" seed="7" result="noise">
-          <animate attributeName="baseFrequency" values="0.012 0.016;0.016 0.012;0.012 0.016" dur="14s" repeatCount="indefinite" />
-        </feTurbulence>
+        <feTurbulence type="fractalNoise" baseFrequency="0.012 0.016" numOctaves="2" seed="7" result="noise" />
         <feGaussianBlur in="noise" stdDeviation="2.5" result="smoothNoise" />
         <feDisplacementMap in="SourceGraphic" in2="smoothNoise" scale="9" xChannelSelector="R" yChannelSelector="G" />
       </filter>
@@ -451,12 +517,12 @@
   <!-- Background Cosmic Starfield & Warp Canvas -->
   <canvas id="cosmosBg" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
 
-  <!-- Morphing Liquid Plasma Blobs Behind Frosted Glass (creates real refraction contrast) -->
+  <!-- Morphing Liquid Plasma Blobs Behind Frosted Glass (Desktop Only) -->
   <div id="blob1" class="liquid-ambient-blob -top-24 left-1/4 w-[34rem] h-[34rem] bg-gradient-to-br from-sky-500/25 via-indigo-600/20 to-emerald-500/15"></div>
   <div id="blob2" class="liquid-ambient-blob-2 -bottom-28 right-1/5 w-[36rem] h-[36rem] bg-gradient-to-tr from-rose-500/20 via-purple-600/20 to-sky-400/20"></div>
 
-  <!-- TOP NAVIGATION & TELEMETRY HEADER -->
-  <header class="fixed top-0 left-0 right-0 h-14 sm:h-16 px-3 sm:px-6 flex items-center justify-between z-30 glass-panel border-t-0 border-x-0 rounded-b-2xl">
+  <!-- TOP NAVIGATION & TELEMETRY HEADER (FLEX ITEM — NEVER OVERLAPS CONTENT) -->
+  <header class="relative shrink-0 h-12 sm:h-15 px-3 sm:px-6 py-1.5 flex items-center justify-between z-30 glass-panel border-t-0 border-x-0 rounded-b-xl sm:rounded-b-2xl">
     <div class="flex items-center gap-2 sm:gap-3 min-w-0">
       <div class="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-xl bg-gradient-to-br from-sky-400 via-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-sky-500/30 font-bold text-xs sm:text-sm border border-white/30">
         🔭
@@ -479,14 +545,8 @@
       <!-- Populated by JS -->
     </div>
 
-    <!-- Mobile Accelerometer / Voice / Export Actions -->
+    <!-- Voice & Export Actions -->
     <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-      <!-- Mobile 3D Accelerometer / Gyro Toggle & Status Badge -->
-      <button id="gyroToggleBtn" onclick="enableMobileGyroTilt(true)" class="px-2.5 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 flex items-center gap-1.5 transition cursor-pointer" title="Activează / Recalibrează senzorul accelerometru 3D pentru carduri">
-        <span id="gyroDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span id="gyroText">📱 3D Senzor</span>
-      </button>
-
       <div class="hidden xl:flex items-center gap-1.5 bg-slate-950/60 border border-white/15 rounded-xl px-3 py-1 backdrop-blur-md">
         <span class="text-xs text-amber-300">🎙️ Narator:</span>
         <span id="voiceBadge" class="text-xs font-semibold text-slate-100">Gemini 3.8 Povestitor Grav</span>
@@ -506,9 +566,9 @@
   </header>
 
   <!-- ===================================================================== -->
-  <!-- SLIDES CONTAINER (8 SLIDES)                                           -->
+  <!-- SLIDES CONTAINER (8 SLIDES — FLEX-1 NATIVE SCROLL CONTAINER)          -->
   <!-- ===================================================================== -->
-  <main id="deckContainer" class="relative w-full h-full z-10">
+  <main id="deckContainer">
 
     <!-- SLIDE 1: INTRO & SYSTEM OVERVIEW -->
     <section class="slide-section active" data-slide="0">
@@ -521,8 +581,8 @@
             </div>
             <div class="interactive-cue">
               <span class="sonar-dot"></span>
-              <span class="sm:hidden">Înclină telefonul pentru efect 3D Liquid Glass</span>
-              <span class="hidden sm:inline">Mișcă cursorul / înclină telefonul pentru efect 3D &amp; refracție Liquid Glass</span>
+              <span class="sm:hidden">Atinge cardurile pentru detalii &amp; simulatoare</span>
+              <span class="hidden sm:inline">Mișcă cursorul peste carduri pentru efect 3D &amp; refracție Liquid Glass</span>
             </div>
           </div>
 
@@ -1401,26 +1461,26 @@
   </main>
 
   <!-- ===================================================================== -->
-  <!-- BOTTOM CONTROL BAR & SYNCHRONIZED STORYTELLER SUBTITLES               -->
+  <!-- BOTTOM CONTROL BAR & SYNCHRONIZED STORYTELLER SUBTITLES (FLEX ITEM)   -->
   <!-- ===================================================================== -->
-  <footer class="fixed bottom-0 left-0 right-0 z-30 px-2.5 sm:px-6 pb-2 sm:pb-3 pt-1 flex flex-col gap-1.5 sm:gap-2 pointer-events-none">
+  <footer class="relative shrink-0 z-30 px-2 sm:px-6 pt-1 pb-2 flex flex-col gap-1 sm:gap-1.5" style="padding-bottom: max(0.5rem, env(safe-area-inset-bottom));">
     <!-- Synchronized Subtitle Banner -->
-    <div class="max-w-4xl mx-auto w-full pointer-events-auto">
-      <div class="glass-panel rounded-xl sm:rounded-2xl px-3 sm:px-5 py-1.5 sm:py-2.5 text-center shadow-2xl">
-        <p id="subtitleDisplay" class="text-xs sm:text-sm md:text-base font-medium text-white tracking-wide drop-shadow leading-snug">
-          Apasă pe „▶ Pornește Povestitorul” pentru a asculta prezentarea narată în limba română cu animații coregrafiate.
+    <div class="max-w-4xl mx-auto w-full">
+      <div class="glass-panel rounded-xl sm:rounded-2xl px-3 sm:px-5 py-1.5 sm:py-2 text-center shadow-2xl">
+        <p id="subtitleDisplay" class="text-[11px] sm:text-sm md:text-base font-medium text-white tracking-wide drop-shadow leading-snug">
+          Apasă pe „▶ Povestitor” pentru a asculta prezentarea narată în limba română cu animații coregrafiate.
         </p>
       </div>
     </div>
 
     <!-- Deck Controls Bar -->
-    <div class="max-w-6xl mx-auto w-full glass-panel rounded-xl sm:rounded-2xl px-2.5 sm:px-4 py-1.5 sm:py-2 flex flex-wrap items-center justify-between gap-2 sm:gap-3 pointer-events-auto">
+    <div class="max-w-6xl mx-auto w-full glass-panel rounded-xl sm:rounded-2xl px-2.5 sm:px-4 py-1.5 sm:py-2 flex items-center justify-between gap-1.5 sm:gap-3">
       <!-- Slide Navigation -->
-      <div class="flex items-center gap-1 sm:gap-2">
+      <div class="flex items-center gap-1 sm:gap-2 shrink-0">
         <button onclick="prevSlide()" class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-[11px] sm:text-xs font-semibold text-white border border-white/15 transition cursor-pointer">
           ◀ <span class="hidden sm:inline">Anterior</span>
         </button>
-        <span id="slideCounter" class="font-mono-code text-[11px] sm:text-xs font-bold text-sky-300 px-1.5 sm:px-2">
+        <span id="slideCounter" class="font-mono-code text-[11px] sm:text-xs font-bold text-sky-300 px-1 sm:px-2">
           1 / 8
         </span>
         <button onclick="nextSlide()" class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-[11px] sm:text-xs font-semibold text-white border border-white/15 transition cursor-pointer">
@@ -1429,18 +1489,18 @@
       </div>
 
       <!-- Narrator Audio Controls -->
-      <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-[180px] max-w-xl">
-        <button id="playNarrationBtn" onclick="toggleNarration()" class="px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-[11px] sm:text-xs font-bold border border-white/25 shadow-lg shadow-amber-500/25 flex items-center gap-1.5 transition cursor-pointer shrink-0">
+      <div class="flex items-center gap-1.5 sm:gap-3 flex-1 min-w-0 max-w-xl">
+        <button id="playNarrationBtn" onclick="toggleNarration()" class="px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-[11px] sm:text-xs font-bold border border-white/25 shadow-lg shadow-amber-500/25 flex items-center gap-1 sm:gap-1.5 transition cursor-pointer shrink-0">
           <span id="playIcon">▶</span>
           <span id="playBtnText">Povestitor</span>
         </button>
 
-        <div class="flex-1 flex items-center gap-1.5 sm:gap-2">
+        <div class="flex-1 flex items-center gap-1.5 sm:gap-2 min-w-[60px]">
           <span id="audioTimeCur" class="hidden sm:inline text-xs font-mono-code text-slate-300 w-9 text-right">0:00</span>
           <div class="flex-1 h-2 sm:h-2.5 bg-slate-950/80 rounded-full overflow-hidden cursor-pointer border border-white/15" onclick="seekAudio(event)">
             <div id="audioProgressBar" class="h-full bg-gradient-to-r from-amber-400 via-sky-400 to-emerald-400 w-0 transition-all duration-150"></div>
           </div>
-          <span id="audioTimeDur" class="text-[10px] sm:text-xs font-mono-code text-slate-300 w-8 sm:w-10">0:00</span>
+          <span id="audioTimeDur" class="text-[10px] sm:text-xs font-mono-code text-slate-300 w-7 sm:w-10 shrink-0">0:00</span>
         </div>
 
         <label class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-200 cursor-pointer shrink-0">
@@ -1451,7 +1511,7 @@
       </div>
 
       <!-- Keyboard hint -->
-      <div class="hidden xl:flex items-center gap-1.5 text-xs text-slate-300">
+      <div class="hidden xl:flex items-center gap-1.5 text-xs text-slate-300 shrink-0">
         <span>Taste:</span>
         <kbd class="px-1.5 py-0.5 rounded bg-slate-900/90 border border-white/15 font-mono-code text-slate-200">←</kbd>
         <kbd class="px-1.5 py-0.5 rounded bg-slate-900/90 border border-white/15 font-mono-code text-slate-200">→</kbd>
@@ -1464,171 +1524,32 @@
 
   <script>
     // =========================================================================
-    // 1. 3D / 2.5D MAGNETIC HOVER TILT, MOBILE ACCELEROMETER & LIQUID GLASS
+    // 0. EXACT MOBILE & DESKTOP VIEWPORT HEIGHT SYNC (PREVENTS CUT-OFF FOOTER)
     // =========================================================================
-    let gyroState = {
-      active: false,
-      hasData: false,
-      rawX: 0,      // Left-right tilt (-1 .. +1)
-      rawY: 0,      // Front-back tilt (-1 .. +1)
-      baseX: null,  // Self-calibrating neutral hold X
-      baseY: null,  // Self-calibrating neutral hold Y
-      smoothX: 0,
-      smoothY: 0,
-      touchOverride: false
-    };
-
-    function applyCard3DTransform(card, normX, normY, isTouchOrMouse = false) {
-      // normX, normY in [-1, 1]
-      const clampedX = Math.max(-1, Math.min(1, normX));
-      const clampedY = Math.max(-1, Math.min(1, normY));
-      const px = ((clampedX + 1) * 0.5) * 100;
-      const py = ((clampedY + 1) * 0.5) * 100;
-
-      // Update Liquid Glass specular refraction origin
-      card.style.setProperty('--mx', `${px.toFixed(1)}%`);
-      card.style.setProperty('--my', `${py.toFixed(1)}%`);
-
-      if (card.classList.contains('tilt-3d')) {
-        const isPanel = card.classList.contains('glass-panel');
-        const maxTilt = isTouchOrMouse
-          ? (isPanel ? 4.5 : 9.0)
-          : (isPanel ? 3.8 : 7.2); // Discreet, refined 3D motion from mobile accelerometer
-        const rotY = clampedX * maxTilt;
-        const rotX = -clampedY * maxTilt;
-        const zLift = isTouchOrMouse ? 8 : 5;
-        const scale = isTouchOrMouse ? 1.016 : 1.008;
-        card.style.transform = `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) translateZ(${zLift}px) scale(${scale})`;
-      }
+    function syncViewportHeight() {
+      const vh = (window.visualViewport && window.visualViewport.height)
+        ? window.visualViewport.height
+        : window.innerHeight;
+      document.documentElement.style.setProperty('--app-height', `${vh}px`);
+    }
+    syncViewportHeight();
+    window.addEventListener('resize', syncViewportHeight);
+    window.addEventListener('orientationchange', () => setTimeout(syncViewportHeight, 100));
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', syncViewportHeight);
     }
 
-    function handleSensorTiltInput(tiltLRDeg, tiltFBDeg) {
-      gyroState.hasData = true;
-      gyroState.active = true;
-
-      if (gyroState.baseX === null || gyroState.baseY === null) {
-        gyroState.baseX = tiltLRDeg;
-        gyroState.baseY = tiltFBDeg;
-      } else {
-        // Gentle adaptive drift compensation so holding the phone at any comfortable angle stays centered
-        gyroState.baseX += (tiltLRDeg - gyroState.baseX) * 0.008;
-        gyroState.baseY += (tiltFBDeg - gyroState.baseY) * 0.008;
-      }
-
-      const deltaX = tiltLRDeg - gyroState.baseX;
-      const deltaY = tiltFBDeg - gyroState.baseY;
-
-      // Normalize: ~18 degrees of phone tilt reaches full discreet 3D card excursion
-      gyroState.rawX = Math.max(-1, Math.min(1, deltaX / 18));
-      gyroState.rawY = Math.max(-1, Math.min(1, deltaY / 18));
-
-      const gyroTxt = document.getElementById('gyroText');
-      const gyroDot = document.getElementById('gyroDot');
-      if (gyroTxt && gyroTxt.textContent !== '📱 3D Activ') {
-        gyroTxt.textContent = '📱 3D Activ';
-        if (gyroDot) gyroDot.className = 'w-2 h-2 rounded-full bg-sky-400 animate-ping';
-      }
-    }
-
-    function attachMobileSensorListeners() {
-      // 1. Hardware Accelerometer (DeviceMotionEvent -> accelerationIncludingGravity)
-      window.addEventListener('devicemotion', (e) => {
-        const acc = e.accelerationIncludingGravity;
-        if (!acc || (acc.x === null && acc.y === null)) return;
-        // Convert gravity vector (m/s^2) on X and Y axes into degrees of tilt
-        const isLandscape = window.innerWidth > window.innerHeight && window.innerWidth < 1024;
-        const gx = isLandscape ? (acc.y || 0) : -(acc.x || 0);
-        const gy = isLandscape ? -(acc.x || 0) : (acc.y || 0);
-        const gz = acc.z || 9.81;
-        const rollDeg = Math.atan2(gx, Math.sqrt(gy * gy + gz * gz)) * (180 / Math.PI);
-        const pitchDeg = Math.atan2(gy, Math.sqrt(gx * gx + gz * gz)) * (180 / Math.PI);
-        handleSensorTiltInput(rollDeg, pitchDeg);
-      }, { passive: true });
-
-      // 2. Gyroscope / Orientation Sensor (DeviceOrientationEvent -> gamma / beta)
-      window.addEventListener('deviceorientation', (e) => {
-        if (e.gamma === null && e.beta === null) return;
-        const gamma = e.gamma || 0; // Left/Right (-90 .. 90)
-        const beta = e.beta || 0;   // Front/Back (-180 .. 180)
-        handleSensorTiltInput(gamma, beta);
-      }, { passive: true });
-    }
-
-    async function enableMobileGyroTilt(recalibrate = false) {
-      if (recalibrate) {
-        gyroState.baseX = null;
-        gyroState.baseY = null;
-      }
-      try {
-        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
-          const res = await DeviceMotionEvent.requestPermission();
-          if (res === 'granted') attachMobileSensorListeners();
-        }
-        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-          const res2 = await DeviceOrientationEvent.requestPermission();
-          if (res2 === 'granted') attachMobileSensorListeners();
-        }
-      } catch (_) {}
-      attachMobileSensorListeners();
-
-      const gyroTxt = document.getElementById('gyroText');
-      if (gyroTxt && recalibrate) {
-        gyroTxt.textContent = '📱 Calibrat 3D';
-        setTimeout(() => {
-          if (gyroTxt) gyroTxt.textContent = gyroState.hasData ? '📱 3D Activ' : '📱 3D Senzor';
-        }, 1200);
-      }
-    }
-
-    // Expose deterministic helper for testing mobile accelerometer 3D tilt in browser
-    window.__simulateMobileTilt = function(degLR, degFB) {
-      if (gyroState.baseX === null) {
-        gyroState.baseX = 0;
-        gyroState.baseY = 0;
-      }
-      handleSensorTiltInput(degLR, degFB);
-      for (let i = 0; i < 20; i++) updateMobileSensor3DFrame();
-    };
-
-    function updateMobileSensor3DFrame() {
-      if (!gyroState.hasData || gyroState.touchOverride) return;
-
-      // Smooth spring low-pass filter (eliminates sensor micro-tremor)
-      gyroState.smoothX += (gyroState.rawX - gyroState.smoothX) * 0.14;
-      gyroState.smoothY += (gyroState.rawY - gyroState.smoothY) * 0.14;
-
-      // Parallax on background morphing liquid blobs
-      const b1 = document.getElementById('blob1');
-      const b2 = document.getElementById('blob2');
-      if (b1) b1.style.marginLeft = `${(gyroState.smoothX * 36).toFixed(1)}px`;
-      if (b2) b2.style.marginTop = `${(-gyroState.smoothY * 36).toFixed(1)}px`;
-
-      const activeSec = document.querySelector('.slide-section.active');
-      if (!activeSec) return;
-
-      const activeCards = activeSec.querySelectorAll('.tilt-3d, .glass-card, .glass-panel');
-      activeCards.forEach((card, idx) => {
-        // Slight per-card phase offset creates an organic multi-layer 3D depth effect
-        const factor = 1 + ((idx % 3) - 1) * 0.12;
-        applyCard3DTransform(card, gyroState.smoothX * factor, gyroState.smoothY * factor, false);
-      });
-    }
-
+    // =========================================================================
+    // 1. DESKTOP-ONLY 3D HOVER TILT & LIQUID GLASS CAUSTIC REFRACTION
+    // =========================================================================
     function init3DTiltAndLiquidCaustics() {
+      const isDesktopPointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      if (!isDesktopPointer) return; // Zero GPU transform thrashing or flicker on mobile touchscreens!
+
       const cards = document.querySelectorAll('.tilt-3d, .glass-card, .glass-panel');
 
-      // Attach accelerometer & gyroscope listeners immediately (works out-of-the-box on Android)
-      attachMobileSensorListeners();
-
-      // Auto-unlock iOS 13+ sensor permissions on first touch anywhere
-      const unlockOnce = () => {
-        enableMobileGyroTilt(false);
-        window.removeEventListener('touchend', unlockOnce);
-      };
-      window.addEventListener('touchend', unlockOnce, { passive: true });
-
       window.addEventListener('mousemove', (e) => {
-        // Subtle parallax on background morphing liquid blobs
+        if (window.innerWidth < 1024) return;
         const nx = (e.clientX / window.innerWidth - 0.5) * 40;
         const ny = (e.clientY / window.innerHeight - 0.5) * 40;
         const b1 = document.getElementById('blob1');
@@ -1639,58 +1560,30 @@
 
       cards.forEach(card => {
         card.addEventListener('mousemove', (e) => {
+          if (window.innerWidth < 1024) return;
           const rect = card.getBoundingClientRect();
-          const normX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-          const normY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-          applyCard3DTransform(card, normX, normY, true);
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const px = (x / rect.width) * 100;
+          const py = (y / rect.height) * 100;
+
+          card.style.setProperty('--mx', `${px.toFixed(1)}%`);
+          card.style.setProperty('--my', `${py.toFixed(1)}%`);
+
+          if (card.classList.contains('tilt-3d')) {
+            const maxTilt = card.classList.contains('glass-panel') ? 4.5 : 9.0;
+            const rotY = ((x / rect.width) - 0.5) * (maxTilt * 2);
+            const rotX = (0.5 - (y / rect.height)) * (maxTilt * 2);
+            card.style.transform = `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) translateZ(8px) scale(1.016)`;
+          }
         });
 
         card.addEventListener('mouseleave', () => {
-          if (card.classList.contains('tilt-3d') && !gyroState.hasData) {
+          if (card.classList.contains('tilt-3d')) {
             card.style.transform = '';
           }
         });
-
-        // Direct touch 3D tilt response when touching/sliding finger over cards on mobile
-        card.addEventListener('touchmove', (e) => {
-          if (!e.touches || !e.touches[0]) return;
-          gyroState.touchOverride = true;
-          const t = e.touches[0];
-          const rect = card.getBoundingClientRect();
-          const normX = ((t.clientX - rect.left) / rect.width - 0.5) * 2;
-          const normY = ((t.clientY - rect.top) / rect.height - 0.5) * 2;
-          applyCard3DTransform(card, normX, normY, true);
-        }, { passive: true });
-
-        card.addEventListener('touchend', () => {
-          gyroState.touchOverride = false;
-          if (card.classList.contains('tilt-3d') && !gyroState.hasData) {
-            card.style.transform = '';
-          }
-        }, { passive: true });
       });
-
-      // Horizontal touch-swipe navigation between slides on mobile (ignores sliders/tables)
-      let touchStartX = 0;
-      let touchStartY = 0;
-      let ignoreSwipe = false;
-      window.addEventListener('touchstart', (e) => {
-        if (!e.touches || !e.touches[0]) return;
-        const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
-        ignoreSwipe = (tag === 'input' || tag === 'button' || tag === 'canvas' || !!(e.target && e.target.closest('.overflow-x-auto')));
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-      }, { passive: true });
-
-      window.addEventListener('touchend', (e) => {
-        if (ignoreSwipe || !e.changedTouches || !e.changedTouches[0]) return;
-        const dx = e.changedTouches[0].clientX - touchStartX;
-        const dy = e.changedTouches[0].clientY - touchStartY;
-        if (Math.abs(dx) > 68 && Math.abs(dx) > Math.abs(dy) * 1.8) {
-          if (dx < 0) nextSlide();
-          else prevSlide();
-        }
-      }, { passive: true });
     }
 
     // =========================================================================
@@ -1788,6 +1681,9 @@
 
       currentSlide = index;
       lastChoreoSeg = -1;
+
+      const deckEl = document.getElementById('deckContainer');
+      if (deckEl) deckEl.scrollTop = 0;
 
       slideElements.forEach((el, i) => {
         el.classList.remove('active', 'prev-slide');
@@ -2336,12 +2232,9 @@
         }
       }
 
-      // Keep Slide 7 Nyquist scintillation & mobile accelerometer 3D tilt alive at 60fps!
-      if (!document.body.classList.contains('export-mode')) {
-        updateMobileSensor3DFrame();
-        if (currentSlide === 6) {
-          renderNyquistFrame(ts);
-        }
+      // Keep Slide 7 Nyquist scintillation alive at 60fps!
+      if (currentSlide === 6 && !document.body.classList.contains('export-mode')) {
+        renderNyquistFrame(ts);
       }
 
       requestAnimationFrame(animateBg);
