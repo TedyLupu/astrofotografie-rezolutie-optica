@@ -27,8 +27,11 @@
       color: #f1f5f9;
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       overflow: hidden;
+      height: 100vh;
+      height: 100dvh;
       user-select: none;
       perspective: 1600px;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .font-mono-code {
@@ -210,7 +213,7 @@
     }
 
     /* ===================================================================== */
-    /* BOLD 3D MORPHING SLIDE TRANSITIONS                                    */
+    /* BOLD 3D MORPHING SLIDE TRANSITIONS & MOBILE RESPONSIVE SCROLLING      */
     /* ===================================================================== */
     .slide-section {
       position: absolute;
@@ -226,8 +229,38 @@
         filter 0.85s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      padding: 4.5rem 3.5rem 6.2rem 3.5rem;
+      justify-content: flex-start;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      padding: 4.4rem 0.95rem 9.6rem 0.95rem;
+    }
+
+    @media (min-width: 640px) {
+      .slide-section {
+        padding: 4.8rem 2rem 8.5rem 2rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .slide-section {
+        justify-content: center;
+        overflow-y: auto;
+        padding: 4.5rem 3.5rem 6.2rem 3.5rem;
+      }
+    }
+
+    /* Subtle custom scrollbar for mobile/tablet vertical scroll */
+    .slide-section::-webkit-scrollbar {
+      width: 4px;
+    }
+    .slide-section::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .slide-section::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.3);
+      border-radius: 999px;
     }
 
     .slide-section.prev-slide {
@@ -423,19 +456,19 @@
   <div id="blob2" class="liquid-ambient-blob-2 -bottom-28 right-1/5 w-[36rem] h-[36rem] bg-gradient-to-tr from-rose-500/20 via-purple-600/20 to-sky-400/20"></div>
 
   <!-- TOP NAVIGATION & TELEMETRY HEADER -->
-  <header class="fixed top-0 left-0 right-0 h-16 px-6 flex items-center justify-between z-30 glass-panel border-t-0 border-x-0 rounded-b-2xl">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-400 via-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-sky-500/30 font-bold text-sm border border-white/30">
+  <header class="fixed top-0 left-0 right-0 h-14 sm:h-16 px-3 sm:px-6 flex items-center justify-between z-30 glass-panel border-t-0 border-x-0 rounded-b-2xl">
+    <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+      <div class="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-xl bg-gradient-to-br from-sky-400 via-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-sky-500/30 font-bold text-xs sm:text-sm border border-white/30">
         🔭
       </div>
-      <div>
-        <div class="flex items-center gap-2">
-          <span class="font-bold text-sm tracking-wide text-white">ASTRO-OPTICA KEYNOTE</span>
-          <span class="px-2 py-0.5 text-xs font-mono-code rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/40">
-            1.36"/px • f/3.8 • Liquid Glass 3D
+      <div class="min-w-0">
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <span class="font-bold text-xs sm:text-sm tracking-wide text-white truncate">ASTRO-OPTICA</span>
+          <span class="px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs font-mono-code rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/40 shrink-0">
+            1.36"/px • f/3.8
           </span>
         </div>
-        <div class="text-xs text-slate-300">
+        <div class="hidden sm:block text-xs text-slate-300 truncate">
           Newton 6" (150mm / 600mm) • Corector Comă 0.95× • Cameră Răcită Sony IMX533
         </div>
       </div>
@@ -446,20 +479,28 @@
       <!-- Populated by JS -->
     </div>
 
-    <!-- Voice & Export Actions -->
-    <div class="flex items-center gap-2.5">
-      <div class="flex items-center gap-1.5 bg-slate-950/60 border border-white/15 rounded-xl px-3 py-1 backdrop-blur-md">
+    <!-- Mobile Accelerometer / Voice / Export Actions -->
+    <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+      <!-- Mobile 3D Accelerometer / Gyro Toggle & Status Badge -->
+      <button id="gyroToggleBtn" onclick="enableMobileGyroTilt(true)" class="px-2.5 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 flex items-center gap-1.5 transition cursor-pointer" title="Activează / Recalibrează senzorul accelerometru 3D pentru carduri">
+        <span id="gyroDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="gyroText">📱 3D Senzor</span>
+      </button>
+
+      <div class="hidden xl:flex items-center gap-1.5 bg-slate-950/60 border border-white/15 rounded-xl px-3 py-1 backdrop-blur-md">
         <span class="text-xs text-amber-300">🎙️ Narator:</span>
         <span id="voiceBadge" class="text-xs font-semibold text-slate-100">Gemini 3.8 Povestitor Grav</span>
       </div>
 
-      <button id="recordWebBtn" onclick="toggleBrowserRecording()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-500/20 hover:bg-rose-500/35 text-rose-200 border border-rose-400/40 flex items-center gap-1.5 transition cursor-pointer" title="Înregistrează live prezentarea din browser cu sunet">
+      <button id="recordWebBtn" onclick="toggleBrowserRecording()" class="hidden md:flex px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-500/20 hover:bg-rose-500/35 text-rose-200 border border-rose-400/40 items-center gap-1.5 transition cursor-pointer" title="Înregistrează live prezentarea din browser cu sunet">
         <span id="recDot" class="w-2 h-2 rounded-full bg-rose-400"></span>
         <span id="recText">Înregistrare Live</span>
       </button>
 
-      <a href="prezentare_astrofotografie_imx533.mp4" download="Prezentare_Astrofotografie_IMX533_1080p.mp4" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white border border-white/25 shadow-lg shadow-sky-500/25 flex items-center gap-1.5 transition cursor-pointer">
-        <span>⬇ Descarcă MP4 (1080p)</span>
+      <a href="prezentare_astrofotografie_imx533.mp4" download="Prezentare_Astrofotografie_IMX533_1080p.mp4" class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white border border-white/25 shadow-lg shadow-sky-500/25 flex items-center gap-1 transition cursor-pointer">
+        <span>⬇</span>
+        <span class="hidden sm:inline">Descarcă</span>
+        <span>MP4</span>
       </a>
     </div>
   </header>
@@ -471,68 +512,69 @@
 
     <!-- SLIDE 1: INTRO & SYSTEM OVERVIEW -->
     <section class="slide-section active" data-slide="0">
-      <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div class="lg:col-span-7 space-y-5">
-          <div class="stagger-1 flex flex-wrap items-center gap-2.5">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card text-sky-300 text-xs font-medium">
+      <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-center">
+        <div class="lg:col-span-7 space-y-3.5 sm:space-y-5">
+          <div class="stagger-1 flex flex-wrap items-center gap-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-card text-sky-300 text-[11px] sm:text-xs font-medium">
               <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
               <span>Simulare Optică &amp; Fizică Astrofotografică</span>
             </div>
             <div class="interactive-cue">
               <span class="sonar-dot"></span>
-              <span>Mișcă cursorul peste carduri pentru efect 3D &amp; refracție Liquid Glass</span>
+              <span class="sm:hidden">Înclină telefonul pentru efect 3D Liquid Glass</span>
+              <span class="hidden sm:inline">Mișcă cursorul / înclină telefonul pentru efect 3D &amp; refracție Liquid Glass</span>
             </div>
           </div>
 
-          <h1 class="stagger-2 text-4xl xl:text-5xl font-extrabold tracking-tight leading-tight text-white drop-shadow-lg">
+          <h1 class="stagger-2 text-2xl sm:text-4xl xl:text-5xl font-extrabold tracking-tight leading-tight text-white drop-shadow-lg">
             Cum Calculăm <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-indigo-300 to-emerald-300">Rezoluția Optică</span> în Astrofotografie
           </h1>
 
-          <p class="stagger-3 text-base xl:text-lg text-slate-200 leading-relaxed">
+          <p class="stagger-3 text-sm sm:text-base xl:text-lg text-slate-200 leading-relaxed">
             În spatele fiecărei galaxii și nebuloase fotografiate cu claritate chirurgicală se află o relație matematică între <strong>distanța focală efectivă</strong> a telescopului și <strong>dimensiunea fizică a pixelului</strong>.
           </p>
 
           <!-- Key Hardware Specs Grid (3D Tilt Liquid Glass Cards) -->
-          <div class="stagger-4 grid grid-cols-2 sm:grid-cols-4 gap-3.5 pt-2">
-            <div class="glass-card tilt-3d rounded-2xl p-3.5 cursor-pointer" data-narrator-step="0" onclick="goToSlide(2)">
-              <div class="text-xs text-slate-300">Telescop Newton</div>
-              <div class="text-lg font-bold text-white mt-0.5">6" (150 mm)</div>
-              <div class="text-xs text-sky-300 font-mono-code">F_nativ = 600mm (f/4)</div>
+          <div class="stagger-4 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5 pt-1">
+            <div class="glass-card tilt-3d rounded-2xl p-3 sm:p-3.5 cursor-pointer" data-narrator-step="0" onclick="goToSlide(2)">
+              <div class="text-[11px] sm:text-xs text-slate-300">Telescop Newton</div>
+              <div class="text-base sm:text-lg font-bold text-white mt-0.5">6" (150 mm)</div>
+              <div class="text-[11px] sm:text-xs text-sky-300 font-mono-code">F_nativ = 600mm (f/4)</div>
             </div>
-            <div class="glass-card tilt-3d rounded-2xl p-3.5 cursor-pointer" data-narrator-step="1" onclick="goToSlide(3)">
-              <div class="text-xs text-slate-300">Corector de Comă</div>
-              <div class="text-lg font-bold text-indigo-200 mt-0.5">Factor 0.95×</div>
-              <div class="text-xs text-indigo-300 font-mono-code">F_ef = 570mm (f/3.8)</div>
+            <div class="glass-card tilt-3d rounded-2xl p-3 sm:p-3.5 cursor-pointer" data-narrator-step="1" onclick="goToSlide(3)">
+              <div class="text-[11px] sm:text-xs text-slate-300">Corector de Comă</div>
+              <div class="text-base sm:text-lg font-bold text-indigo-200 mt-0.5">Factor 0.95×</div>
+              <div class="text-[11px] sm:text-xs text-indigo-300 font-mono-code">F_ef = 570mm (f/3.8)</div>
             </div>
-            <div class="glass-card tilt-3d rounded-2xl p-3.5 cursor-pointer" data-narrator-step="2" onclick="goToSlide(4)">
-              <div class="text-xs text-slate-300">Cameră Răcită</div>
-              <div class="text-lg font-bold text-rose-200 mt-0.5">Sony IMX533</div>
-              <div class="text-xs text-rose-300 font-mono-code">Pixel = 3.76 µm</div>
+            <div class="glass-card tilt-3d rounded-2xl p-3 sm:p-3.5 cursor-pointer" data-narrator-step="2" onclick="goToSlide(4)">
+              <div class="text-[11px] sm:text-xs text-slate-300">Cameră Răcită</div>
+              <div class="text-base sm:text-lg font-bold text-rose-200 mt-0.5">Sony IMX533</div>
+              <div class="text-[11px] sm:text-xs text-rose-300 font-mono-code">Pixel = 3.76 µm</div>
             </div>
-            <div class="glass-card tilt-3d rounded-2xl p-3.5 border-emerald-400/50 bg-emerald-950/30 glow-badge cursor-pointer" data-narrator-step="2" onclick="goToSlide(5)">
-              <div class="text-xs text-emerald-200">Rezoluție Optică</div>
-              <div class="text-2xl font-extrabold text-emerald-300 mt-0.5 font-mono-code">1.36"/px</div>
-              <div class="text-xs text-emerald-200/90">Click → Calcul &amp; FOV</div>
+            <div class="glass-card tilt-3d rounded-2xl p-3 sm:p-3.5 border-emerald-400/50 bg-emerald-950/30 glow-badge cursor-pointer" data-narrator-step="2" onclick="goToSlide(5)">
+              <div class="text-[11px] sm:text-xs text-emerald-200">Rezoluție Optică</div>
+              <div class="text-xl sm:text-2xl font-extrabold text-emerald-300 mt-0.5 font-mono-code">1.36"/px</div>
+              <div class="text-[11px] sm:text-xs text-emerald-200/90">Click → Calcul &amp; FOV</div>
             </div>
           </div>
         </div>
 
         <!-- Right Visual Card with 3D Hover & Liquid Glass Overlay -->
         <div class="lg:col-span-5 stagger-3">
-          <div class="glass-panel tilt-3d alive-float relative rounded-3xl p-2.5 shadow-2xl group cursor-pointer" onclick="goToSlide(5)">
+          <div class="glass-panel tilt-3d alive-float relative rounded-3xl p-2 sm:p-2.5 shadow-2xl group cursor-pointer" onclick="goToSlide(5)">
             <div class="relative rounded-2xl overflow-hidden">
-              <img src="assets/hero_nebula_newton.jpg" alt="Astrograf Newton 6 inch și Nebuloasă" class="w-full h-[360px] object-cover group-hover:scale-105 transition duration-700" />
+              <img src="assets/hero_nebula_newton.jpg" alt="Astrograf Newton 6 inch și Nebuloasă" class="w-full h-[230px] sm:h-[360px] object-cover group-hover:scale-105 transition duration-700" />
               <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent"></div>
-              <div class="absolute top-3 right-3 interactive-cue">
+              <div class="absolute top-2.5 right-2.5 interactive-cue">
                 <span class="sonar-dot"></span>
                 <span>Panou 3D • Click pentru Formula Completă</span>
               </div>
-              <div class="absolute bottom-3 left-3 right-3 glass-panel rounded-2xl p-4">
-                <div class="flex items-center justify-between text-xs text-slate-200 mb-1">
+              <div class="absolute bottom-2.5 left-2.5 right-2.5 glass-panel rounded-2xl p-3 sm:p-4">
+                <div class="flex items-center justify-between text-[11px] sm:text-xs text-slate-200 mb-1">
                   <span>Ecuația Fundamentală a Eșantionării</span>
                   <span class="font-mono-code text-sky-300">rad → arcsec</span>
                 </div>
-                <div class="font-mono-code text-base sm:text-lg font-bold text-white flex items-center justify-between">
+                <div class="font-mono-code text-xs sm:text-lg font-bold text-white flex flex-wrap items-center justify-between gap-1">
                   <span>R = (206.265 × 3.76 µm) / 570 mm</span>
                   <span class="text-emerald-300">= 1.361"/px</span>
                 </div>
@@ -707,17 +749,17 @@
           </p>
 
           <!-- Toggle 150mm vs 152.4mm -->
-          <div class="stagger-3 glass-panel interactive-zone rounded-2xl p-4 space-y-3" data-narrator-step="0">
-            <div class="flex items-center justify-between">
+          <div class="stagger-3 glass-panel interactive-zone rounded-2xl p-3.5 sm:p-4 space-y-3" data-narrator-step="0">
+            <div class="flex flex-wrap items-center justify-between gap-2">
               <span class="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
                 <span class="sonar-dot"></span>
                 <span>Standard Apertură 6 inch:</span>
               </span>
               <div class="inline-flex rounded-xl bg-slate-950/80 p-1 border border-white/15">
-                <button id="btnAp150" onclick="setApertureMode(150)" class="px-3 py-1 rounded-lg text-xs font-semibold bg-sky-500 text-white shadow transition cursor-pointer">
+                <button id="btnAp150" onclick="setApertureMode(150)" class="px-2.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold bg-sky-500 text-white shadow transition cursor-pointer">
                   150 mm (Comercial)
                 </button>
-                <button id="btnAp152" onclick="setApertureMode(152.4)" class="px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer">
+                <button id="btnAp152" onclick="setApertureMode(152.4)" class="px-2.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer">
                   152.4 mm (6" Exact)
                 </button>
               </div>
@@ -854,42 +896,42 @@
           </p>
 
           <!-- Interactive Toggle Before/After Corrector -->
-          <div class="stagger-3 glass-panel interactive-zone rounded-2xl p-4 space-y-3" data-narrator-step="1">
-            <div class="flex items-center justify-between">
+          <div class="stagger-3 glass-panel interactive-zone rounded-2xl p-3.5 sm:p-4 space-y-3" data-narrator-step="1">
+            <div class="flex flex-wrap items-center justify-between gap-2">
               <span class="text-xs font-bold uppercase tracking-wider text-indigo-200 flex items-center gap-1.5">
                 <span class="sonar-dot"></span>
                 <span>Simulare Tren Optic:</span>
               </span>
               <div class="inline-flex rounded-xl bg-slate-950/80 p-1 border border-white/15">
-                <button id="btnCCOff" onclick="setComaCorrector(false)" class="px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer">
+                <button id="btnCCOff" onclick="setComaCorrector(false)" class="px-2.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer">
                   Fără Corector (1.00×)
                 </button>
-                <button id="btnCCOn" onclick="setComaCorrector(true)" class="px-3 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow transition cursor-pointer">
+                <button id="btnCCOn" onclick="setComaCorrector(true)" class="px-2.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold bg-indigo-600 text-white shadow transition cursor-pointer">
                   Cu Corector Comă (0.95×)
                 </button>
               </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-2.5 text-center">
-              <div class="glass-card tilt-3d p-3 rounded-xl">
-                <div class="text-xs text-slate-300">Distanța Focală</div>
-                <div id="ccFocalText" class="text-lg font-extrabold font-mono-code text-indigo-300 mt-0.5">570 mm</div>
-                <div class="text-xs text-slate-400">600 × 0.95</div>
+            <div class="grid grid-cols-3 gap-2 sm:gap-2.5 text-center">
+              <div class="glass-card tilt-3d p-2 sm:p-3 rounded-xl">
+                <div class="text-[11px] sm:text-xs text-slate-300">Distanța Focală</div>
+                <div id="ccFocalText" class="text-sm sm:text-lg font-extrabold font-mono-code text-indigo-300 mt-0.5">570 mm</div>
+                <div class="text-[10px] sm:text-xs text-slate-400">600 × 0.95</div>
               </div>
-              <div class="glass-card tilt-3d p-3 rounded-xl">
-                <div class="text-xs text-slate-300">Raport Focal</div>
-                <div id="ccFRatioText" class="text-lg font-extrabold font-mono-code text-sky-300 mt-0.5">f/3.80</div>
-                <div id="ccSpeedText" class="text-xs text-emerald-300">+11% mai luminos</div>
+              <div class="glass-card tilt-3d p-2 sm:p-3 rounded-xl">
+                <div class="text-[11px] sm:text-xs text-slate-300">Raport Focal</div>
+                <div id="ccFRatioText" class="text-sm sm:text-lg font-extrabold font-mono-code text-sky-300 mt-0.5">f/3.80</div>
+                <div id="ccSpeedText" class="text-[10px] sm:text-xs text-emerald-300">+11% luminos</div>
               </div>
-              <div class="glass-card tilt-3d p-3 rounded-xl">
-                <div class="text-xs text-slate-300">Rezoluție IMX533</div>
-                <div id="ccScaleText" class="text-lg font-extrabold font-mono-code text-emerald-300 mt-0.5">1.36"/px</div>
-                <div class="text-xs text-slate-400">Câmp +5.3% mai larg</div>
+              <div class="glass-card tilt-3d p-2 sm:p-3 rounded-xl">
+                <div class="text-[11px] sm:text-xs text-slate-300">Rezoluție IMX533</div>
+                <div id="ccScaleText" class="text-sm sm:text-lg font-extrabold font-mono-code text-emerald-300 mt-0.5">1.36"/px</div>
+                <div class="text-[10px] sm:text-xs text-slate-400">Câmp +5.3%</div>
               </div>
             </div>
           </div>
 
-          <div class="stagger-4 grid grid-cols-2 gap-3" data-narrator-step="2">
+          <div class="stagger-4 grid grid-cols-1 sm:grid-cols-2 gap-3" data-narrator-step="2">
             <div class="glass-card tilt-3d rounded-2xl p-3.5">
               <div class="text-xs font-semibold text-amber-300">1. Efect Geometric (Punctualitate)</div>
               <p class="text-xs text-slate-200 mt-1">
@@ -917,19 +959,19 @@
             </div>
 
             <!-- 2-Column Split Labels Aligned with Left/Right Halves (Zero Overlap) -->
-            <div class="grid grid-cols-2 gap-2.5">
-              <div id="comaHighlightLeft" onclick="setComaCorrector(false)" class="px-3 py-2 rounded-xl glass-card border-rose-400/50 text-rose-200 text-xs font-semibold flex items-center justify-between cursor-pointer transition">
-                <span>❌ Fără Corector (600mm)</span>
-                <span class="font-mono-code text-xs text-rose-300">Comă</span>
+            <div class="grid grid-cols-2 gap-2">
+              <div id="comaHighlightLeft" onclick="setComaCorrector(false)" class="px-2 sm:px-3 py-2 rounded-xl glass-card border-rose-400/50 text-rose-200 text-[11px] sm:text-xs font-semibold flex items-center justify-between gap-1 cursor-pointer transition">
+                <span class="truncate">❌ Fără Corector</span>
+                <span class="font-mono-code text-[10px] sm:text-xs text-rose-300 shrink-0">600mm</span>
               </div>
-              <div id="comaHighlightRight" onclick="setComaCorrector(true)" class="px-3 py-2 rounded-xl glass-card border-emerald-400/70 text-emerald-200 text-xs font-semibold flex items-center justify-between glow-badge cursor-pointer transition">
-                <span>✅ Corector 0.95× (570mm)</span>
-                <span class="font-mono-code text-xs text-emerald-300">Punctual</span>
+              <div id="comaHighlightRight" onclick="setComaCorrector(true)" class="px-2 sm:px-3 py-2 rounded-xl glass-card border-emerald-400/70 text-emerald-200 text-[11px] sm:text-xs font-semibold flex items-center justify-between gap-1 glow-badge cursor-pointer transition">
+                <span class="truncate">✅ Corector 0.95×</span>
+                <span class="font-mono-code text-[10px] sm:text-xs text-emerald-300 shrink-0">570mm</span>
               </div>
             </div>
 
             <div onclick="setComaCorrector(!comaState)" class="relative rounded-2xl overflow-hidden border border-indigo-400/40 cursor-pointer group">
-              <img src="assets/coma_aberration_comparison.jpg" alt="Comparație Aberație de Comă" class="w-full h-[270px] object-cover group-hover:scale-105 transition duration-700" />
+              <img src="assets/coma_aberration_comparison.jpg" alt="Comparație Aberație de Comă" class="w-full h-[210px] sm:h-[270px] object-cover group-hover:scale-105 transition duration-700" />
               <!-- Center Split Divider Line -->
               <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-0.5 bg-gradient-to-b from-sky-400/80 via-white/90 to-emerald-400/80 shadow-[0_0_12px_rgba(56,189,248,0.9)] pointer-events-none"></div>
               <div class="absolute bottom-3 left-3 px-2.5 py-1 rounded-lg bg-slate-950/85 border border-rose-400/40 text-rose-200 text-xs font-mono-code">
@@ -1119,31 +1161,31 @@
           </div>
 
           <!-- Comparison Table Without vs With Corrector -->
-          <div class="stagger-4 glass-panel tilt-3d rounded-2xl overflow-hidden">
-            <table class="w-full text-left text-xs">
+          <div class="stagger-4 glass-panel tilt-3d rounded-2xl overflow-x-auto">
+            <table class="w-full text-left text-[11px] sm:text-xs min-w-[420px]">
               <thead class="bg-slate-950/70 text-slate-200 border-b border-white/15">
                 <tr>
-                  <th class="py-2.5 px-3">Configurație</th>
-                  <th class="py-2.5 px-3">Focală</th>
-                  <th class="py-2.5 px-3">Raport f/</th>
-                  <th class="py-2.5 px-3">Rezoluție ("/px)</th>
-                  <th class="py-2.5 px-3">Câmp Vizual (FOV)</th>
+                  <th class="py-2 sm:py-2.5 px-2.5 sm:px-3">Configurație</th>
+                  <th class="py-2 sm:py-2.5 px-2 sm:px-3">Focală</th>
+                  <th class="py-2 sm:py-2.5 px-2 sm:px-3">Raport f/</th>
+                  <th class="py-2 sm:py-2.5 px-2 sm:px-3">Rezoluție ("/px)</th>
+                  <th class="py-2 sm:py-2.5 px-2.5 sm:px-3">Câmp Vizual (FOV)</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-white/10 font-mono-code">
                 <tr class="text-slate-300">
-                  <td class="py-2 px-3 font-sans">Nativ (Fără corector)</td>
-                  <td class="py-2 px-3">600 mm</td>
-                  <td class="py-2 px-3">f/4.00</td>
-                  <td class="py-2 px-3">1.293" / px</td>
-                  <td class="py-2 px-3">1.08° × 1.08° (64.8')</td>
+                  <td class="py-2 px-2.5 sm:px-3 font-sans">Nativ (Fără corector)</td>
+                  <td class="py-2 px-2 sm:px-3">600 mm</td>
+                  <td class="py-2 px-2 sm:px-3">f/4.00</td>
+                  <td class="py-2 px-2 sm:px-3">1.293" / px</td>
+                  <td class="py-2 px-2.5 sm:px-3">1.08° × 1.08° (64.8')</td>
                 </tr>
                 <tr class="bg-emerald-500/15 text-emerald-200 font-bold">
-                  <td class="py-2.5 px-3 font-sans text-white">✅ Cu Corector 0.95×</td>
-                  <td class="py-2.5 px-3">570 mm</td>
-                  <td class="py-2.5 px-3">f/3.80</td>
-                  <td class="py-2.5 px-3 text-emerald-300 text-sm">1.361" / px</td>
-                  <td class="py-2.5 px-3">1.14° × 1.14° (68.2')</td>
+                  <td class="py-2 sm:py-2.5 px-2.5 sm:px-3 font-sans text-white">✅ Cu Corector 0.95×</td>
+                  <td class="py-2 sm:py-2.5 px-2 sm:px-3">570 mm</td>
+                  <td class="py-2 sm:py-2.5 px-2 sm:px-3">f/3.80</td>
+                  <td class="py-2 sm:py-2.5 px-2 sm:px-3 text-emerald-300 text-xs sm:text-sm">1.361" / px</td>
+                  <td class="py-2 sm:py-2.5 px-2.5 sm:px-3">1.14° × 1.14° (68.2')</td>
                 </tr>
               </tbody>
             </table>
@@ -1225,26 +1267,26 @@
           </p>
 
           <!-- Interactive Seeing Slider -->
-          <div class="stagger-3 glass-panel interactive-zone rounded-2xl p-4 space-y-3" data-narrator-step="1">
-            <div class="flex items-center justify-between">
+          <div class="stagger-3 glass-panel interactive-zone rounded-2xl p-3.5 sm:p-4 space-y-3" data-narrator-step="1">
+            <div class="flex flex-wrap items-center justify-between gap-2">
               <span class="text-xs font-bold text-white flex items-center gap-1.5">
                 <span class="sonar-dot"></span>
-                <span>🌬️ Simulare Turbulență Atmosferică (Seeing FWHM):</span>
+                <span>🌬️ Simulare Turbulență (Seeing FWHM):</span>
               </span>
               <span id="s7SeeingBadge" class="px-2.5 py-0.5 rounded-lg bg-emerald-500/25 text-emerald-200 font-mono-code text-xs font-bold border border-emerald-400/40">
                 Seeing: 3.0" → 2.21 pixeli/stea
               </span>
             </div>
             <input id="s7SeeingSlider" type="range" min="1.0" max="4.5" step="0.1" value="3.0" oninput="updateSlide7Seeing(this.value)" class="w-full cursor-pointer" />
-            <div class="flex justify-between text-xs text-slate-300 font-mono-code">
-              <span>1.0" (Vârf de munte)</span>
-              <span>2.5" – 3.5" (Seeing tipic România)</span>
-              <span>4.5" (Turbulență mare)</span>
+            <div class="flex justify-between text-[10px] sm:text-xs text-slate-300 font-mono-code">
+              <span>1.0" (Munte)</span>
+              <span>2.5"–3.5" (Tipic România)</span>
+              <span>4.5" (Turbulent)</span>
             </div>
           </div>
 
           <!-- Sampling Regimes Cards -->
-          <div class="stagger-4 grid grid-cols-3 gap-2.5" data-narrator-step="2">
+          <div class="stagger-4 grid grid-cols-1 sm:grid-cols-3 gap-2.5" data-narrator-step="2">
             <div id="regimeUnder" onclick="document.getElementById('s7SeeingSlider').value=1.4;updateSlide7Seeing(1.4)" class="glass-card tilt-3d rounded-2xl p-3 opacity-60 cursor-pointer">
               <div class="text-xs font-bold text-amber-300">Sub-eșantionat</div>
               <div class="text-xs font-mono-code text-white mt-0.5">&lt; 1.6 px / FWHM</div>
@@ -1362,49 +1404,50 @@
   <!-- ===================================================================== -->
   <!-- BOTTOM CONTROL BAR & SYNCHRONIZED STORYTELLER SUBTITLES               -->
   <!-- ===================================================================== -->
-  <footer class="fixed bottom-0 left-0 right-0 z-30 px-6 pb-3 pt-2 flex flex-col gap-2 pointer-events-none">
+  <footer class="fixed bottom-0 left-0 right-0 z-30 px-2.5 sm:px-6 pb-2 sm:pb-3 pt-1 flex flex-col gap-1.5 sm:gap-2 pointer-events-none">
     <!-- Synchronized Subtitle Banner -->
     <div class="max-w-4xl mx-auto w-full pointer-events-auto">
-      <div class="glass-panel rounded-2xl px-5 py-2.5 text-center shadow-2xl">
-        <p id="subtitleDisplay" class="text-sm sm:text-base font-medium text-white tracking-wide drop-shadow">
+      <div class="glass-panel rounded-xl sm:rounded-2xl px-3 sm:px-5 py-1.5 sm:py-2.5 text-center shadow-2xl">
+        <p id="subtitleDisplay" class="text-xs sm:text-sm md:text-base font-medium text-white tracking-wide drop-shadow leading-snug">
           Apasă pe „▶ Pornește Povestitorul” pentru a asculta prezentarea narată în limba română cu animații coregrafiate.
         </p>
       </div>
     </div>
 
     <!-- Deck Controls Bar -->
-    <div class="max-w-6xl mx-auto w-full glass-panel rounded-2xl px-4 py-2 flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
+    <div class="max-w-6xl mx-auto w-full glass-panel rounded-xl sm:rounded-2xl px-2.5 sm:px-4 py-1.5 sm:py-2 flex flex-wrap items-center justify-between gap-2 sm:gap-3 pointer-events-auto">
       <!-- Slide Navigation -->
-      <div class="flex items-center gap-2">
-        <button onclick="prevSlide()" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white border border-white/15 transition cursor-pointer">
-          ◀ Anterior
+      <div class="flex items-center gap-1 sm:gap-2">
+        <button onclick="prevSlide()" class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-[11px] sm:text-xs font-semibold text-white border border-white/15 transition cursor-pointer">
+          ◀ <span class="hidden sm:inline">Anterior</span>
         </button>
-        <span id="slideCounter" class="font-mono-code text-xs font-bold text-sky-300 px-2">
-          Slide 1 / 8
+        <span id="slideCounter" class="font-mono-code text-[11px] sm:text-xs font-bold text-sky-300 px-1.5 sm:px-2">
+          1 / 8
         </span>
-        <button onclick="nextSlide()" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white border border-white/15 transition cursor-pointer">
-          Următor ▶
+        <button onclick="nextSlide()" class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-[11px] sm:text-xs font-semibold text-white border border-white/15 transition cursor-pointer">
+          <span class="hidden sm:inline">Următor</span> ▶
         </button>
       </div>
 
       <!-- Narrator Audio Controls -->
-      <div class="flex items-center gap-3 flex-1 max-w-xl">
-        <button id="playNarrationBtn" onclick="toggleNarration()" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-xs font-bold border border-white/25 shadow-lg shadow-amber-500/25 flex items-center gap-1.5 transition cursor-pointer shrink-0">
+      <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-[180px] max-w-xl">
+        <button id="playNarrationBtn" onclick="toggleNarration()" class="px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-[11px] sm:text-xs font-bold border border-white/25 shadow-lg shadow-amber-500/25 flex items-center gap-1.5 transition cursor-pointer shrink-0">
           <span id="playIcon">▶</span>
-          <span id="playBtnText">Pornește Povestitorul</span>
+          <span id="playBtnText">Povestitor</span>
         </button>
 
-        <div class="flex-1 flex items-center gap-2">
-          <span id="audioTimeCur" class="text-xs font-mono-code text-slate-300 w-10 text-right">0:00</span>
-          <div class="flex-1 h-2.5 bg-slate-950/80 rounded-full overflow-hidden cursor-pointer border border-white/15" onclick="seekAudio(event)">
+        <div class="flex-1 flex items-center gap-1.5 sm:gap-2">
+          <span id="audioTimeCur" class="hidden sm:inline text-xs font-mono-code text-slate-300 w-9 text-right">0:00</span>
+          <div class="flex-1 h-2 sm:h-2.5 bg-slate-950/80 rounded-full overflow-hidden cursor-pointer border border-white/15" onclick="seekAudio(event)">
             <div id="audioProgressBar" class="h-full bg-gradient-to-r from-amber-400 via-sky-400 to-emerald-400 w-0 transition-all duration-150"></div>
           </div>
-          <span id="audioTimeDur" class="text-xs font-mono-code text-slate-300 w-10">0:00</span>
+          <span id="audioTimeDur" class="text-[10px] sm:text-xs font-mono-code text-slate-300 w-8 sm:w-10">0:00</span>
         </div>
 
-        <label class="flex items-center gap-1.5 text-xs text-slate-200 cursor-pointer shrink-0">
+        <label class="flex items-center gap-1 text-[11px] sm:text-xs text-slate-200 cursor-pointer shrink-0">
           <input id="autoAdvanceToggle" type="checkbox" checked class="accent-sky-400 rounded cursor-pointer" />
-          <span>Auto-Slide</span>
+          <span class="hidden md:inline">Auto-Slide</span>
+          <span class="md:hidden">Auto</span>
         </label>
       </div>
 
@@ -1422,10 +1465,168 @@
 
   <script>
     // =========================================================================
-    // 1. 3D / 2.5D MAGNETIC HOVER TILT & LIQUID GLASS CAUSTIC REFRACTION
+    // 1. 3D / 2.5D MAGNETIC HOVER TILT, MOBILE ACCELEROMETER & LIQUID GLASS
     // =========================================================================
+    let gyroState = {
+      active: false,
+      hasData: false,
+      rawX: 0,      // Left-right tilt (-1 .. +1)
+      rawY: 0,      // Front-back tilt (-1 .. +1)
+      baseX: null,  // Self-calibrating neutral hold X
+      baseY: null,  // Self-calibrating neutral hold Y
+      smoothX: 0,
+      smoothY: 0,
+      touchOverride: false
+    };
+
+    function applyCard3DTransform(card, normX, normY, isTouchOrMouse = false) {
+      // normX, normY in [-1, 1]
+      const clampedX = Math.max(-1, Math.min(1, normX));
+      const clampedY = Math.max(-1, Math.min(1, normY));
+      const px = ((clampedX + 1) * 0.5) * 100;
+      const py = ((clampedY + 1) * 0.5) * 100;
+
+      // Update Liquid Glass specular refraction origin
+      card.style.setProperty('--mx', `${px.toFixed(1)}%`);
+      card.style.setProperty('--my', `${py.toFixed(1)}%`);
+
+      if (card.classList.contains('tilt-3d')) {
+        const isPanel = card.classList.contains('glass-panel');
+        const maxTilt = isTouchOrMouse
+          ? (isPanel ? 4.5 : 9.0)
+          : (isPanel ? 3.8 : 7.2); // Discreet, refined 3D motion from mobile accelerometer
+        const rotY = clampedX * maxTilt;
+        const rotX = -clampedY * maxTilt;
+        const zLift = isTouchOrMouse ? 8 : 5;
+        const scale = isTouchOrMouse ? 1.016 : 1.008;
+        card.style.transform = `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) translateZ(${zLift}px) scale(${scale})`;
+      }
+    }
+
+    function handleSensorTiltInput(tiltLRDeg, tiltFBDeg) {
+      gyroState.hasData = true;
+      gyroState.active = true;
+
+      if (gyroState.baseX === null || gyroState.baseY === null) {
+        gyroState.baseX = tiltLRDeg;
+        gyroState.baseY = tiltFBDeg;
+      } else {
+        // Gentle adaptive drift compensation so holding the phone at any comfortable angle stays centered
+        gyroState.baseX += (tiltLRDeg - gyroState.baseX) * 0.008;
+        gyroState.baseY += (tiltFBDeg - gyroState.baseY) * 0.008;
+      }
+
+      const deltaX = tiltLRDeg - gyroState.baseX;
+      const deltaY = tiltFBDeg - gyroState.baseY;
+
+      // Normalize: ~18 degrees of phone tilt reaches full discreet 3D card excursion
+      gyroState.rawX = Math.max(-1, Math.min(1, deltaX / 18));
+      gyroState.rawY = Math.max(-1, Math.min(1, deltaY / 18));
+
+      const gyroTxt = document.getElementById('gyroText');
+      const gyroDot = document.getElementById('gyroDot');
+      if (gyroTxt && gyroTxt.textContent !== '📱 3D Activ') {
+        gyroTxt.textContent = '📱 3D Activ';
+        if (gyroDot) gyroDot.className = 'w-2 h-2 rounded-full bg-sky-400 animate-ping';
+      }
+    }
+
+    function attachMobileSensorListeners() {
+      // 1. Hardware Accelerometer (DeviceMotionEvent -> accelerationIncludingGravity)
+      window.addEventListener('devicemotion', (e) => {
+        const acc = e.accelerationIncludingGravity;
+        if (!acc || (acc.x === null && acc.y === null)) return;
+        // Convert gravity vector (m/s^2) on X and Y axes into degrees of tilt
+        const isLandscape = window.innerWidth > window.innerHeight && window.innerWidth < 1024;
+        const gx = isLandscape ? (acc.y || 0) : -(acc.x || 0);
+        const gy = isLandscape ? -(acc.x || 0) : (acc.y || 0);
+        const gz = acc.z || 9.81;
+        const rollDeg = Math.atan2(gx, Math.sqrt(gy * gy + gz * gz)) * (180 / Math.PI);
+        const pitchDeg = Math.atan2(gy, Math.sqrt(gx * gx + gz * gz)) * (180 / Math.PI);
+        handleSensorTiltInput(rollDeg, pitchDeg);
+      }, { passive: true });
+
+      // 2. Gyroscope / Orientation Sensor (DeviceOrientationEvent -> gamma / beta)
+      window.addEventListener('deviceorientation', (e) => {
+        if (e.gamma === null && e.beta === null) return;
+        const gamma = e.gamma || 0; // Left/Right (-90 .. 90)
+        const beta = e.beta || 0;   // Front/Back (-180 .. 180)
+        handleSensorTiltInput(gamma, beta);
+      }, { passive: true });
+    }
+
+    async function enableMobileGyroTilt(recalibrate = false) {
+      if (recalibrate) {
+        gyroState.baseX = null;
+        gyroState.baseY = null;
+      }
+      try {
+        if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+          const res = await DeviceMotionEvent.requestPermission();
+          if (res === 'granted') attachMobileSensorListeners();
+        }
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+          const res2 = await DeviceOrientationEvent.requestPermission();
+          if (res2 === 'granted') attachMobileSensorListeners();
+        }
+      } catch (_) {}
+      attachMobileSensorListeners();
+
+      const gyroTxt = document.getElementById('gyroText');
+      if (gyroTxt && recalibrate) {
+        gyroTxt.textContent = '📱 Calibrat 3D';
+        setTimeout(() => {
+          if (gyroTxt) gyroTxt.textContent = gyroState.hasData ? '📱 3D Activ' : '📱 3D Senzor';
+        }, 1200);
+      }
+    }
+
+    // Expose deterministic helper for testing mobile accelerometer 3D tilt in browser
+    window.__simulateMobileTilt = function(degLR, degFB) {
+      if (gyroState.baseX === null) {
+        gyroState.baseX = 0;
+        gyroState.baseY = 0;
+      }
+      handleSensorTiltInput(degLR, degFB);
+      for (let i = 0; i < 20; i++) updateMobileSensor3DFrame();
+    };
+
+    function updateMobileSensor3DFrame() {
+      if (!gyroState.hasData || gyroState.touchOverride) return;
+
+      // Smooth spring low-pass filter (eliminates sensor micro-tremor)
+      gyroState.smoothX += (gyroState.rawX - gyroState.smoothX) * 0.14;
+      gyroState.smoothY += (gyroState.rawY - gyroState.smoothY) * 0.14;
+
+      // Parallax on background morphing liquid blobs
+      const b1 = document.getElementById('blob1');
+      const b2 = document.getElementById('blob2');
+      if (b1) b1.style.marginLeft = `${(gyroState.smoothX * 36).toFixed(1)}px`;
+      if (b2) b2.style.marginTop = `${(-gyroState.smoothY * 36).toFixed(1)}px`;
+
+      const activeSec = document.querySelector('.slide-section.active');
+      if (!activeSec) return;
+
+      const activeCards = activeSec.querySelectorAll('.tilt-3d, .glass-card, .glass-panel');
+      activeCards.forEach((card, idx) => {
+        // Slight per-card phase offset creates an organic multi-layer 3D depth effect
+        const factor = 1 + ((idx % 3) - 1) * 0.12;
+        applyCard3DTransform(card, gyroState.smoothX * factor, gyroState.smoothY * factor, false);
+      });
+    }
+
     function init3DTiltAndLiquidCaustics() {
       const cards = document.querySelectorAll('.tilt-3d, .glass-card, .glass-panel');
+
+      // Attach accelerometer & gyroscope listeners immediately (works out-of-the-box on Android)
+      attachMobileSensorListeners();
+
+      // Auto-unlock iOS 13+ sensor permissions on first touch anywhere
+      const unlockOnce = () => {
+        enableMobileGyroTilt(false);
+        window.removeEventListener('touchend', unlockOnce);
+      };
+      window.addEventListener('touchend', unlockOnce, { passive: true });
 
       window.addEventListener('mousemove', (e) => {
         // Subtle parallax on background morphing liquid blobs
@@ -1440,29 +1641,57 @@
       cards.forEach(card => {
         card.addEventListener('mousemove', (e) => {
           const rect = card.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          const px = (x / rect.width) * 100;
-          const py = (y / rect.height) * 100;
-
-          // Update Liquid Glass specular refraction origin
-          card.style.setProperty('--mx', `${px}%`);
-          card.style.setProperty('--my', `${py}%`);
-
-          if (card.classList.contains('tilt-3d')) {
-            const maxTilt = card.classList.contains('glass-panel') ? 4.5 : 9.5;
-            const rotY = ((x / rect.width) - 0.5) * (maxTilt * 2);
-            const rotX = (0.5 - (y / rect.height)) * (maxTilt * 2);
-            card.style.transform = `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) translateZ(8px) scale(1.018)`;
-          }
+          const normX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+          const normY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+          applyCard3DTransform(card, normX, normY, true);
         });
 
         card.addEventListener('mouseleave', () => {
-          if (card.classList.contains('tilt-3d')) {
+          if (card.classList.contains('tilt-3d') && !gyroState.hasData) {
             card.style.transform = '';
           }
         });
+
+        // Direct touch 3D tilt response when touching/sliding finger over cards on mobile
+        card.addEventListener('touchmove', (e) => {
+          if (!e.touches || !e.touches[0]) return;
+          gyroState.touchOverride = true;
+          const t = e.touches[0];
+          const rect = card.getBoundingClientRect();
+          const normX = ((t.clientX - rect.left) / rect.width - 0.5) * 2;
+          const normY = ((t.clientY - rect.top) / rect.height - 0.5) * 2;
+          applyCard3DTransform(card, normX, normY, true);
+        }, { passive: true });
+
+        card.addEventListener('touchend', () => {
+          gyroState.touchOverride = false;
+          if (card.classList.contains('tilt-3d') && !gyroState.hasData) {
+            card.style.transform = '';
+          }
+        }, { passive: true });
       });
+
+      // Horizontal touch-swipe navigation between slides on mobile (ignores sliders/tables)
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let ignoreSwipe = false;
+      window.addEventListener('touchstart', (e) => {
+        if (!e.touches || !e.touches[0]) return;
+        const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+        ignoreSwipe = (tag === 'input' || tag === 'button' || tag === 'canvas' || !!(e.target && e.target.closest('.overflow-x-auto')));
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      window.addEventListener('touchend', (e) => {
+        if (ignoreSwipe || !e.changedTouches || !e.changedTouches[0]) return;
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        const dy = e.changedTouches[0].clientY - touchStartY;
+        if (Math.abs(dx) > 68 && Math.abs(dx) > Math.abs(dy) * 1.8) {
+          if (dx < 0) nextSlide();
+          else prevSlide();
+        }
+      }, { passive: true });
     }
 
     // =========================================================================
@@ -1565,12 +1794,13 @@
         el.classList.remove('active', 'prev-slide');
         if (i === currentSlide) {
           el.classList.add('active');
+          el.scrollTop = 0;
         } else if (i < currentSlide) {
           el.classList.add('prev-slide');
         }
       });
 
-      document.getElementById('slideCounter').textContent = `Slide ${currentSlide + 1} / ${totalSlides}`;
+      document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
       initDots();
 
       const slideMeta = narrationData.slides[currentSlide];
@@ -2107,9 +2337,12 @@
         }
       }
 
-      // Keep Slide 7 Nyquist scintillation & Slide 5 thermal noise alive at 60fps!
-      if (currentSlide === 6 && !document.body.classList.contains('export-mode')) {
-        renderNyquistFrame(ts);
+      // Keep Slide 7 Nyquist scintillation & mobile accelerometer 3D tilt alive at 60fps!
+      if (!document.body.classList.contains('export-mode')) {
+        updateMobileSensor3DFrame();
+        if (currentSlide === 6) {
+          renderNyquistFrame(ts);
+        }
       }
 
       requestAnimationFrame(animateBg);
