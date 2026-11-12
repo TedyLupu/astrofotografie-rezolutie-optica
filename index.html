@@ -1,0 +1,2191 @@
+<!DOCTYPE html>
+<html lang="ro" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rezoluția Optică în Astrofotografie — Newton 6" 600mm • 0.95× • Sony IMX533</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+    :root {
+      --accent-cyan: #38bdf8;
+      --accent-indigo: #818cf8;
+      --accent-emerald: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-rose: #fb7185;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #03060e;
+      color: #f1f5f9;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      user-select: none;
+      perspective: 1600px;
+    }
+
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ===================================================================== */
+    /* LIQUID GLASS, FROSTED MORPHISM & SIMULATED REFRACTION                 */
+    /* ===================================================================== */
+    @keyframes morphBlob1 {
+      0%, 100% {
+        border-radius: 62% 38% 46% 54% / 60% 44% 56% 40%;
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+      }
+      33% {
+        border-radius: 38% 62% 63% 37% / 41% 59% 41% 59%;
+        transform: translate3d(60px, -40px, 0) rotate(120deg) scale(1.12);
+      }
+      66% {
+        border-radius: 54% 46% 35% 65% / 65% 36% 64% 35%;
+        transform: translate3d(-45px, 35px, 0) rotate(240deg) scale(0.94);
+      }
+    }
+
+    @keyframes morphBlob2 {
+      0%, 100% {
+        border-radius: 45% 55% 62% 38% / 53% 38% 62% 47%;
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+      }
+      50% {
+        border-radius: 68% 32% 40% 60% / 38% 66% 34% 62%;
+        transform: translate3d(-70px, -55px, 0) rotate(-160deg) scale(1.15);
+      }
+    }
+
+    .liquid-ambient-blob {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1;
+      filter: blur(70px);
+      mix-blend-mode: screen;
+      animation: morphBlob1 18s ease-in-out infinite;
+    }
+
+    .liquid-ambient-blob-2 {
+      position: fixed;
+      pointer-events: none;
+      z-index: 1;
+      filter: blur(80px);
+      mix-blend-mode: screen;
+      animation: morphBlob2 22s ease-in-out infinite;
+    }
+
+    /* True Liquid Glass Panel with Chromatic Specular Rim & Refraction */
+    .glass-panel {
+      position: relative;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.09) 0%,
+        rgba(15, 23, 42, 0.58) 45%,
+        rgba(30, 58, 138, 0.22) 100%
+      );
+      backdrop-filter: url(#liquid-refraction) blur(22px) saturate(190%) brightness(1.06);
+      -webkit-backdrop-filter: blur(22px) saturate(190%) brightness(1.06);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow:
+        0 24px 60px -12px rgba(0, 0, 0, 0.65),
+        inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35),
+        inset 0 -1.5px 2px rgba(56, 189, 248, 0.22),
+        inset 1.5px 0 2px rgba(244, 63, 94, 0.10),
+        inset -1.5px 0 2px rgba(129, 140, 248, 0.18);
+      overflow: hidden;
+    }
+
+    /* Liquid Glass Specular Sheen Overlay */
+    .glass-panel::before,
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background: radial-gradient(
+        480px circle at var(--mx, 50%) var(--my, 20%),
+        rgba(255, 255, 255, 0.16),
+        rgba(56, 189, 248, 0.08) 32%,
+        transparent 70%
+      );
+      opacity: 0.75;
+      transition: opacity 0.3s ease;
+      z-index: 1;
+    }
+
+    /* Chromatic Liquid Meniscus Rim */
+    .glass-panel::after,
+    .glass-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.48) 0%,
+        rgba(56, 189, 248, 0.35) 28%,
+        rgba(255, 255, 255, 0.04) 55%,
+        rgba(244, 63, 94, 0.25) 80%,
+        rgba(129, 140, 248, 0.45) 100%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    /* Interactive 3D / 2.5D Liquid Glass Card */
+    .glass-card {
+      position: relative;
+      background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.11) 0%,
+        rgba(15, 23, 42, 0.48) 52%,
+        rgba(56, 189, 248, 0.10) 100%
+      );
+      backdrop-filter: blur(18px) saturate(180%) contrast(1.05);
+      -webkit-backdrop-filter: blur(18px) saturate(180%) contrast(1.05);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow:
+        0 14px 34px -8px rgba(0, 0, 0, 0.55),
+        inset 0 1px 1px rgba(255, 255, 255, 0.32),
+        inset 0 -1px 2px rgba(56, 189, 248, 0.18);
+      transform-style: preserve-3d;
+      will-change: transform, box-shadow;
+      transition:
+        transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.3s ease;
+    }
+
+    .glass-card:hover {
+      border-color: rgba(56, 189, 248, 0.55);
+      box-shadow:
+        0 24px 48px -10px rgba(56, 189, 248, 0.28),
+        0 0 25px rgba(129, 140, 248, 0.18),
+        inset 0 1.5px 2px rgba(255, 255, 255, 0.55),
+        inset 0 -2px 4px rgba(56, 189, 248, 0.35);
+    }
+
+    /* 2.5D Depth Pop for inner content when hovering 3D cards */
+    .tilt-3d {
+      transform-style: preserve-3d;
+      perspective: 1100px;
+    }
+
+    .tilt-3d > * {
+      position: relative;
+      z-index: 2;
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .tilt-3d:hover > * {
+      transform: translateZ(22px);
+    }
+
+    /* Narrator Highlight Pulse when storyteller talks about a card */
+    @keyframes narratorHighlight {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(56, 189, 248, 0), inset 0 1px 2px rgba(255,255,255,0.4);
+      }
+      50% {
+        box-shadow: 0 0 32px 4px rgba(56, 189, 248, 0.32), inset 0 1.5px 3px rgba(255,255,255,0.65);
+        border-color: rgba(56, 189, 248, 0.75);
+      }
+    }
+
+    .narrator-focus {
+      animation: narratorHighlight 2.6s ease-in-out infinite;
+    }
+
+    /* ===================================================================== */
+    /* BOLD 3D MORPHING SLIDE TRANSITIONS                                    */
+    /* ===================================================================== */
+    .slide-section {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      transform-style: preserve-3d;
+      transform: perspective(1400px) translate3d(80px, 28px, -240px) rotateY(-12deg) rotateX(6deg) scale(0.88);
+      filter: blur(14px) saturate(1.6);
+      transition:
+        opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.95s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4.5rem 3.5rem 6.2rem 3.5rem;
+    }
+
+    .slide-section.prev-slide {
+      transform: perspective(1400px) translate3d(-90px, -22px, -260px) rotateY(12deg) rotateX(-5deg) scale(0.86);
+      filter: blur(14px) saturate(1.6);
+    }
+
+    .slide-section.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: perspective(1400px) translate3d(0, 0, 0) rotateY(0deg) rotateX(0deg) scale(1);
+      filter: blur(0px) saturate(1);
+      z-index: 10;
+    }
+
+    /* Liquid Refraction Wave Sweep on Slide Change */
+    #transitionWave {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 25;
+      opacity: 0;
+      background: radial-gradient(
+        circle at 50% 50%,
+        rgba(56, 189, 248, 0.22) 0%,
+        rgba(129, 140, 248, 0.14) 35%,
+        transparent 70%
+      );
+      backdrop-filter: url(#liquid-refraction) blur(6px);
+      transition: opacity 0.45s ease;
+    }
+    #transitionWave.wave-active {
+      opacity: 1;
+    }
+
+    /* Staggered 3D spring reveal inside active slide */
+    .slide-section .stagger-1,
+    .slide-section .stagger-2,
+    .slide-section .stagger-3,
+    .slide-section .stagger-4 {
+      opacity: 0;
+      transform: perspective(900px) translate3d(0, 32px, -60px) rotateX(10deg) scale(0.94);
+      transition:
+        opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slide-section.active .stagger-1 { opacity: 1; transform: perspective(900px) translate3d(0, 0, 0) rotateX(0) scale(1); transition-delay: 0.10s; }
+    .slide-section.active .stagger-2 { opacity: 1; transform: perspective(900px) translate3d(0, 0, 0) rotateX(0) scale(1); transition-delay: 0.22s; }
+    .slide-section.active .stagger-3 { opacity: 1; transform: perspective(900px) translate3d(0, 0, 0) rotateX(0) scale(1); transition-delay: 0.34s; }
+    .slide-section.active .stagger-4 { opacity: 1; transform: perspective(900px) translate3d(0, 0, 0) rotateX(0) scale(1); transition-delay: 0.46s; }
+
+    /* ===================================================================== */
+    /* DISCRETE INTERACTIVE AFFORDANCE HINTS                                 */
+    /* ===================================================================== */
+    @keyframes sonarPulse {
+      0% { transform: scale(0.85); opacity: 0.9; }
+      70% { transform: scale(2.2); opacity: 0; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    @keyframes floatHint {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-3px); }
+    }
+
+    .interactive-cue {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: #bae6fd;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(129, 140, 248, 0.18));
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+      animation: floatHint 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .sonar-dot {
+      position: relative;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #38bdf8;
+    }
+    .sonar-dot::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 1.5px solid #38bdf8;
+      animation: sonarPulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    /* Interactive Zone Hover Glow */
+    .interactive-zone {
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    .interactive-zone:hover {
+      border-color: rgba(56, 189, 248, 0.65) !important;
+      box-shadow: 0 0 28px rgba(56, 189, 248, 0.22), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+    }
+
+    /* Glowing photon beam animation */
+    @keyframes beamFlow {
+      0% { stroke-dashoffset: 40; }
+      100% { stroke-dashoffset: 0; }
+    }
+    .photon-ray {
+      stroke-dasharray: 8 6;
+      animation: beamFlow 1.0s linear infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.55)); }
+      50% { filter: drop-shadow(0 0 20px rgba(52, 211, 153, 0.95)); }
+    }
+    .glow-badge {
+      animation: pulseGlow 3s ease-in-out infinite;
+    }
+
+    /* Continuous subtle floating for hero visuals */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-7px) rotate(0.4deg); }
+    }
+    .alive-float {
+      animation: floatSlow 6s ease-in-out infinite;
+    }
+
+    /* Custom liquid glass range sliders */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 7px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.5), rgba(129, 140, 248, 0.5));
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      outline: none;
+      transition: box-shadow 0.2s ease;
+    }
+    input[type="range"]:hover {
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.45);
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffffff, #38bdf8 60%, #0284c7 100%);
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      cursor: grab;
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.95), inset 0 1px 2px rgba(255,255,255,0.8);
+      transition: transform 0.15s ease;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.22);
+    }
+  </style>
+</head>
+<body class="relative w-screen h-screen overflow-hidden select-none">
+
+  <!-- ===================================================================== -->
+  <!-- SVG LIQUID GLASS OPTICAL REFRACTION FILTER                            -->
+  <!-- ===================================================================== -->
+  <svg class="hidden" width="0" height="0" aria-hidden="true">
+    <defs>
+      <filter id="liquid-refraction" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012 0.016" numOctaves="2" seed="7" result="noise">
+          <animate attributeName="baseFrequency" values="0.012 0.016;0.016 0.012;0.012 0.016" dur="14s" repeatCount="indefinite" />
+        </feTurbulence>
+        <feGaussianBlur in="noise" stdDeviation="2.5" result="smoothNoise" />
+        <feDisplacementMap in="SourceGraphic" in2="smoothNoise" scale="9" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Transition Liquid Refraction Wave -->
+  <div id="transitionWave"></div>
+
+  <!-- Background Cosmic Starfield & Warp Canvas -->
+  <canvas id="cosmosBg" class="fixed inset-0 w-full h-full pointer-events-none z-0"></canvas>
+
+  <!-- Morphing Liquid Plasma Blobs Behind Frosted Glass (creates real refraction contrast) -->
+  <div id="blob1" class="liquid-ambient-blob -top-24 left-1/4 w-[34rem] h-[34rem] bg-gradient-to-br from-sky-500/25 via-indigo-600/20 to-emerald-500/15"></div>
+  <div id="blob2" class="liquid-ambient-blob-2 -bottom-28 right-1/5 w-[36rem] h-[36rem] bg-gradient-to-tr from-rose-500/20 via-purple-600/20 to-sky-400/20"></div>
+
+  <!-- TOP NAVIGATION & TELEMETRY HEADER -->
+  <header class="fixed top-0 left-0 right-0 h-16 px-6 flex items-center justify-between z-30 glass-panel border-t-0 border-x-0 rounded-b-2xl">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-400 via-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-sky-500/30 font-bold text-sm border border-white/30">
+        🔭
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-sm tracking-wide text-white">ASTRO-OPTICA KEYNOTE</span>
+          <span class="px-2 py-0.5 text-xs font-mono-code rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/40">
+            1.36"/px • f/3.8 • Liquid Glass 3D
+          </span>
+        </div>
+        <div class="text-xs text-slate-300">
+          Newton 6" (150mm / 600mm) • Corector Comă 0.95× • Cameră Răcită Sony IMX533
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide Dots Indicator -->
+    <div id="slideDots" class="hidden lg:flex items-center gap-1.5 bg-slate-950/60 px-3.5 py-1.5 rounded-full border border-white/15 backdrop-blur-md">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Voice & Export Actions -->
+    <div class="flex items-center gap-2.5">
+      <div class="flex items-center gap-1.5 bg-slate-950/60 border border-white/15 rounded-xl px-3 py-1 backdrop-blur-md">
+        <span class="text-xs text-amber-300">🎙️ Narator:</span>
+        <span id="voiceBadge" class="text-xs font-semibold text-slate-100">Gemini 3.8 Povestitor Grav</span>
+      </div>
+
+      <button id="recordWebBtn" onclick="toggleBrowserRecording()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-500/20 hover:bg-rose-500/35 text-rose-200 border border-rose-400/40 flex items-center gap-1.5 transition cursor-pointer" title="Înregistrează live prezentarea din browser cu sunet">
+        <span id="recDot" class="w-2 h-2 rounded-full bg-rose-400"></span>
+        <span id="recText">Înregistrare Live</span>
+      </button>
+
+      <a href="prezentare_astrofotografie_imx533.mp4" download="Prezentare_Astrofotografie_IMX533_1080p.mp4" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white border border-white/25 shadow-lg shadow-sky-500/25 flex items-center gap-1.5 transition cursor-pointer">
+        <span>⬇ Descarcă MP4 (1080p)</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- SLIDES CONTAINER (8 SLIDES)                                           -->
+  <!-- ===================================================================== -->
+  <main id="deckContainer" class="relative w-full h-full z-10">
+
+    <!-- SLIDE 1: INTRO & SYSTEM OVERVIEW -->
+    <section class="slide-section active" data-slide="0">
+      <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-7 space-y-5">
+          <div class="stagger-1 flex flex-wrap items-center gap-2.5">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card text-sky-300 text-xs font-medium">
+              <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+              <span>Simulare Optică &amp; Fizică Astrofotografică</span>
+            </div>
+            <div class="interactive-cue">
+              <span class="sonar-dot"></span>
+              <span>Mișcă cursorul peste carduri pentru efect 3D &amp; refracție Liquid Glass</span>
+            </div>
+          </div>
+
+          <h1 class="stagger-2 text-4xl xl:text-5xl font-extrabold tracking-tight leading-tight text-white drop-shadow-lg">
+            Cum Calculăm <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-indigo-300 to-emerald-300">Rezoluția Optică</span> în Astrofotografie
+          </h1>
+
+          <p class="stagger-3 text-base xl:text-lg text-slate-200 leading-relaxed">
+            În spatele fiecărei galaxii și nebuloase fotografiate cu claritate chirurgicală se află o relație matematică între <strong>distanța focală efectivă</strong> a telescopului și <strong>dimensiunea fizică a pixelului</strong>.
+          </p>
+
+          <!-- Key Hardware Specs Grid (3D Tilt Liquid Glass Cards) -->
+          <div class="stagger-4 grid grid-cols-2 sm:grid-cols-4 gap-3.5 pt-2">
+            <div class="glass-card tilt-3d rounded-2xl p-3.5 cursor-pointer" data-narrator-step="0" onclick="goToSlide(2)">
+              <div class="text-xs text-slate-300">Telescop Newton</div>
+              <div class="text-lg font-bold text-white mt-0.5">6" (150 mm)</div>
+              <div class="text-xs text-sky-300 font-mono-code">F_nativ = 600mm (f/4)</div>
+            </div>
+            <div class="glass-card tilt-3d rounded-2xl p-3.5 cursor-pointer" data-narrator-step="1" onclick="goToSlide(3)">
+              <div class="text-xs text-slate-300">Corector de Comă</div>
+              <div class="text-lg font-bold text-indigo-200 mt-0.5">Factor 0.95×</div>
+              <div class="text-xs text-indigo-300 font-mono-code">F_ef = 570mm (f/3.8)</div>
+            </div>
+            <div class="glass-card tilt-3d rounded-2xl p-3.5 cursor-pointer" data-narrator-step="2" onclick="goToSlide(4)">
+              <div class="text-xs text-slate-300">Cameră Răcită</div>
+              <div class="text-lg font-bold text-rose-200 mt-0.5">Sony IMX533</div>
+              <div class="text-xs text-rose-300 font-mono-code">Pixel = 3.76 µm</div>
+            </div>
+            <div class="glass-card tilt-3d rounded-2xl p-3.5 border-emerald-400/50 bg-emerald-950/30 glow-badge cursor-pointer" data-narrator-step="2" onclick="goToSlide(5)">
+              <div class="text-xs text-emerald-200">Rezoluție Optică</div>
+              <div class="text-2xl font-extrabold text-emerald-300 mt-0.5 font-mono-code">1.36"/px</div>
+              <div class="text-xs text-emerald-200/90">Click → Calcul &amp; FOV</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Visual Card with 3D Hover & Liquid Glass Overlay -->
+        <div class="lg:col-span-5 stagger-3">
+          <div class="glass-panel tilt-3d alive-float relative rounded-3xl p-2.5 shadow-2xl group cursor-pointer" onclick="goToSlide(5)">
+            <div class="relative rounded-2xl overflow-hidden">
+              <img src="assets/hero_nebula_newton.jpg" alt="Astrograf Newton 6 inch și Nebuloasă" class="w-full h-[360px] object-cover group-hover:scale-105 transition duration-700" />
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent"></div>
+              <div class="absolute top-3 right-3 interactive-cue">
+                <span class="sonar-dot"></span>
+                <span>Panou 3D • Click pentru Formula Completă</span>
+              </div>
+              <div class="absolute bottom-3 left-3 right-3 glass-panel rounded-2xl p-4">
+                <div class="flex items-center justify-between text-xs text-slate-200 mb-1">
+                  <span>Ecuația Fundamentală a Eșantionării</span>
+                  <span class="font-mono-code text-sky-300">rad → arcsec</span>
+                </div>
+                <div class="font-mono-code text-base sm:text-lg font-bold text-white flex items-center justify-between">
+                  <span>R = (206.265 × 3.76 µm) / 570 mm</span>
+                  <span class="text-emerald-300">= 1.361"/px</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: CE ESTE O SECUNDĂ DE ARC (1") PE CER? -->
+    <section class="slide-section" data-slide="1">
+      <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-6 space-y-4">
+          <div class="stagger-1 flex items-center gap-2.5">
+            <span class="px-3 py-1 rounded-full glass-card text-indigo-200 text-xs font-semibold">
+              ETAPA 1 • MĂSURAREA UNGHIULARĂ A BOLȚII CEREȘTI
+            </span>
+            <span class="interactive-cue">
+              <span class="sonar-dot"></span>
+              <span>Click pe carduri pentru simulare de zoom unghiular</span>
+            </span>
+          </div>
+          <h2 class="stagger-2 text-3xl xl:text-4xl font-bold text-white">
+            Ce Înseamnă o <span class="text-sky-300">Secundă de Arc (1")</span>?
+          </h2>
+          <p class="stagger-2 text-slate-200 text-sm xl:text-base leading-relaxed">
+            Pe cerul nopții nu putem măsura obiectele în milimetri sau kilometri, ci în <strong>unghiuri aparente</strong>. O secundă de arc (<span class="font-mono-code text-sky-300">1"</span>) este a <strong>3.600-a parte dintr-un singur grad</strong>:
+          </p>
+
+          <div class="stagger-3 space-y-2.5">
+            <div onclick="highlightAngularScale(0)" class="glass-card tilt-3d rounded-2xl p-3.5 flex items-center justify-between cursor-pointer" data-narrator-step="0">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-sky-500/25 border border-sky-300/40 flex items-center justify-center font-mono-code font-bold text-sky-200">1°</div>
+                <div>
+                  <div class="font-semibold text-white text-sm">Un Grad de Arc (1° = 60' = 3.600")</div>
+                  <div class="text-xs text-slate-300">Cât lățimea degetului mic ținut la lungimea brațului (2 Luni Pline alăturate)</div>
+                </div>
+              </div>
+              <span class="font-mono-code text-sm text-sky-300 font-bold">3.600"</span>
+            </div>
+
+            <div onclick="highlightAngularScale(1)" class="glass-card tilt-3d rounded-2xl p-3.5 flex items-center justify-between cursor-pointer" data-narrator-step="1">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/25 border border-indigo-300/40 flex items-center justify-center font-mono-code font-bold text-indigo-200">1'</div>
+                <div>
+                  <div class="font-semibold text-white text-sm">Un Minut de Arc (1' = 60")</div>
+                  <div class="text-xs text-slate-300">Limita de acuitate a ochiului uman liber • Luna Plină are 30' (1.800")</div>
+                </div>
+              </div>
+              <span class="font-mono-code text-sm text-indigo-300 font-bold">60"</span>
+            </div>
+
+            <div onclick="highlightAngularScale(2)" class="glass-card tilt-3d rounded-2xl p-3.5 flex items-center justify-between border-emerald-400/50 bg-emerald-950/25 cursor-pointer" data-narrator-step="2">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/25 border border-emerald-300/50 flex items-center justify-center font-mono-code font-bold text-emerald-200">1"</div>
+                <div>
+                  <div class="font-semibold text-white text-sm">O Secundă de Arc (1/3600 dintr-un grad)</div>
+                  <div class="text-xs text-emerald-200">Echivalentul unei monede privite de la ~4.8 kilometri distanță!</div>
+                </div>
+              </div>
+              <span class="font-mono-code text-sm text-emerald-300 font-bold">1.36" / pixel</span>
+            </div>
+          </div>
+
+          <div class="stagger-4 glass-panel tilt-3d rounded-2xl p-3.5 border-l-4 border-l-amber-400">
+            <div class="text-xs text-amber-300 font-semibold">De unde provine constanta 206.265 din formulă?</div>
+            <div class="text-xs text-slate-200 mt-1 font-mono-code">
+              1 radian = 180° / π = 57.29578° × 3.600"/grad = <strong class="text-white">206.264,8 secunde de arc</strong>!
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Interactive Angular Scale Visualizer -->
+        <div class="lg:col-span-6 stagger-3">
+          <div class="glass-panel tilt-3d rounded-3xl p-5 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-sm font-bold text-white">🔍 Comparator Interactiv de Scară Unghiulară</h3>
+                <p class="text-xs text-slate-300">Trage de slider pentru a face zoom de la Luna Plină (1.800") până la 1 Pixel IMX533 (1.36")</p>
+              </div>
+              <div class="interactive-cue">
+                <span class="sonar-dot"></span>
+                <span>Trage pentru Zoom</span>
+              </div>
+            </div>
+
+            <!-- Interactive Angular Zoom Slider -->
+            <div class="p-3 rounded-2xl bg-slate-950/60 border border-white/10 space-y-1.5">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-300">Nivel Zoom Unghiular:</span>
+                <span id="zoomScaleLabel" class="font-mono-code text-sky-300 font-bold">Lupa pe Pixel (1.36" = 3.64 km distanță monedă)</span>
+              </div>
+              <input id="angZoomSlider" type="range" min="1" max="100" value="75" oninput="updateAngularZoom(this.value)" class="w-full cursor-pointer" />
+            </div>
+
+            <!-- Bar comparison graphic -->
+            <div class="space-y-3 py-1">
+              <div class="p-2 rounded-xl hover:bg-white/5 transition">
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-slate-200">🌕 Luna Plină (30 minute de arc)</span>
+                  <span class="font-mono-code text-slate-200">1.800" (≈ 1.323 pixeli IMX533)</span>
+                </div>
+                <div class="w-full h-3 bg-slate-900/90 rounded-full overflow-hidden border border-white/10">
+                  <div id="barMoon" class="h-full bg-gradient-to-r from-slate-400 to-white w-full transition-all duration-500"></div>
+                </div>
+              </div>
+
+              <div class="p-2 rounded-xl hover:bg-white/5 transition">
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-slate-200">🪐 Discul Planetei Jupiter (la opoziție)</span>
+                  <span class="font-mono-code text-amber-300">45" (≈ 33 pixeli pe diametru)</span>
+                </div>
+                <div class="w-full h-3 bg-slate-900/90 rounded-full overflow-hidden border border-white/10">
+                  <div id="barJup" class="h-full bg-gradient-to-r from-amber-500 to-yellow-300 transition-all duration-500" style="width: 52%"></div>
+                </div>
+              </div>
+
+              <div class="p-2 rounded-xl hover:bg-white/5 transition">
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-slate-200">✨ Stea reală afectată de Seeing Atmosferic mediu</span>
+                  <span class="font-mono-code text-sky-300">3.0" FWHM (≈ 2.2 pixeli)</span>
+                </div>
+                <div class="w-full h-3 bg-slate-900/90 rounded-full overflow-hidden border border-white/10">
+                  <div id="barSeeing" class="h-full bg-gradient-to-r from-sky-500 to-cyan-300 transition-all duration-500" style="width: 26%"></div>
+                </div>
+              </div>
+
+              <div class="p-2 rounded-xl bg-emerald-500/10 border border-emerald-400/30">
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-emerald-200 font-semibold">🟩 1 Pixel Senzor Sony IMX533 (la F_ef = 570 mm)</span>
+                  <span class="font-mono-code text-emerald-300 font-bold">1.36" (3.76 µm pe senzor)</span>
+                </div>
+                <div class="w-full h-3 bg-slate-900/90 rounded-full overflow-hidden border border-emerald-400/30">
+                  <div id="barPixel" class="h-full bg-gradient-to-r from-emerald-500 to-teal-300 transition-all duration-500" style="width: 14%"></div>
+                </div>
+              </div>
+
+              <div class="p-2 rounded-xl hover:bg-white/5 transition">
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-indigo-200">🔬 Limita de Difracție Dawes (Oglindă 6" / 150 mm)</span>
+                  <span class="font-mono-code text-indigo-300">0.76" (Puterea teoretică în vid)</span>
+                </div>
+                <div class="w-full h-3 bg-slate-900/90 rounded-full overflow-hidden border border-white/10">
+                  <div id="barDawes" class="h-full bg-gradient-to-r from-indigo-500 to-purple-400 transition-all duration-500" style="width: 8%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: TELESCOPUL NEWTON 6" (150/600mm f/4) -->
+    <section class="slide-section" data-slide="2">
+      <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-5 space-y-4">
+          <div class="stagger-1 flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full glass-card text-sky-200 text-xs font-semibold">
+              ETAPA 2 • COLECTORUL DE FOTONI
+            </span>
+            <span class="interactive-cue">
+              <span class="sonar-dot"></span>
+              <span>Comută 150mm vs 152.4mm</span>
+            </span>
+          </div>
+          <h2 class="stagger-2 text-3xl xl:text-4xl font-bold text-white">
+            Astrograful Newton <span class="text-sky-300">6" (150/600 mm)</span>
+          </h2>
+          <p class="stagger-2 text-slate-200 text-sm leading-relaxed">
+            Un telescop reflector Newtonian de 6 inci cu focala de 600 mm este un veritabil „aspirator de fotoni” (<strong class="text-white">f/4 nativ</strong>). Dar care este rolul exact al aperturii față de cel al focalei?
+          </p>
+
+          <!-- Toggle 150mm vs 152.4mm -->
+          <div class="stagger-3 glass-panel interactive-zone rounded-2xl p-4 space-y-3" data-narrator-step="0">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
+                <span class="sonar-dot"></span>
+                <span>Standard Apertură 6 inch:</span>
+              </span>
+              <div class="inline-flex rounded-xl bg-slate-950/80 p-1 border border-white/15">
+                <button id="btnAp150" onclick="setApertureMode(150)" class="px-3 py-1 rounded-lg text-xs font-semibold bg-sky-500 text-white shadow transition cursor-pointer">
+                  150 mm (Comercial)
+                </button>
+                <button id="btnAp152" onclick="setApertureMode(152.4)" class="px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer">
+                  152.4 mm (6" Exact)
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5 pt-1">
+              <div class="glass-card tilt-3d p-2.5 rounded-xl">
+                <div class="text-xs text-slate-300">Raport Focal Nativ</div>
+                <div id="apNativeF" class="text-base font-bold font-mono-code text-sky-300">f/4.00</div>
+              </div>
+              <div class="glass-card tilt-3d p-2.5 rounded-xl">
+                <div class="text-xs text-slate-300">Cu Corector 0.95×</div>
+                <div id="apCorrF" class="text-base font-bold font-mono-code text-indigo-300">f/3.80</div>
+              </div>
+              <div class="glass-card tilt-3d p-2.5 rounded-xl">
+                <div class="text-xs text-slate-300">Limita Dawes / Rayleigh</div>
+                <div id="apDawes" class="text-sm font-bold font-mono-code text-emerald-300">0.77" / 0.92"</div>
+              </div>
+              <div class="glass-card tilt-3d p-2.5 rounded-xl">
+                <div class="text-xs text-slate-300">Diametru Disc Airy</div>
+                <div id="apAiry" class="text-sm font-bold font-mono-code text-amber-300">5.09 µm</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stagger-4 glass-card tilt-3d rounded-2xl p-3.5 border-l-4 border-l-emerald-400" data-narrator-step="2">
+            <div class="text-xs font-bold text-emerald-300 uppercase">Regula de Aur în Calculul Rezoluției</div>
+            <p class="text-xs text-slate-200 mt-1 leading-relaxed">
+              Apertura de 6" (150 mm) determină <strong>luminozitatea (f/3.8)</strong> și <strong>limita fizică de difracție (0.77")</strong>, însă în formula rezoluției pe pixel intră <strong>exclusiv focala efectivă (570 mm)</strong>!
+            </p>
+          </div>
+        </div>
+
+        <!-- Right Interactive SVG Ray-Tracing Diagram -->
+        <div class="lg:col-span-7 stagger-3">
+          <div class="glass-panel tilt-3d rounded-3xl p-5" data-narrator-step="1">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <h3 class="text-sm font-bold text-white">⚡ Simulare Live Ray-Tracing: Drumul Fotonilor în Tubul Newton</h3>
+                <p class="text-xs text-slate-300">Plimbă cursorul peste tubul optic pentru a inspecta razele și focalizarea</p>
+              </div>
+              <span class="interactive-cue">
+                <span class="sonar-dot"></span>
+                <span>Con Luminos Activ f/3.8</span>
+              </span>
+            </div>
+
+            <svg id="newtonSvg" viewBox="0 0 680 310" class="w-full h-auto rounded-2xl bg-slate-950/80 border border-white/15 cursor-crosshair">
+              <defs>
+                <linearGradient id="tubeGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#1e293b" stop-opacity="0.75"/>
+                  <stop offset="50%" stop-color="#0f172a" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#1e293b" stop-opacity="0.75"/>
+                </linearGradient>
+                <linearGradient id="mirrorGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#38bdf8"/>
+                  <stop offset="100%" stop-color="#94a3b8"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Telescope Tube -->
+              <rect x="60" y="75" width="520" height="190" rx="8" fill="url(#tubeGrad)" stroke="#64748b" stroke-width="2"/>
+
+              <!-- Focuser Tube on top-left -->
+              <rect x="145" y="18" width="70" height="60" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>
+              <!-- Cooled Camera IMX533 -->
+              <rect x="150" y="2" width="60" height="22" rx="4" fill="#e11d48" stroke="#fda4af" stroke-width="1.5"/>
+              <text x="180" y="16" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">IMX533</text>
+
+              <!-- 0.95x Coma Corrector inside focuser -->
+              <rect x="158" y="36" width="44" height="28" rx="4" fill="#6366f1" fill-opacity="0.45" stroke="#a5b4fc" stroke-width="1.5"/>
+              <text x="180" y="54" fill="#e0e7ff" font-size="9" font-weight="bold" text-anchor="middle">0.95× CC</text>
+
+              <!-- Sensor plane line -->
+              <line x1="162" y1="24" x2="198" y2="24" stroke="#34d399" stroke-width="3"/>
+
+              <!-- Parabolic Primary Mirror at Right (x=555) -->
+              <path d="M 550 82 Q 532 170 550 258 L 568 258 L 568 82 Z" fill="url(#mirrorGrad)" stroke="#38bdf8" stroke-width="2"/>
+              <text id="svgMirrorLabel" x="555" y="285" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle">Oglindă Primară Parabolică 6" (150mm)</text>
+
+              <!-- Incoming parallel light rays from left -->
+              <line x1="15" y1="98" x2="544" y2="98" stroke="#38bdf8" stroke-width="2.2" class="photon-ray"/>
+              <line x1="15" y1="242" x2="544" y2="242" stroke="#38bdf8" stroke-width="2.2" class="photon-ray"/>
+              <line x1="15" y1="130" x2="540" y2="130" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.7" class="photon-ray"/>
+              <line x1="15" y1="210" x2="540" y2="210" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.7" class="photon-ray"/>
+
+              <!-- Reflected converging cone to Secondary Mirror -->
+              <line x1="544" y1="98" x2="180" y2="152" stroke="#818cf8" stroke-width="2.2" class="photon-ray"/>
+              <line x1="544" y1="242" x2="180" y2="188" stroke="#818cf8" stroke-width="2.2" class="photon-ray"/>
+
+              <!-- Secondary Mirror 45 deg -->
+              <line x1="158" y1="148" x2="202" y2="192" stroke="#f8fafc" stroke-width="5" stroke-linecap="round"/>
+              <text x="245" y="175" fill="#e2e8f0" font-size="10" font-weight="bold">Oglindă Secundară 45°</text>
+
+              <!-- Cone upward from Secondary through 0.95x Coma Corrector to Sensor -->
+              <line x1="168" y1="158" x2="164" y2="58" stroke="#c084fc" stroke-width="2.2" class="photon-ray"/>
+              <line x1="192" y1="182" x2="196" y2="58" stroke="#c084fc" stroke-width="2.2" class="photon-ray"/>
+              <!-- Refracted by 0.95x Coma Corrector to focal point at Sensor (y=24) -->
+              <line x1="164" y1="58" x2="180" y2="24" stroke="#34d399" stroke-width="2.5"/>
+              <line x1="196" y1="58" x2="180" y2="24" stroke="#34d399" stroke-width="2.5"/>
+              <circle cx="180" cy="24" r="4.5" fill="#34d399">
+                <animate attributeName="r" values="3.5;6.5;3.5" dur="1.6s" repeatCount="indefinite"/>
+              </circle>
+
+              <!-- Dimension annotation -->
+              <line x1="180" y1="298" x2="550" y2="298" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+              <text x="365" y="293" fill="#cbd5e1" font-size="10" font-family="monospace" text-anchor="middle">
+                F_nativ = 600 mm  •  Cu Corector 0.95× → F_efectiv = 570 mm
+              </text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: CORECTORUL DE COMĂ 0.95× -->
+    <section class="slide-section" data-slide="3">
+      <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-6 space-y-4">
+          <div class="stagger-1 flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full glass-card text-indigo-200 text-xs font-semibold">
+              ETAPA 3 • CORECȚIE OPTICĂ &amp; REDUCERE FOCALĂ
+            </span>
+            <span class="interactive-cue">
+              <span class="sonar-dot"></span>
+              <span>Activează / Dezactivează Corectorul 0.95×</span>
+            </span>
+          </div>
+          <h2 class="stagger-2 text-3xl xl:text-4xl font-bold text-white">
+            Rolul Dublu al <span class="text-indigo-300">Corectorului de Comă 0.95×</span>
+          </h2>
+          <p class="stagger-2 text-slate-200 text-sm leading-relaxed">
+            Oglinzile parabolice rapide (<span class="font-mono-code text-white">f/4</span>) focalizează perfect razele din centrul imaginii, dar razele venite oblic (spre colțurile senzorului) formează <strong>stele alungite ca niște comete</strong> (aberația de comă).
+          </p>
+
+          <!-- Interactive Toggle Before/After Corrector -->
+          <div class="stagger-3 glass-panel interactive-zone rounded-2xl p-4 space-y-3" data-narrator-step="1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold uppercase tracking-wider text-indigo-200 flex items-center gap-1.5">
+                <span class="sonar-dot"></span>
+                <span>Simulare Tren Optic:</span>
+              </span>
+              <div class="inline-flex rounded-xl bg-slate-950/80 p-1 border border-white/15">
+                <button id="btnCCOff" onclick="setComaCorrector(false)" class="px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer">
+                  Fără Corector (1.00×)
+                </button>
+                <button id="btnCCOn" onclick="setComaCorrector(true)" class="px-3 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow transition cursor-pointer">
+                  Cu Corector Comă (0.95×)
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2.5 text-center">
+              <div class="glass-card tilt-3d p-3 rounded-xl">
+                <div class="text-xs text-slate-300">Distanța Focală</div>
+                <div id="ccFocalText" class="text-lg font-extrabold font-mono-code text-indigo-300 mt-0.5">570 mm</div>
+                <div class="text-xs text-slate-400">600 × 0.95</div>
+              </div>
+              <div class="glass-card tilt-3d p-3 rounded-xl">
+                <div class="text-xs text-slate-300">Raport Focal</div>
+                <div id="ccFRatioText" class="text-lg font-extrabold font-mono-code text-sky-300 mt-0.5">f/3.80</div>
+                <div id="ccSpeedText" class="text-xs text-emerald-300">+11% mai luminos</div>
+              </div>
+              <div class="glass-card tilt-3d p-3 rounded-xl">
+                <div class="text-xs text-slate-300">Rezoluție IMX533</div>
+                <div id="ccScaleText" class="text-lg font-extrabold font-mono-code text-emerald-300 mt-0.5">1.36"/px</div>
+                <div class="text-xs text-slate-400">Câmp +5.3% mai larg</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stagger-4 grid grid-cols-2 gap-3" data-narrator-step="2">
+            <div class="glass-card tilt-3d rounded-2xl p-3.5">
+              <div class="text-xs font-semibold text-amber-300">1. Efect Geometric (Punctualitate)</div>
+              <p class="text-xs text-slate-200 mt-1">
+                Lentilele corectorului compensează diferența de drum optic pentru razele periferice, oferind stele rotunde pe toată diagonala de 16 mm a senzorului IMX533.
+              </p>
+            </div>
+            <div class="glass-card tilt-3d rounded-2xl p-3.5">
+              <div class="text-xs font-semibold text-sky-300">2. Efect Matematic (0.95×)</div>
+              <p class="text-xs text-slate-200 mt-1">
+                Scurtează focala cu 5% (<span class="font-mono-code">600 → 570 mm</span>), mărind ușor rezoluția numerică de la <span class="font-mono-code">1.29"/px</span> la <span class="font-mono-code text-emerald-300">1.36"/px</span>.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Visual Split Coma Comparison with Interactive Magnifier -->
+        <div class="lg:col-span-6 stagger-3">
+          <div class="glass-panel tilt-3d rounded-3xl p-4 space-y-3" data-narrator-step="0">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-bold text-white truncate">🌟 Colțurile Senzorului: Comă vs. Corector 0.95×</span>
+              <span class="interactive-cue shrink-0">
+                <span class="sonar-dot"></span>
+                <span>Click pe imagine</span>
+              </span>
+            </div>
+
+            <!-- 2-Column Split Labels Aligned with Left/Right Halves (Zero Overlap) -->
+            <div class="grid grid-cols-2 gap-2.5">
+              <div id="comaHighlightLeft" onclick="setComaCorrector(false)" class="px-3 py-2 rounded-xl glass-card border-rose-400/50 text-rose-200 text-xs font-semibold flex items-center justify-between cursor-pointer transition">
+                <span>❌ Fără Corector (600mm)</span>
+                <span class="font-mono-code text-xs text-rose-300">Comă</span>
+              </div>
+              <div id="comaHighlightRight" onclick="setComaCorrector(true)" class="px-3 py-2 rounded-xl glass-card border-emerald-400/70 text-emerald-200 text-xs font-semibold flex items-center justify-between glow-badge cursor-pointer transition">
+                <span>✅ Corector 0.95× (570mm)</span>
+                <span class="font-mono-code text-xs text-emerald-300">Punctual</span>
+              </div>
+            </div>
+
+            <div onclick="setComaCorrector(!comaState)" class="relative rounded-2xl overflow-hidden border border-indigo-400/40 cursor-pointer group">
+              <img src="assets/coma_aberration_comparison.jpg" alt="Comparație Aberație de Comă" class="w-full h-[270px] object-cover group-hover:scale-105 transition duration-700" />
+              <!-- Center Split Divider Line -->
+              <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-0.5 bg-gradient-to-b from-sky-400/80 via-white/90 to-emerald-400/80 shadow-[0_0_12px_rgba(56,189,248,0.9)] pointer-events-none"></div>
+              <div class="absolute bottom-3 left-3 px-2.5 py-1 rounded-lg bg-slate-950/85 border border-rose-400/40 text-rose-200 text-xs font-mono-code">
+                f/4.0 • 1.29"/px
+              </div>
+              <div class="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg bg-slate-950/85 border border-emerald-400/50 text-emerald-300 text-xs font-mono-code">
+                f/3.8 • 1.36"/px
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: SENZORUL RĂCIT SONY IMX533 -->
+    <section class="slide-section" data-slide="4">
+      <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-6 space-y-4">
+          <div class="stagger-1 flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full glass-card text-rose-200 text-xs font-semibold">
+              ETAPA 4 • DETECTORUL DE FOTONI
+            </span>
+            <span class="interactive-cue">
+              <span class="sonar-dot"></span>
+              <span>Trage sliderul de temperatură TEC</span>
+            </span>
+          </div>
+          <h2 class="stagger-2 text-3xl xl:text-4xl font-bold text-white">
+            Senzorul Răcit <span class="text-rose-300">Sony IMX533</span>
+          </h2>
+          <p class="stagger-2 text-slate-200 text-sm leading-relaxed">
+            Considerat unul dintre cei mai echilibrați senzori moderni pentru astrofotografie, <strong>Sony IMX533</strong> este un cip CMOS pătrat cu iluminare din spate (<strong>BSI — Back-Illuminated</strong>), montat într-o cameră dedicată cu răcire Peltier (TEC).
+          </p>
+
+          <div class="stagger-3 grid grid-cols-2 gap-3">
+            <div class="glass-card tilt-3d rounded-2xl p-3.5 border-rose-400/50" data-narrator-step="2">
+              <div class="text-xs text-slate-300">Dimensiune Fizică Pixel (p)</div>
+              <div class="text-2xl font-extrabold font-mono-code text-rose-300 mt-0.5">3.76 µm × 3.76 µm</div>
+              <div class="text-xs text-slate-300 mt-0.5">3,76 micrometri (0,00376 mm)</div>
+            </div>
+            <div class="glass-card tilt-3d rounded-2xl p-3.5" data-narrator-step="1">
+              <div class="text-xs text-slate-300">Rezoluție Matrice Pătrată</div>
+              <div class="text-2xl font-extrabold font-mono-code text-white mt-0.5">3008 × 3008 px</div>
+              <div class="text-xs text-sky-300 mt-0.5">9.05 Megapixeli • Format 1:1</div>
+            </div>
+            <div class="glass-card tilt-3d rounded-2xl p-3.5" data-narrator-step="1">
+              <div class="text-xs text-slate-300">Arie Activă Senzor</div>
+              <div class="text-lg font-bold font-mono-code text-indigo-200 mt-0.5">11.31 × 11.31 mm</div>
+              <div class="text-xs text-slate-300 mt-0.5">Diagonală 16.0 mm (1 inch)</div>
+            </div>
+            <div class="glass-card tilt-3d rounded-2xl p-3.5" data-narrator-step="0">
+              <div class="text-xs text-slate-300">Performanță Cuantică</div>
+              <div class="text-lg font-bold font-mono-code text-emerald-300 mt-0.5">QE &gt; 80% • Zero Amp-Glow</div>
+              <div class="text-xs text-slate-300 mt-0.5">ADC 14-bit • 50.000 e⁻ Full Well</div>
+            </div>
+          </div>
+
+          <!-- Interactive TEC Cooling Simulator -->
+          <div class="stagger-4 glass-panel interactive-zone rounded-2xl p-4 space-y-2" data-narrator-step="0">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slate-200 font-semibold flex items-center gap-1.5">
+                <span class="sonar-dot"></span>
+                <span>❄️ Simulator Răcire TEC (Zgomot Termic):</span>
+              </span>
+              <span id="tempLabel" class="font-mono-code font-bold text-sky-300">-10°C (0.002 e⁻/s/px)</span>
+            </div>
+            <input id="tempSlider" type="range" min="-20" max="25" step="5" value="-10" oninput="updateCoolingSim(this.value)" class="w-full cursor-pointer" />
+            <div class="flex justify-between text-xs text-slate-300">
+              <span>-20°C (Răcire TEC profundă — Zgomot invizibil)</span>
+              <span>+25°C (Cameră nerăcită — Zgomot termic ridicat)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Interactive Sensor Blueprint & Pixel Zoom -->
+        <div class="lg:col-span-6 stagger-3">
+          <div class="glass-panel tilt-3d rounded-3xl p-5 flex flex-col items-center">
+            <div class="w-full flex items-center justify-between mb-3">
+              <span class="text-xs font-bold text-white">📐 Arhitectura Geometrică a Senzorului Pătrat IMX533</span>
+              <span class="text-xs font-mono-code text-emerald-300">Raport 1:1 (Profită maxim de conul optic)</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full items-center">
+              <!-- SVG Sensor Diagram with animated laser scanline -->
+              <svg viewBox="0 0 260 260" class="w-full max-w-[230px] mx-auto">
+                <circle cx="130" cy="130" r="108" fill="rgba(56, 189, 248, 0.08)" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="5 4"/>
+                <text x="130" y="34" fill="#7dd3fc" font-size="9" text-anchor="middle">Cerc Imagine Corectat (Ø 22mm)</text>
+
+                <!-- Square Sensor 11.31 x 11.31 mm -->
+                <rect x="62" y="62" width="136" height="136" rx="4" fill="rgba(244, 63, 94, 0.18)" stroke="#fb7185" stroke-width="2.5"/>
+
+                <!-- Grid lines inside sensor -->
+                <line x1="96" y1="62" x2="96" y2="198" stroke="#fb7185" stroke-opacity="0.3"/>
+                <line x1="130" y1="62" x2="130" y2="198" stroke="#fb7185" stroke-opacity="0.3"/>
+                <line x1="164" y1="62" x2="164" y2="198" stroke="#fb7185" stroke-opacity="0.3"/>
+                <line x1="62" y1="96" x2="198" y2="96" stroke="#fb7185" stroke-opacity="0.3"/>
+                <line x1="62" y1="130" x2="198" y2="130" stroke="#fb7185" stroke-opacity="0.3"/>
+                <line x1="62" y1="164" x2="198" y2="164" stroke="#fb7185" stroke-opacity="0.3"/>
+
+                <!-- Animated Sensor Readout Scanline -->
+                <line x1="64" y1="64" x2="196" y2="64" stroke="#38bdf8" stroke-width="2" stroke-opacity="0.75">
+                  <animate attributeName="y1" values="64;196;64" dur="4s" repeatCount="indefinite" />
+                  <animate attributeName="y2" values="64;196;64" dur="4s" repeatCount="indefinite" />
+                </line>
+
+                <!-- Diagonal 16mm -->
+                <line x1="62" y1="198" x2="198" y2="62" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="3 3"/>
+                <text x="130" y="125" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">11.31 × 11.31 mm</text>
+                <text x="130" y="142" fill="#fda4af" font-size="10" font-family="monospace" text-anchor="middle">3008 × 3008 px</text>
+                <text x="130" y="216" fill="#fbbf24" font-size="10" font-family="monospace" text-anchor="middle">Diagonală = 16.0 mm</text>
+              </svg>
+
+              <!-- Microscopic Pixel Zoom & Dark Noise Preview -->
+              <div class="space-y-3">
+                <div class="glass-card tilt-3d p-3.5 rounded-2xl">
+                  <div class="text-xs font-semibold text-rose-300 mb-1">🔬 Zoom pe 1 Pixel (p = 3.76 µm)</div>
+                  <p class="text-xs text-slate-200 leading-relaxed">
+                    Un fir de păr uman are ~75 µm grosime — pe lățimea lui încap <strong>20 de pixeli IMX533</strong> unul lângă altul!
+                  </p>
+                </div>
+
+                <div class="glass-card tilt-3d p-3.5 rounded-2xl">
+                  <div class="flex justify-between text-xs mb-1.5">
+                    <span class="text-slate-200 font-medium">Simulare Cadru Dark (300s):</span>
+                    <span id="darkStatusBadge" class="text-emerald-300 font-mono-code">Curat (TEC ON)</span>
+                  </div>
+                  <canvas id="darkNoiseCanvas" width="180" height="76" class="w-full h-16 rounded-lg border border-white/15"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: FORMULA ȘI CALCULUL PAS CU PAS (1.36"/PIXEL) -->
+    <section class="slide-section" data-slide="5">
+      <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <div class="lg:col-span-7 space-y-3.5">
+          <div class="stagger-1 flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full glass-card text-emerald-200 text-xs font-semibold">
+              ETAPA 5 • DEMONSTRAȚIA MATEMATICĂ COMPLETĂ
+            </span>
+            <span class="interactive-cue">
+              <span class="sonar-dot"></span>
+              <span>Testează orice combinație în Calculatorul Live</span>
+            </span>
+          </div>
+          <h2 class="stagger-2 text-3xl xl:text-4xl font-bold text-white">
+            Calculul Pas cu Pas: <span class="text-emerald-300">1.36" / pixel</span>
+          </h2>
+
+          <!-- 3 Step Mathematical Breakdown -->
+          <div class="stagger-3 space-y-2.5">
+            <div class="glass-card tilt-3d rounded-2xl p-3.5 border-l-4 border-l-indigo-400" data-narrator-step="0">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-indigo-200">PASUL 1: Calculul Distanței Focale Efective (cu Corectorul 0.95×)</span>
+                <span class="font-mono-code text-xs text-slate-300">f/4.0 → f/3.8</span>
+              </div>
+              <div class="font-mono-code text-base sm:text-lg font-bold text-white mt-1">
+                F_efectiv = F_nativ × k_corector = 600 mm × 0.95 = <span class="text-indigo-300">570 mm</span>
+              </div>
+            </div>
+
+            <div class="glass-card tilt-3d rounded-2xl p-3.5 border-l-4 border-l-sky-400" data-narrator-step="1">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-sky-200">PASUL 2: Aplicarea Formulei Rezoluției Optice (Image Scale)</span>
+                <span class="font-mono-code text-xs text-slate-300">p = 3.76 µm</span>
+              </div>
+              <div class="font-mono-code text-base sm:text-lg font-bold text-white mt-1">
+                Rezoluția = (206.265 × p) / F_efectiv = (206.265 × 3.76) / 570
+              </div>
+              <div class="font-mono-code text-sm text-sky-200 mt-0.5">
+                Rezoluția = 775.5564 / 570 = <span class="text-emerald-300 font-extrabold text-lg">1.3606" / pixel ≈ 1.36" / px</span>
+              </div>
+            </div>
+
+            <div class="glass-card tilt-3d rounded-2xl p-3.5 border-l-4 border-l-emerald-400" data-narrator-step="2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-emerald-200">PASUL 3: Câmpul Vizual Total (FOV) pe Senzorul IMX533 (3008 × 3008 px)</span>
+                <span class="font-mono-code text-xs text-slate-300">L = 11.31 mm</span>
+              </div>
+              <div class="font-mono-code text-sm sm:text-base font-bold text-white mt-1">
+                FOV = 3008 px × 1.3606"/px = 4092.7" = <span class="text-emerald-300">68.2' × 68.2' (1.14° × 1.14°)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comparison Table Without vs With Corrector -->
+          <div class="stagger-4 glass-panel tilt-3d rounded-2xl overflow-hidden">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-950/70 text-slate-200 border-b border-white/15">
+                <tr>
+                  <th class="py-2.5 px-3">Configurație</th>
+                  <th class="py-2.5 px-3">Focală</th>
+                  <th class="py-2.5 px-3">Raport f/</th>
+                  <th class="py-2.5 px-3">Rezoluție ("/px)</th>
+                  <th class="py-2.5 px-3">Câmp Vizual (FOV)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/10 font-mono-code">
+                <tr class="text-slate-300">
+                  <td class="py-2 px-3 font-sans">Nativ (Fără corector)</td>
+                  <td class="py-2 px-3">600 mm</td>
+                  <td class="py-2 px-3">f/4.00</td>
+                  <td class="py-2 px-3">1.293" / px</td>
+                  <td class="py-2 px-3">1.08° × 1.08° (64.8')</td>
+                </tr>
+                <tr class="bg-emerald-500/15 text-emerald-200 font-bold">
+                  <td class="py-2.5 px-3 font-sans text-white">✅ Cu Corector 0.95×</td>
+                  <td class="py-2.5 px-3">570 mm</td>
+                  <td class="py-2.5 px-3">f/3.80</td>
+                  <td class="py-2.5 px-3 text-emerald-300 text-sm">1.361" / px</td>
+                  <td class="py-2.5 px-3">1.14° × 1.14° (68.2')</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right Interactive Calculator Inside Slide 6 -->
+        <div class="lg:col-span-5 stagger-3">
+          <div class="glass-panel tilt-3d interactive-zone rounded-3xl p-5 space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                  <span class="sonar-dot"></span>
+                  <span>🧮 Calculator Optic Live</span>
+                </h3>
+                <p class="text-xs text-slate-300">Trage de slidere pentru a recalcula instantaneu rezoluția</p>
+              </div>
+              <button onclick="resetSlide6Calc()" class="px-3 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-xs text-sky-200 border border-white/20 cursor-pointer transition">
+                Reset Setup
+              </button>
+            </div>
+
+            <div class="space-y-3.5">
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-slate-200">Focală Nativă Telescop (mm)</span>
+                  <span id="s6FocalVal" class="font-mono-code font-bold text-sky-300">600 mm</span>
+                </div>
+                <input id="s6Focal" type="range" min="200" max="2000" step="10" value="600" oninput="updateSlide6Calc()" class="w-full" />
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-slate-200">Factor Corector / Reductor (×)</span>
+                  <span id="s6RedVal" class="font-mono-code font-bold text-indigo-300">0.95×</span>
+                </div>
+                <input id="s6Red" type="range" min="0.60" max="1.50" step="0.01" value="0.95" oninput="updateSlide6Calc()" class="w-full" />
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-slate-200">Dimensiune Pixel Cameră (µm)</span>
+                  <span id="s6PixVal" class="font-mono-code font-bold text-rose-300">3.76 µm (IMX533)</span>
+                </div>
+                <input id="s6Pix" type="range" min="2.00" max="9.00" step="0.01" value="3.76" oninput="updateSlide6Calc()" class="w-full" />
+              </div>
+            </div>
+
+            <div class="glass-card p-4 rounded-2xl border-emerald-400/50 text-center space-y-1 glow-badge">
+              <div class="text-xs text-slate-300">Rezoluție Optică Rezultată</div>
+              <div id="s6ResultScale" class="text-3xl font-extrabold font-mono-code text-emerald-300">1.361" / pixel</div>
+              <div id="s6ResultSub" class="text-xs font-mono-code text-slate-200">
+                F_ef = 570 mm (f/3.80) • FOV = 1.14° × 1.14°
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: EȘANTIONAREA NYQUIST ȘI SEEING-UL ATMOSFERIC -->
+    <section class="slide-section" data-slide="6">
+      <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-6 space-y-4">
+          <div class="stagger-1 flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full glass-card text-amber-200 text-xs font-semibold">
+              ETAPA 6 • VALIDAREA FIZICĂ SUB CERUL REAL
+            </span>
+            <span class="interactive-cue">
+              <span class="sonar-dot"></span>
+              <span>Modifică turbulența atmosferică (Seeing FWHM)</span>
+            </span>
+          </div>
+          <h2 class="stagger-2 text-3xl xl:text-4xl font-bold text-white">
+            Criteriul Nyquist &amp; <span class="text-amber-300">Seeing-ul Atmosferic</span>
+          </h2>
+          <p class="stagger-2 text-slate-200 text-sm leading-relaxed">
+            Atmosfera Pământului estompează fiecare stea într-un disc turbulent măsurat prin <strong>FWHM (Full Width at Half Maximum)</strong>. Conform teoremei de eșantionare Nyquist-Shannon, pentru a rezolva fidel o stea rotunjită, diametrul FWHM al seeing-ului trebuie eșantionat pe <strong>2 până la 3 pixeli</strong>.
+          </p>
+
+          <!-- Interactive Seeing Slider -->
+          <div class="stagger-3 glass-panel interactive-zone rounded-2xl p-4 space-y-3" data-narrator-step="1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-white flex items-center gap-1.5">
+                <span class="sonar-dot"></span>
+                <span>🌬️ Simulare Turbulență Atmosferică (Seeing FWHM):</span>
+              </span>
+              <span id="s7SeeingBadge" class="px-2.5 py-0.5 rounded-lg bg-emerald-500/25 text-emerald-200 font-mono-code text-xs font-bold border border-emerald-400/40">
+                Seeing: 3.0" → 2.21 pixeli/stea
+              </span>
+            </div>
+            <input id="s7SeeingSlider" type="range" min="1.0" max="4.5" step="0.1" value="3.0" oninput="updateSlide7Seeing(this.value)" class="w-full cursor-pointer" />
+            <div class="flex justify-between text-xs text-slate-300 font-mono-code">
+              <span>1.0" (Vârf de munte)</span>
+              <span>2.5" – 3.5" (Seeing tipic România)</span>
+              <span>4.5" (Turbulență mare)</span>
+            </div>
+          </div>
+
+          <!-- Sampling Regimes Cards -->
+          <div class="stagger-4 grid grid-cols-3 gap-2.5" data-narrator-step="2">
+            <div id="regimeUnder" onclick="document.getElementById('s7SeeingSlider').value=1.4;updateSlide7Seeing(1.4)" class="glass-card tilt-3d rounded-2xl p-3 opacity-60 cursor-pointer">
+              <div class="text-xs font-bold text-amber-300">Sub-eșantionat</div>
+              <div class="text-xs font-mono-code text-white mt-0.5">&lt; 1.6 px / FWHM</div>
+              <p class="text-xs text-slate-300 mt-1">Steaua cade pe 1 singur pixel → stele „pătrățoase” (blocky).</p>
+            </div>
+            <div id="regimeOpt" onclick="document.getElementById('s7SeeingSlider').value=3.0;updateSlide7Seeing(3.0)" class="glass-card tilt-3d rounded-2xl p-3 border-emerald-400 bg-emerald-950/35 cursor-pointer">
+              <div class="text-xs font-bold text-emerald-300">✅ Optim (2 – 3 px)</div>
+              <div class="text-xs font-mono-code text-white mt-0.5">1.36"/px @ 2.5"–3.5"</div>
+              <p class="text-xs text-emerald-100/90 mt-1">Stele perfect rotunde și raport semnal-zgomot (SNR) maxim!</p>
+            </div>
+            <div id="regimeOver" onclick="document.getElementById('s7SeeingSlider').value=4.4;updateSlide7Seeing(4.4)" class="glass-card tilt-3d rounded-2xl p-3 opacity-60 cursor-pointer">
+              <div class="text-xs font-bold text-sky-300">Supra-eșantionat</div>
+              <div class="text-xs font-mono-code text-white mt-0.5">&gt; 3.5 px / FWHM</div>
+              <p class="text-xs text-slate-300 mt-1">Lumina se împrăștie pe prea mulți pixeli fără detalii noi.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Live Pixel Grid & Scintillating Gaussian Profile Canvas -->
+        <div class="lg:col-span-6 stagger-3">
+          <div class="glass-panel tilt-3d rounded-3xl p-5 flex flex-col items-center" data-narrator-step="0">
+            <div class="w-full flex items-center justify-between mb-3">
+              <div>
+                <h3 class="text-sm font-bold text-white">🎯 Simulare Live 60fps: Scintilația Stelei pe Matricea IMX533</h3>
+                <p class="text-xs text-slate-300">Observă cum turbulența atmosferică mișcă în timp real fotonii pe grila de pixeli de 3.76 µm</p>
+              </div>
+            </div>
+
+            <canvas id="s7NyquistCanvas" width="460" height="290" class="w-full max-w-[460px] rounded-2xl border border-white/15 bg-slate-950 shadow-inner"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: ÎNCADRAREA PE CER (FOV 1.14°) ȘI CONCLUZII -->
+    <section class="slide-section" data-slide="7">
+      <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-6 space-y-4">
+          <div class="stagger-1 flex items-center gap-2">
+            <span class="px-3 py-1 rounded-full glass-card text-emerald-200 text-xs font-semibold">
+              ETAPA 7 • ÎNCADRAREA PE CER &amp; VERDICTUL FINAL
+            </span>
+            <span class="interactive-cue">
+              <span class="sonar-dot"></span>
+              <span>Selectează ținta Deep-Sky (M51, M42, M13)</span>
+            </span>
+          </div>
+          <h2 class="stagger-2 text-3xl xl:text-4xl font-bold text-white">
+            Fereastra de <span class="text-emerald-300">1.14° × 1.14°</span> pe Cerul Profund
+          </h2>
+          <p class="stagger-2 text-slate-200 text-sm leading-relaxed">
+            Cu o rezoluție de <strong>1.36"/pixel</strong> și un câmp vizual pătrat de <strong>68.2' × 68.2'</strong> (de peste 4 ori suprafața Lunii pline!), acest sistem este o mașinărie extraordinară pentru galaxii, roiuri globulare și nebuloase:
+          </p>
+
+          <!-- Target Selector -->
+          <div class="stagger-3 flex flex-wrap gap-2.5" data-narrator-step="1">
+            <button onclick="selectFovTarget('m51')" id="fovBtn_m51" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-sky-500 text-white shadow-lg shadow-sky-500/30 border border-white/30 cursor-pointer transition">
+              🌀 Galaxia M51 (Vâltoarea)
+            </button>
+            <button onclick="selectFovTarget('m42')" id="fovBtn_m42" class="px-3.5 py-2 rounded-xl text-xs font-semibold glass-card text-slate-200 hover:text-white cursor-pointer transition">
+              🌺 Nebuloasa Orion (M42)
+            </button>
+            <button onclick="selectFovTarget('m13')" id="fovBtn_m13" class="px-3.5 py-2 rounded-xl text-xs font-semibold glass-card text-slate-200 hover:text-white cursor-pointer transition">
+              ✨ Roiul Globular M13
+            </button>
+          </div>
+
+          <div id="fovTargetDesc" class="stagger-3 glass-card tilt-3d rounded-2xl p-4 text-xs text-slate-100 leading-relaxed">
+            <strong class="text-sky-300">Galaxia Vâltoarea (M51 — 11' × 7'):</strong> La 1.36"/px, nucleul și brațele spirale ocupă ~500 × 310 pixeli, oferind detalii spectaculoase în benzile de praf, în timp ce cadrul pătrat de 68.2' lasă spațiu generos în jurul galaxiei.
+          </div>
+
+          <!-- Final Summary Scorecard -->
+          <div class="stagger-4 glass-panel tilt-3d rounded-2xl p-4 border border-emerald-400/50 space-y-2" data-narrator-step="2">
+            <div class="text-xs font-bold text-emerald-300 uppercase tracking-wider">🏆 Rezumatul Configurației Tale Optice</div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs font-mono-code">
+              <div class="p-2 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Focală ef.:</span> <strong class="text-white">570 mm</strong></div>
+              <div class="p-2 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Raport f/:</span> <strong class="text-sky-300">f/3.80</strong></div>
+              <div class="p-2 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Rezoluție:</span> <strong class="text-emerald-300">1.361"/px</strong></div>
+              <div class="p-2 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Câmp FOV:</span> <strong class="text-indigo-200">1.14° × 1.14°</strong></div>
+              <div class="p-2 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Disc Airy:</span> <strong class="text-amber-300">5.02 µm</strong></div>
+              <div class="p-2 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Seeing 3":</span> <strong class="text-emerald-300">2.2 px (Optim)</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Interactive FOV Framing Preview -->
+        <div class="lg:col-span-6 stagger-3">
+          <div class="glass-panel tilt-3d rounded-3xl p-4 space-y-3" data-narrator-step="0">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-white">🖼️ Simulator Încadrare Senzor IMX533 (3008 × 3008 px)</span>
+              <span class="font-mono-code text-emerald-300"> Verde: 570mm (0.95×) • Punctat: 600mm nativ</span>
+            </div>
+
+            <div class="relative w-full max-w-[380px] aspect-square mx-auto rounded-2xl overflow-hidden border border-white/20 shadow-2xl group">
+              <img id="fovPreviewImg" src="assets/m51_fov_framing.jpg" alt="FOV Framing" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
+              <!-- 570mm (0.95x) Full Frame Border -->
+              <div class="absolute inset-3 border-2 border-emerald-400 rounded-xl pointer-events-none flex flex-col justify-between p-2 shadow-[inset_0_0_20px_rgba(52,211,153,0.25)]">
+                <div class="flex justify-between text-xs font-mono-code">
+                  <span class="px-2 py-0.5 rounded-lg glass-panel text-emerald-300 font-bold">IMX533 @ 570mm (1.14° × 1.14°)</span>
+                  <span class="px-2 py-0.5 rounded-lg glass-panel text-white">1.36"/px</span>
+                </div>
+                <!-- Inner 600mm native frame (95% size) -->
+                <div class="w-[92%] h-[92%] m-auto border border-dashed border-sky-300/90 rounded-lg flex items-end justify-end p-1.5">
+                  <span class="px-2 py-0.5 rounded-lg glass-panel text-sky-200 text-xs font-mono-code">F=600mm (1.08°)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- BOTTOM CONTROL BAR & SYNCHRONIZED STORYTELLER SUBTITLES               -->
+  <!-- ===================================================================== -->
+  <footer class="fixed bottom-0 left-0 right-0 z-30 px-6 pb-3 pt-2 flex flex-col gap-2 pointer-events-none">
+    <!-- Synchronized Subtitle Banner -->
+    <div class="max-w-4xl mx-auto w-full pointer-events-auto">
+      <div class="glass-panel rounded-2xl px-5 py-2.5 text-center shadow-2xl">
+        <p id="subtitleDisplay" class="text-sm sm:text-base font-medium text-white tracking-wide drop-shadow">
+          Apasă pe „▶ Pornește Povestitorul” pentru a asculta prezentarea narată în limba română cu animații coregrafiate.
+        </p>
+      </div>
+    </div>
+
+    <!-- Deck Controls Bar -->
+    <div class="max-w-6xl mx-auto w-full glass-panel rounded-2xl px-4 py-2 flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
+      <!-- Slide Navigation -->
+      <div class="flex items-center gap-2">
+        <button onclick="prevSlide()" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white border border-white/15 transition cursor-pointer">
+          ◀ Anterior
+        </button>
+        <span id="slideCounter" class="font-mono-code text-xs font-bold text-sky-300 px-2">
+          Slide 1 / 8
+        </span>
+        <button onclick="nextSlide()" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white border border-white/15 transition cursor-pointer">
+          Următor ▶
+        </button>
+      </div>
+
+      <!-- Narrator Audio Controls -->
+      <div class="flex items-center gap-3 flex-1 max-w-xl">
+        <button id="playNarrationBtn" onclick="toggleNarration()" class="px-4 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white text-xs font-bold border border-white/25 shadow-lg shadow-amber-500/25 flex items-center gap-1.5 transition cursor-pointer shrink-0">
+          <span id="playIcon">▶</span>
+          <span id="playBtnText">Pornește Povestitorul</span>
+        </button>
+
+        <div class="flex-1 flex items-center gap-2">
+          <span id="audioTimeCur" class="text-xs font-mono-code text-slate-300 w-10 text-right">0:00</span>
+          <div class="flex-1 h-2.5 bg-slate-950/80 rounded-full overflow-hidden cursor-pointer border border-white/15" onclick="seekAudio(event)">
+            <div id="audioProgressBar" class="h-full bg-gradient-to-r from-amber-400 via-sky-400 to-emerald-400 w-0 transition-all duration-150"></div>
+          </div>
+          <span id="audioTimeDur" class="text-xs font-mono-code text-slate-300 w-10">0:00</span>
+        </div>
+
+        <label class="flex items-center gap-1.5 text-xs text-slate-200 cursor-pointer shrink-0">
+          <input id="autoAdvanceToggle" type="checkbox" checked class="accent-sky-400 rounded cursor-pointer" />
+          <span>Auto-Slide</span>
+        </label>
+      </div>
+
+      <!-- Keyboard hint -->
+      <div class="hidden xl:flex items-center gap-1.5 text-xs text-slate-300">
+        <span>Taste:</span>
+        <kbd class="px-1.5 py-0.5 rounded bg-slate-900/90 border border-white/15 font-mono-code text-slate-200">←</kbd>
+        <kbd class="px-1.5 py-0.5 rounded bg-slate-900/90 border border-white/15 font-mono-code text-slate-200">→</kbd>
+        <kbd class="px-1.5 py-0.5 rounded bg-slate-900/90 border border-white/15 font-mono-code text-slate-200">Space</kbd>
+      </div>
+    </div>
+  </footer>
+
+  <audio id="narratorAudio" preload="auto"></audio>
+
+  <script>
+    // =========================================================================
+    // 1. 3D / 2.5D MAGNETIC HOVER TILT & LIQUID GLASS CAUSTIC REFRACTION
+    // =========================================================================
+    function init3DTiltAndLiquidCaustics() {
+      const cards = document.querySelectorAll('.tilt-3d, .glass-card, .glass-panel');
+
+      window.addEventListener('mousemove', (e) => {
+        // Subtle parallax on background morphing liquid blobs
+        const nx = (e.clientX / window.innerWidth - 0.5) * 40;
+        const ny = (e.clientY / window.innerHeight - 0.5) * 40;
+        const b1 = document.getElementById('blob1');
+        const b2 = document.getElementById('blob2');
+        if (b1) b1.style.marginLeft = `${nx}px`;
+        if (b2) b2.style.marginTop = `${-ny}px`;
+      });
+
+      cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const px = (x / rect.width) * 100;
+          const py = (y / rect.height) * 100;
+
+          // Update Liquid Glass specular refraction origin
+          card.style.setProperty('--mx', `${px}%`);
+          card.style.setProperty('--my', `${py}%`);
+
+          if (card.classList.contains('tilt-3d')) {
+            const maxTilt = card.classList.contains('glass-panel') ? 4.5 : 9.5;
+            const rotY = ((x / rect.width) - 0.5) * (maxTilt * 2);
+            const rotX = (0.5 - (y / rect.height)) * (maxTilt * 2);
+            card.style.transform = `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) translateZ(8px) scale(1.018)`;
+          }
+        });
+
+        card.addEventListener('mouseleave', () => {
+          if (card.classList.contains('tilt-3d')) {
+            card.style.transform = '';
+          }
+        });
+      });
+    }
+
+    // =========================================================================
+    // 2. NARRATION METADATA & STORYTELLER CHOREOGRAPHY
+    // =========================================================================
+    let narrationData = {
+      slides: [
+        { slide: 1, id: "slide_01", title: "Introducere", default_file: "audio/slide_01.mp3", segments: [
+          { start: 0, end: 22, subtitle: "În spatele fiecărui detaliu fin dintr-o astrofotografie se ascunde o poveste despre lumină și precizie optică." },
+          { start: 22, end: 45, subtitle: "Calculăm pas cu pas rezoluția optică (arcsec/pixel) pentru un sistem astrofotografic modern." },
+          { start: 45, end: 80, subtitle: "Setup: Newton 6\" (150mm) F=600mm + Corector Comă 0.95× + Cameră răcită Sony IMX533." }
+        ]},
+        { slide: 2, id: "slide_02", title: "Secunda de Arc", default_file: "audio/slide_02.mp3", segments: [
+          { start: 0, end: 18, subtitle: "Cerul este măsurat în unități unghiulare: grade (°), minute (') și secunde de arc (\")." },
+          { start: 18, end: 40, subtitle: "1° = 60' (minute de arc) = 3.600\" (secunde de arc). Luna plină are ~1.800\" (30')." },
+          { start: 40, end: 65, subtitle: "1\" (o secundă de arc) ≈ o monedă privită de la ~5 km distanță. Aceasta este scara unui pixel!" }
+        ]},
+        { slide: 3, id: "slide_03", title: "Telescopul Newton 6\"", default_file: "audio/slide_03.mp3", segments: [
+          { start: 0, end: 20, subtitle: "Astrograf Newton 6\": apertură D = 150 mm (152.4 mm exact) și focală nativă F = 600 mm." },
+          { start: 20, end: 42, subtitle: "Raport focal nativ f/4: un sistem optic foarte rapid, cu un con de lumină larg și luminos." },
+          { start: 42, end: 68, subtitle: "Important: Apertura dă puterea de separare (Dawes 0.76\"), dar focala și pixelul dau rezoluția (\"/px)." }
+        ]},
+        { slide: 4, id: "slide_04", title: "Corectorul de Comă 0.95×", default_file: "audio/slide_04.mp3", segments: [
+          { start: 0, end: 20, subtitle: "La f/4, oglinda parabolică introduce comă: stelele de la marginea câmpului par mici comete." },
+          { start: 20, end: 40, subtitle: "Corectorul 0.95× elimină coma pe tot câmpul și acționează simultan ca reductor focal." },
+          { start: 40, end: 65, subtitle: "Focală efectivă: F_ef = 600 mm × 0.95 = 570 mm → Raport focal accelerat la f/3.8!" }
+        ]},
+        { slide: 5, id: "slide_05", title: "Senzorul Sony IMX533", default_file: "audio/slide_05.mp3", segments: [
+          { start: 0, end: 18, subtitle: "Senzor CMOS BSI Sony IMX533 cu răcire TEC activă (până la -35°C sub temperatura ambiantă)." },
+          { start: 18, end: 42, subtitle: "Format pătrat 1\" (11.31 × 11.31 mm, 3008 × 3008 px, 9 MP), Zero Amp-Glow, QE > 80%." },
+          { start: 42, end: 65, subtitle: "Parametrul critic pentru rezoluție: dimensiunea pixelului p = 3.76 µm × 3.76 µm." }
+        ]},
+        { slide: 6, id: "slide_06", title: "Calculul 1.36\"/pixel", default_file: "audio/slide_06.mp3", segments: [
+          { start: 0, end: 22, subtitle: "Formula: Rezoluția (\"/px) = (206.265 × p [µm]) / F_efectiv [mm], unde 206.265 = 1 rad în arcsec / 1000." },
+          { start: 22, end: 48, subtitle: "Calcul: (206.265 × 3.76 µm) / 570 mm = 775.556 / 570 = 1.3606\"/pixel." },
+          { start: 48, end: 75, subtitle: "Rezultat final: 1.36\"/pixel (1.361 arcsec/px) | Câmp vizual total (FOV): 1.14° × 1.14° (68.2' × 68.2')." }
+        ]},
+        { slide: 7, id: "slide_07", title: "Seeing și Nyquist", default_file: "audio/slide_07.mp3", segments: [
+          { start: 0, end: 20, subtitle: "Cum interacționează cei 1.36\"/px cu turbulența atmosferică (Seeing FWHM)?" },
+          { start: 20, end: 40, subtitle: "Regula optimă de eșantionare: Seeing FWHM împărțit la 2 – 3 pixeli per stea." },
+          { start: 40, end: 65, subtitle: "La 1.36\"/px și seeing de 2.5\"–3.5\", steaua ocupă ~2.2 pixeli FWHM → Eșantionare Ideală (Sweet Spot)!" }
+        ]},
+        { slide: 8, id: "slide_08", title: "Încadrare FOV & Concluzii", default_file: "audio/slide_08.mp3", segments: [
+          { start: 0, end: 20, subtitle: "Cu 1.36\"/px și FOV de 1.14° × 1.14°, sistemul este extrem de versatil pentru Deep-Sky." },
+          { start: 20, end: 40, subtitle: "Ținte ideale: Nebuloasa Orion (M42), Galaxia M51, M13, M27, nucleul Rozetei și complexe H-alpha." },
+          { start: 40, end: 65, subtitle: "Un echilibru optic remarcabil: f/3.8 rapid, 1.36\"/px eșantionare optimă și stele punctuale. Cer senin!" }
+        ]}
+      ]
+    };
+
+    fetch('audio/narration_metadata.json')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data && data.slides) {
+          narrationData = data;
+          updateSubtitleForTime(0);
+        }
+      })
+      .catch(() => {});
+
+    // =========================================================================
+    // 3. SLIDE NAVIGATION WITH 3D WARP & LIQUID REFRACTION WAVE
+    // =========================================================================
+    let currentSlide = 0;
+    const totalSlides = 8;
+    let isPlayingNarration = false;
+    let starWarpBoost = 0;
+    let lastChoreoSeg = -1;
+    const audioEl = document.getElementById('narratorAudio');
+    const slideElements = document.querySelectorAll('.slide-section');
+    const dotsContainer = document.getElementById('slideDots');
+
+    function initDots() {
+      dotsContainer.innerHTML = '';
+      for (let i = 0; i < totalSlides; i++) {
+        const btn = document.createElement('button');
+        btn.className = `h-2.5 rounded-full transition-all duration-300 cursor-pointer ${i === currentSlide ? 'w-8 bg-gradient-to-r from-sky-400 to-indigo-400 shadow-lg shadow-sky-400/50' : 'w-2.5 bg-slate-600 hover:bg-slate-400'}`;
+        btn.title = `Slide ${i + 1}`;
+        btn.onclick = () => goToSlide(i);
+        dotsContainer.appendChild(btn);
+      }
+    }
+
+    function triggerTransitionWave() {
+      starWarpBoost = 1.0; // Triggers hyperspace starfield surge
+      const wave = document.getElementById('transitionWave');
+      if (!wave) return;
+      wave.classList.add('wave-active');
+      setTimeout(() => wave.classList.remove('wave-active'), 420);
+    }
+
+    function goToSlide(index, autoPlayAudio = null) {
+      if (index < 0 || index >= totalSlides) return;
+      if (index !== currentSlide) triggerTransitionWave();
+
+      currentSlide = index;
+      lastChoreoSeg = -1;
+
+      slideElements.forEach((el, i) => {
+        el.classList.remove('active', 'prev-slide');
+        if (i === currentSlide) {
+          el.classList.add('active');
+        } else if (i < currentSlide) {
+          el.classList.add('prev-slide');
+        }
+      });
+
+      document.getElementById('slideCounter').textContent = `Slide ${currentSlide + 1} / ${totalSlides}`;
+      initDots();
+
+      const slideMeta = narrationData.slides[currentSlide];
+      if (slideMeta) {
+        audioEl.src = slideMeta.default_file || `audio/slide_0${currentSlide + 1}.mp3`;
+        updateSubtitleForTime(0);
+        if (autoPlayAudio !== null ? autoPlayAudio : isPlayingNarration) {
+          audioEl.play().catch(() => {});
+        }
+      }
+
+      if (currentSlide === 4) updateCoolingSim(document.getElementById('tempSlider').value);
+      if (currentSlide === 6) updateSlide7Seeing(document.getElementById('s7SeeingSlider').value);
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) goToSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) goToSlide(currentSlide - 1);
+    }
+
+    function toggleNarration() {
+      if (audioEl.paused) {
+        if (!audioEl.src || audioEl.src === window.location.href) {
+          const slideMeta = narrationData.slides[currentSlide];
+          audioEl.src = slideMeta ? slideMeta.default_file : `audio/slide_0${currentSlide + 1}.mp3`;
+        }
+        audioEl.play().then(() => {
+          isPlayingNarration = true;
+          document.getElementById('playIcon').textContent = '⏸';
+          document.getElementById('playBtnText').textContent = 'Pauză Povestitor';
+        }).catch(() => {});
+      } else {
+        audioEl.pause();
+        isPlayingNarration = false;
+        document.getElementById('playIcon').textContent = '▶';
+        document.getElementById('playBtnText').textContent = 'Continuă Povestitorul';
+      }
+    }
+
+    function formatTime(sec) {
+      if (!sec || isNaN(sec)) return '0:00';
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    // Live Storyteller Choreography: animates elements inside the active slide while the narrator speaks!
+    function runSlideChoreography(segIdx) {
+      if (segIdx === lastChoreoSeg) return;
+      lastChoreoSeg = segIdx;
+
+      const activeSection = slideElements[currentSlide];
+      if (!activeSection) return;
+
+      activeSection.querySelectorAll('[data-narrator-step]').forEach(el => {
+        const step = parseInt(el.getAttribute('data-narrator-step'), 10);
+        el.classList.toggle('narrator-focus', step === segIdx);
+      });
+
+      // Dynamic simulation choreography during storytelling
+      if (isPlayingNarration) {
+        if (currentSlide === 1) {
+          highlightAngularScale(segIdx);
+        } else if (currentSlide === 2) {
+          setApertureMode(segIdx === 0 ? 152.4 : 150);
+        } else if (currentSlide === 3) {
+          setComaCorrector(segIdx !== 0);
+        } else if (currentSlide === 4) {
+          const temps = [-15, -10, -5];
+          const tv = temps[segIdx] ?? -10;
+          document.getElementById('tempSlider').value = tv;
+          updateCoolingSim(tv);
+        } else if (currentSlide === 6) {
+          const seeings = [2.2, 1.4, 3.0];
+          const sv = seeings[segIdx] ?? 3.0;
+          document.getElementById('s7SeeingSlider').value = sv;
+          updateSlide7Seeing(sv);
+        } else if (currentSlide === 7) {
+          const targets = ['m51', 'm42', 'm13'];
+          selectFovTarget(targets[segIdx] || 'm51');
+        }
+      }
+    }
+
+    function updateSubtitleForTime(t) {
+      const slideMeta = narrationData.slides[currentSlide];
+      if (!slideMeta || !slideMeta.segments) return;
+      let activeSub = slideMeta.segments[0]?.subtitle || '';
+      let activeIdx = 0;
+      slideMeta.segments.forEach((seg, idx) => {
+        if (t >= seg.start) {
+          activeSub = seg.subtitle;
+          activeIdx = idx;
+        }
+      });
+      document.getElementById('subtitleDisplay').textContent = activeSub;
+      runSlideChoreography(activeIdx);
+    }
+
+    audioEl.addEventListener('timeupdate', () => {
+      const cur = audioEl.currentTime || 0;
+      const dur = audioEl.duration || 1;
+      document.getElementById('audioTimeCur').textContent = formatTime(cur);
+      document.getElementById('audioTimeDur').textContent = formatTime(dur);
+      document.getElementById('audioProgressBar').style.width = `${Math.min(100, (cur / dur) * 100)}%`;
+      updateSubtitleForTime(cur);
+    });
+
+    audioEl.addEventListener('ended', () => {
+      const autoAdv = document.getElementById('autoAdvanceToggle').checked;
+      if (autoAdv && currentSlide < totalSlides - 1) {
+        setTimeout(() => goToSlide(currentSlide + 1, true), 450);
+      } else {
+        isPlayingNarration = false;
+        document.getElementById('playIcon').textContent = '▶';
+        document.getElementById('playBtnText').textContent = 'Pornește Povestitorul';
+      }
+    });
+
+    function seekAudio(e) {
+      if (!audioEl.duration) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      audioEl.currentTime = ratio * audioEl.duration;
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') nextSlide();
+      else if (e.key === 'ArrowLeft') prevSlide();
+      else if (e.key === ' ') {
+        e.preventDefault();
+        toggleNarration();
+      }
+    });
+
+    // =========================================================================
+    // 4. INTERACTIVE SIMULATORS PER SLIDE
+    // =========================================================================
+
+    // Slide 2: Interactive Angular Zoom
+    function updateAngularZoom(val) {
+      const z = parseFloat(val);
+      const lbl = document.getElementById('zoomScaleLabel');
+      const factor = 0.5 + (z / 100) * 1.1;
+      document.getElementById('barJup').style.width = `${Math.min(95, 35 * factor)}%`;
+      document.getElementById('barSeeing').style.width = `${Math.min(80, 18 * factor)}%`;
+      document.getElementById('barPixel').style.width = `${Math.min(65, 11 * factor)}%`;
+      document.getElementById('barDawes').style.width = `${Math.min(45, 6 * factor)}%`;
+      if (z < 35) lbl.textContent = 'Scară Largă: Cât Luna Plină (1.800")';
+      else if (z < 70) lbl.textContent = 'Scară Planetară: Discul lui Jupiter (45")';
+      else lbl.textContent = 'Scară Microscopică: 1 Pixel IMX533 = 1.36"';
+    }
+
+    function highlightAngularScale(step) {
+      const vals = [25, 55, 92];
+      const v = vals[step] || 75;
+      const sl = document.getElementById('angZoomSlider');
+      if (sl) {
+        sl.value = v;
+        updateAngularZoom(v);
+      }
+    }
+
+    // Slide 3: 150mm vs 152.4mm Aperture Mode
+    function setApertureMode(diamMm) {
+      const btn150 = document.getElementById('btnAp150');
+      const btn152 = document.getElementById('btnAp152');
+      if (diamMm === 150) {
+        btn150.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-sky-500 text-white shadow transition cursor-pointer';
+        btn152.className = 'px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer';
+      } else {
+        btn152.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-sky-500 text-white shadow transition cursor-pointer';
+        btn150.className = 'px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer';
+      }
+      const fNat = 600 / diamMm;
+      const fCor = 570 / diamMm;
+      const dawes = 116 / diamMm;
+      const rayleigh = 138 / diamMm;
+      const airyUm = 2.44 * 0.55 * fCor;
+
+      document.getElementById('apNativeF').textContent = `f/${fNat.toFixed(2)}`;
+      document.getElementById('apCorrF').textContent = `f/${fCor.toFixed(2)}`;
+      document.getElementById('apDawes').textContent = `${dawes.toFixed(2)}" / ${rayleigh.toFixed(2)}"`;
+      document.getElementById('apAiry').textContent = `${airyUm.toFixed(2)} µm`;
+      const mirrorLbl = document.getElementById('svgMirrorLabel');
+      if (mirrorLbl) mirrorLbl.textContent = `Oglindă Primară Parabolică 6" (${diamMm}mm)`;
+    }
+
+    // Slide 4: Coma Corrector Toggle
+    let comaState = true;
+    function setComaCorrector(enabled) {
+      comaState = enabled;
+      const btnOn = document.getElementById('btnCCOn');
+      const btnOff = document.getElementById('btnCCOff');
+      const leftBadge = document.getElementById('comaHighlightLeft');
+      const rightBadge = document.getElementById('comaHighlightRight');
+      if (enabled) {
+        btnOn.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow transition cursor-pointer';
+        btnOff.className = 'px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer';
+        document.getElementById('ccFocalText').textContent = '570 mm';
+        document.getElementById('ccFRatioText').textContent = 'f/3.80';
+        document.getElementById('ccSpeedText').textContent = '+11% mai luminos';
+        document.getElementById('ccScaleText').textContent = '1.36"/px';
+        if (rightBadge) rightBadge.style.transform = 'translateY(-1px)';
+        if (leftBadge) leftBadge.style.transform = 'none';
+        if (leftBadge) leftBadge.style.opacity = '0.55';
+        if (rightBadge) rightBadge.style.opacity = '1';
+      } else {
+        btnOff.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-rose-600 text-white shadow transition cursor-pointer';
+        btnOn.className = 'px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition cursor-pointer';
+        document.getElementById('ccFocalText').textContent = '600 mm';
+        document.getElementById('ccFRatioText').textContent = 'f/4.00';
+        document.getElementById('ccSpeedText').textContent = 'Comă pe margini';
+        document.getElementById('ccScaleText').textContent = '1.29"/px';
+        if (leftBadge) leftBadge.style.transform = 'translateY(-1px)';
+        if (rightBadge) rightBadge.style.transform = 'none';
+        if (leftBadge) leftBadge.style.opacity = '1';
+        if (rightBadge) rightBadge.style.opacity = '0.55';
+      }
+    }
+
+    // Slide 5: TEC Cooling Dark Current Simulator
+    let currentTecTemp = -10;
+    function updateCoolingSim(tempC) {
+      currentTecTemp = parseFloat(tempC);
+      const t = currentTecTemp;
+      const darkRate = 0.002 * Math.pow(2, (t - (-10)) / 6.3);
+      document.getElementById('tempLabel').textContent = `${t > 0 ? '+' : ''}${t}°C (${darkRate.toFixed(4)} e⁻/s/px)`;
+      const badge = document.getElementById('darkStatusBadge');
+      if (t <= -5) {
+        badge.textContent = 'Fotomulțime Pură (TEC ON)';
+        badge.className = 'text-emerald-300 font-mono-code';
+      } else if (t <= 10) {
+        badge.textContent = 'Zgomot Moderat';
+        badge.className = 'text-amber-300 font-mono-code';
+      } else {
+        badge.textContent = 'Zgomot Termic Mare (TEC OFF)';
+        badge.className = 'text-rose-300 font-mono-code';
+      }
+      drawDarkNoiseFrame();
+    }
+
+    function drawDarkNoiseFrame() {
+      const canvas = document.getElementById('darkNoiseCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width, h = canvas.height;
+      ctx.fillStyle = '#040710';
+      ctx.fillRect(0, 0, w, h);
+
+      const t = currentTecTemp;
+      const noiseCount = Math.min(1800, Math.round(25 * Math.pow(1.09, t + 20)));
+      for (let i = 0; i < noiseCount; i++) {
+        const x = Math.random() * w;
+        const y = Math.random() * h;
+        const val = Math.min(255, Math.round(45 + Math.random() * (t + 30) * 4.5));
+        ctx.fillStyle = `rgb(${val}, ${Math.round(val * 0.4)}, ${Math.round(val * 0.65)})`;
+        ctx.fillRect(x, y, 1.5, 1.5);
+      }
+    }
+
+    // Slide 6: Interactive Optical Calculator
+    function updateSlide6Calc() {
+      const fNat = parseFloat(document.getElementById('s6Focal').value);
+      const red = parseFloat(document.getElementById('s6Red').value);
+      const pix = parseFloat(document.getElementById('s6Pix').value);
+
+      const fEff = fNat * red;
+      const scale = (206.265 * pix) / fEff;
+      const fNum = fEff / 150.0;
+      const fovDeg = ((11.31 * 3437.75) / fEff) / 60.0;
+
+      document.getElementById('s6FocalVal').textContent = `${fNat} mm`;
+      document.getElementById('s6RedVal').textContent = `${red.toFixed(2)}×`;
+      document.getElementById('s6PixVal').textContent = `${pix.toFixed(2)} µm`;
+      document.getElementById('s6ResultScale').textContent = `${scale.toFixed(3)}" / pixel`;
+      document.getElementById('s6ResultSub').textContent = `F_ef = ${Math.round(fEff)} mm (f/${fNum.toFixed(2)}) • FOV = ${fovDeg.toFixed(2)}° × ${fovDeg.toFixed(2)}°`;
+    }
+
+    function resetSlide6Calc() {
+      document.getElementById('s6Focal').value = 600;
+      document.getElementById('s6Red').value = 0.95;
+      document.getElementById('s6Pix').value = 3.76;
+      updateSlide6Calc();
+    }
+
+    // Slide 7: Live 60fps Atmospheric Seeing & Nyquist Scintillation Simulator
+    let currentSeeingArcsec = 3.0;
+    function updateSlide7Seeing(seeingArcsec) {
+      currentSeeingArcsec = parseFloat(seeingArcsec);
+      const seeing = currentSeeingArcsec;
+      const scale = 1.3606;
+      const pxPerFwhm = seeing / scale;
+
+      const badge = document.getElementById('s7SeeingBadge');
+      badge.textContent = `Seeing: ${seeing.toFixed(1)}" → ${pxPerFwhm.toFixed(2)} pixeli/stea`;
+
+      const rUnder = document.getElementById('regimeUnder');
+      const rOpt = document.getElementById('regimeOpt');
+      const rOver = document.getElementById('regimeOver');
+      rUnder.className = 'glass-card tilt-3d rounded-2xl p-3 opacity-50 cursor-pointer';
+      rOpt.className = 'glass-card tilt-3d rounded-2xl p-3 opacity-50 cursor-pointer';
+      rOver.className = 'glass-card tilt-3d rounded-2xl p-3 opacity-50 cursor-pointer';
+
+      if (pxPerFwhm < 1.6) {
+        rUnder.className = 'glass-card tilt-3d rounded-2xl p-3 border-amber-400 bg-amber-950/35 opacity-100 cursor-pointer';
+      } else if (pxPerFwhm <= 3.3) {
+        rOpt.className = 'glass-card tilt-3d rounded-2xl p-3 border-emerald-400 bg-emerald-950/35 opacity-100 cursor-pointer';
+      } else {
+        rOver.className = 'glass-card tilt-3d rounded-2xl p-3 border-sky-400 bg-sky-950/35 opacity-100 cursor-pointer';
+      }
+      renderNyquistFrame(performance.now());
+    }
+
+    function renderNyquistFrame(ts) {
+      const canvas = document.getElementById('s7NyquistCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width, h = canvas.height;
+      ctx.fillStyle = '#050914';
+      ctx.fillRect(0, 0, w, h);
+
+      const seeing = currentSeeingArcsec;
+      const scale = 1.3606;
+      const isExport = document.body.classList.contains('export-mode');
+      // Subtle real-time atmospheric scintillation jitter & breathing
+      const jitterX = isExport ? 0 : Math.sin(ts * 0.0055) * (seeing * 1.15);
+      const jitterY = isExport ? 0 : Math.cos(ts * 0.0042) * (seeing * 1.15);
+      const breath = isExport ? 1.0 : (1.0 + 0.04 * Math.sin(ts * 0.006));
+      const pxPerFwhm = (seeing / scale) * breath;
+
+      const gridN = 9;
+      const gridW = 243;
+      const cell = gridW / gridN;
+      const ox = 18, oy = 22;
+      const cx = ox + gridW / 2 + jitterX;
+      const cy = oy + gridW / 2 + jitterY;
+      const sigmaPx = (pxPerFwhm / 2.355) * cell;
+
+      for (let gy = 0; gy < gridN; gy++) {
+        for (let gx = 0; gx < gridN; gx++) {
+          const px = ox + (gx + 0.5) * cell;
+          const py = oy + (gy + 0.5) * cell;
+          const d2 = (px - cx) ** 2 + (py - cy) ** 2;
+          const val = Math.exp(-d2 / (2 * sigmaPx * sigmaPx));
+          const r = Math.min(255, Math.round(val * 115 + Math.pow(val, 2) * 140));
+          const g = Math.min(255, Math.round(val * 185 + Math.pow(val, 2) * 70));
+          const b = Math.min(255, Math.round(val * 255));
+          ctx.fillStyle = `rgb(${r},${g},${b})`;
+          ctx.fillRect(ox + gx * cell + 1, oy + gy * cell + 1, cell - 2, cell - 2);
+        }
+      }
+
+      // FWHM Circle overlay
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 3]);
+      ctx.beginPath();
+      ctx.arc(cx, cy, (pxPerFwhm * cell) / 2, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Right side: Gaussian Bell Curve Cross-Section
+      const gx0 = 285, gw = 155, gyBase = 235, gh = 175;
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(gx0, gyBase);
+      ctx.lineTo(gx0 + gw, gyBase);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let i = 0; i <= gw; i++) {
+        const xNorm = (i - gw / 2 - jitterX * 0.35) / (gw / gridN);
+        const sigmaInPx = pxPerFwhm / 2.355;
+        const yVal = Math.exp(-(xNorm * xNorm) / (2 * sigmaInPx * sigmaInPx));
+        const px = gx0 + i;
+        const py = gyBase - yVal * gh;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      const halfY = gyBase - 0.5 * gh;
+      const fwhmWidthPx = (pxPerFwhm / gridN) * gw;
+      ctx.strokeStyle = '#34d399';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(gx0 + gw / 2 - fwhmWidthPx / 2, halfY);
+      ctx.lineTo(gx0 + gw / 2 + fwhmWidthPx / 2, halfY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillText('Profil Intensitate PSF', gx0 + 18, 38);
+      ctx.fillStyle = '#34d399';
+      ctx.font = '11px monospace';
+      ctx.fillText(`FWHM = ${(seeing / scale).toFixed(2)} px`, gx0 + 25, halfY - 8);
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillText(`1 px = 1.36" (3.76 µm)`, gx0 + 15, gyBase + 22);
+    }
+
+    // Slide 8: FOV Target Switcher (Verified M51, M42, M13)
+    function selectFovTarget(target) {
+      const desc = document.getElementById('fovTargetDesc');
+      const img = document.getElementById('fovPreviewImg');
+      ['m51', 'm42', 'm13'].forEach(id => {
+        const b = document.getElementById('fovBtn_' + id);
+        b.className = id === target
+          ? 'px-3.5 py-2 rounded-xl text-xs font-semibold bg-sky-500 text-white shadow-lg shadow-sky-500/30 border border-white/30 cursor-pointer transition'
+          : 'px-3.5 py-2 rounded-xl text-xs font-semibold glass-card text-slate-200 hover:text-white cursor-pointer transition';
+      });
+      if (target === 'm51') {
+        img.src = 'assets/m51_fov_framing.jpg';
+        desc.innerHTML = `<strong class="text-sky-300">Galaxia Vâltoarea (M51 — 11' × 7'):</strong> La 1.36"/px, nucleul și brațele spirale ocupă ~500 × 310 pixeli, oferind detalii spectaculoase în benzile de praf, în timp ce cadrul pătrat de 68.2' lasă spațiu generos în jurul galaxiei.`;
+      } else if (target === 'm42') {
+        img.src = 'assets/m42_fov_framing.jpg';
+        desc.innerHTML = `<strong class="text-rose-300">Marea Nebuloasă din Orion (M42 — 65' × 60'):</strong> Încape integral și spectaculos în fereastra pătrată de 68.2' × 68.2' obținută cu ajutorul corectorului de 0.95× (la 600mm nativ marginile ar fi fost la limită!).`;
+      } else {
+        img.src = 'assets/m13_fov_framing.jpg';
+        desc.innerHTML = `<strong class="text-emerald-300">Roiul Globular M13 din Hercule (20' diametru):</strong> Rezoluția de 1.36"/px separă individual sutele de mii de stele din coroană fără a le contopi, profitând de câmpul plat oferit de corectorul 0.95×.`;
+      }
+    }
+
+    // =========================================================================
+    // 5. IN-BROWSER LIVE VIDEO RECORDER (WebCodecs / MediaRecorder)
+    // =========================================================================
+    let mediaRecorder = null;
+    let recordedChunks = [];
+
+    async function toggleBrowserRecording() {
+      const recText = document.getElementById('recText');
+      const recDot = document.getElementById('recDot');
+
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        return;
+      }
+
+      try {
+        const displayStream = await navigator.mediaDevices.getDisplayMedia({
+          video: { frameRate: 60 },
+          audio: true
+        });
+        recordedChunks = [];
+        const mimeType = MediaRecorder.isTypeSupported('video/mp4')
+          ? 'video/mp4'
+          : 'video/webm;codecs=vp9,opus';
+        mediaRecorder = new MediaRecorder(displayStream, { mimeType });
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(recordedChunks, { type: mimeType });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = mimeType.includes('mp4')
+            ? 'Prezentare_Astrofotografie_Live.mp4'
+            : 'Prezentare_Astrofotografie_Live.webm';
+          a.click();
+          recText.textContent = 'Înregistrare Live';
+          recDot.className = 'w-2 h-2 rounded-full bg-rose-400';
+          displayStream.getTracks().forEach(t => t.stop());
+        };
+
+        mediaRecorder.start();
+        recText.textContent = 'Stop & Salvează Video';
+        recDot.className = 'w-2 h-2 rounded-full bg-rose-500 animate-ping';
+      } catch (err) {
+        alert('Pentru descărcare instantă fără captură de ecran, folosește butonul albastru „⬇ Descarcă MP4 (1080p)” din dreapta sus!');
+      }
+    }
+
+    // =========================================================================
+    // 6. ANIMATED STARFIELD BACKGROUND WITH SLIDE-TRANSITION WARP JUMP
+    // =========================================================================
+    const bgCanvas = document.getElementById('cosmosBg');
+    const bgCtx = bgCanvas.getContext('2d');
+    let stars = [];
+
+    function resizeBg() {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+      stars = Array.from({ length: 150 }, () => ({
+        x: Math.random() * bgCanvas.width,
+        y: Math.random() * bgCanvas.height,
+        z: Math.random() * 1.5 + 0.3,
+        r: Math.random() * 1.6 + 0.3,
+        alpha: Math.random() * 0.75 + 0.2,
+        speed: Math.random() * 0.015 + 0.004,
+        phase: Math.random() * Math.PI * 2
+      }));
+    }
+
+    function animateBg(ts) {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      const cx = bgCanvas.width / 2;
+      const cy = bgCanvas.height / 2;
+
+      if (starWarpBoost > 0.01) {
+        starWarpBoost *= 0.90;
+      } else {
+        starWarpBoost = 0;
+      }
+
+      for (const s of stars) {
+        const a = s.alpha * (0.65 + 0.35 * Math.sin(ts * s.speed * 0.1 + s.phase));
+        if (starWarpBoost > 0.05) {
+          // Draw warp streak lines radiating from center during slide transitions
+          const dx = s.x - cx;
+          const dy = s.y - cy;
+          const len = 1 + starWarpBoost * 0.18 * s.z;
+          bgCtx.strokeStyle = `rgba(125, 211, 252, ${Math.min(1, a + 0.3).toFixed(2)})`;
+          bgCtx.lineWidth = s.r * 1.2;
+          bgCtx.beginPath();
+          bgCtx.moveTo(s.x, s.y);
+          bgCtx.lineTo(cx + dx * len, cy + dy * len);
+          bgCtx.stroke();
+        } else {
+          bgCtx.fillStyle = `rgba(226, 232, 240, ${a.toFixed(2)})`;
+          bgCtx.beginPath();
+          bgCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          bgCtx.fill();
+        }
+      }
+
+      // Keep Slide 7 Nyquist scintillation & Slide 5 thermal noise alive at 60fps!
+      if (currentSlide === 6 && !document.body.classList.contains('export-mode')) {
+        renderNyquistFrame(ts);
+      }
+
+      requestAnimationFrame(animateBg);
+    }
+
+    window.addEventListener('resize', resizeBg);
+    resizeBg();
+    initDots();
+    init3DTiltAndLiquidCaustics();
+    updateCoolingSim(-10);
+    updateSlide7Seeing(3.0);
+    requestAnimationFrame(animateBg);
+
+    // Deterministic URL parameter mode for 1080p MP4 video frame rendering
+    (function applyUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      if (!params.has('slide')) return;
+      document.body.classList.add('export-mode');
+      const style = document.createElement('style');
+      style.textContent = `
+        .slide-section, .slide-section * {
+          transition: none !important;
+          animation: none !important;
+        }
+        .slide-section.active {
+          filter: none !important;
+          transform: none !important;
+        }
+        .slide-section.active .stagger-1,
+        .slide-section.active .stagger-2,
+        .slide-section.active .stagger-3,
+        .slide-section.active .stagger-4 {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      `;
+      document.head.appendChild(style);
+
+      const sIdx = parseInt(params.get('slide') || '0', 10);
+      const subIdx = parseInt(params.get('sub') || '0', 10);
+      goToSlide(sIdx, false);
+
+      if (sIdx === 2) {
+        setApertureMode(subIdx === 1 ? 152.4 : 150);
+      } else if (sIdx === 3) {
+        setComaCorrector(subIdx !== 0);
+      } else if (sIdx === 4) {
+        const temps = [20, -5, -15];
+        const tVal = temps[subIdx] ?? -10;
+        document.getElementById('tempSlider').value = tVal;
+        updateCoolingSim(tVal);
+      } else if (sIdx === 6) {
+        const seeings = [1.3, 2.5, 3.0];
+        const sVal = seeings[subIdx] ?? 3.0;
+        document.getElementById('s7SeeingSlider').value = sVal;
+        updateSlide7Seeing(sVal);
+      } else if (sIdx === 7) {
+        const targets = ['m51', 'm42', 'm13'];
+        selectFovTarget(targets[subIdx] || 'm51');
+      }
+
+      const customSub = params.get('subtitle');
+      if (customSub) {
+        document.getElementById('subtitleDisplay').textContent = customSub;
+      } else {
+        const slideMeta = narrationData.slides[sIdx];
+        if (slideMeta && slideMeta.segments && slideMeta.segments[subIdx]) {
+          document.getElementById('subtitleDisplay').textContent = slideMeta.segments[subIdx].subtitle;
+        }
+      }
+
+      const progressPct = ((subIdx + 1) / 3) * 100;
+      document.getElementById('audioProgressBar').style.width = `${progressPct}%`;
+      document.getElementById('playIcon').textContent = '🔊';
+      document.getElementById('playBtnText').textContent = 'Povestitor Activ';
+    })();
+  </script>
+</body>
+</html>

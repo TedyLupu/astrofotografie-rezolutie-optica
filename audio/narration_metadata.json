@@ -1,0 +1,284 @@
+{
+  "slides": [
+    {
+      "slide": 1,
+      "id": "slide_01",
+      "title": "Arta și Fizica Rezoluției Optice în Astrofotografie",
+      "voice": "Algenib",
+      "model": "gemini-3.8-flash-tts",
+      "default_file": "audio/slide_01.mp3",
+      "duration": 76.54,
+      "segments": [
+        {
+          "index": 0,
+          "subtitle": "În spatele fiecărui detaliu fin dintr-o astrofotografie se ascunde o poveste despre lumină și precizie optică.",
+          "spoken": "Privind în liniște cerul nopții... <short pause> vedem galaxii îndepărtate și nebuloase tăcute, sculptate în praf stelar. Dar în spatele fiecărui detaliu fin... <short pause> se ascunde o poveste fascinantă despre lumină, oglinzi și precizie matematică.",
+          "start": 0.25,
+          "end": 28.07,
+          "duration": 27.82
+        },
+        {
+          "index": 1,
+          "subtitle": "Calculăm pas cu pas rezoluția optică (arcsec/pixel) pentru un sistem astrofotografic modern.",
+          "spoken": "Astăzi vom descoperi împreună, pas cu pas, cum se calculează rezoluția optică — măsurată în secunde de arc pe pixel — pentru un echipament îndrăgit de astrofotografi.",
+          "start": 28.07,
+          "end": 46.33,
+          "duration": 18.26
+        },
+        {
+          "index": 2,
+          "subtitle": "Setup: Newton 6\" (150mm) F=600mm + Corector Comă 0.95× + Cameră răcită Sony IMX533.",
+          "spoken": "Vom pune sub lupă un telescop Newton cu apertura de șase inci și focala de șase sute de milimetri... <short pause> un corector de comă de zero virgulă nouăzeci și cinci ori... <short pause> și o cameră dedicată, răcită, cu senzorul Sony I-M-X cinci sute treizeci și trei.",
+          "start": 46.33,
+          "end": 76.14,
+          "duration": 29.8
+        }
+      ]
+    },
+    {
+      "slide": 2,
+      "id": "slide_02",
+      "title": "Ce Înseamnă o Secundă de Arc pe Cerul Nopții?",
+      "voice": "Charon",
+      "model": "gemini-3.8-flash-tts",
+      "default_file": "audio/slide_02.mp3",
+      "duration": 60.89,
+      "segments": [
+        {
+          "index": 0,
+          "subtitle": "Cerul este măsurat în unități unghiulare: grade (°), minute (') și secunde de arc (\").",
+          "spoken": "Înainte să rostim prima formulă... <short pause> hai să ne imaginăm scara la care privim universul. Bolta cerească nu se măsoară în metri, ci în unghiuri: grade, minute și secunde de arc.",
+          "start": 0.25,
+          "end": 16.86,
+          "duration": 16.61
+        },
+        {
+          "index": 1,
+          "subtitle": "1° = 60' (minute de arc) = 3.600\" (secunde de arc). Luna plină are ~1.800\" (30').",
+          "spoken": "Un singur grad pe cer — cam cât acoperă degetul mic ținut la lungimea brațului — se împarte în șaizeci de minute de arc. Iar fiecare minut se împarte, la rândul lui, în șaizeci de secunde de arc. În total... <short pause> trei mii șase sute de secunde de arc într-un singur grad.",
+          "start": 16.86,
+          "end": 41.65,
+          "duration": 24.79
+        },
+        {
+          "index": 2,
+          "subtitle": "1\" (o secundă de arc) ≈ o monedă privită de la ~5 km distanță. Aceasta este scara unui pixel!",
+          "spoken": "O secundă de arc este un unghi aproape de neconceput: ca și cum am privi o monedă de la cinci kilometri depărtare. Ei bine... <short pause> exact o asemenea fărâmă de cer cade pe fiecare pixel al camerei noastre.",
+          "start": 41.65,
+          "end": 60.49,
+          "duration": 18.84
+        }
+      ]
+    },
+    {
+      "slide": 3,
+      "id": "slide_03",
+      "title": "Colectorul de Fotoni: Telescopul Newton 6\" (150/600mm f/4)",
+      "voice": "Algenib",
+      "model": "gemini-3.8-flash-tts",
+      "default_file": "audio/slide_03.mp3",
+      "duration": 64.78,
+      "segments": [
+        {
+          "index": 0,
+          "subtitle": "Astrograf Newton 6\": apertură D = 150 mm (152.4 mm exact) și focală nativă F = 600 mm.",
+          "spoken": "Călătoria fotonilor începe în oglinda primară a telescopului Newton de șase inci — adică o sută cincizeci de milimetri în standardul comercial, sau o sută cincizeci și doi virgulă patru milimetri matematic exact.",
+          "start": 0.25,
+          "end": 19.73,
+          "duration": 19.48
+        },
+        {
+          "index": 1,
+          "subtitle": "Raport focal nativ f/4: un sistem optic foarte rapid, cu un con de lumină larg și luminos.",
+          "spoken": "Având o distanță focală nativă de șase sute de milimetri, acest telescop lucrează la un raport focal rapid, de f pe patru. Este o adevărată pâlnie de lumină, capabilă să adune fotonii slabi ai nebuloaselor într-un timp surprinzător de scurt.",
+          "start": 19.73,
+          "end": 41.87,
+          "duration": 22.14
+        },
+        {
+          "index": 2,
+          "subtitle": "Important: Apertura dă puterea de separare (Dawes 0.76\"), dar focala și pixelul dau rezoluția (\"/px).",
+          "spoken": "Dar iată primul secret al opticii astronomice... <short pause> Apertura de șase inci stabilește câți fotoni adunăm și cât de fină este limita de difracție, însă rezoluția pe pixel depinde doar de distanța focală efectivă și de mărimea pixelului.",
+          "start": 41.87,
+          "end": 64.38,
+          "duration": 22.51
+        }
+      ]
+    },
+    {
+      "slide": 4,
+      "id": "slide_04",
+      "title": "Rolul Dublu al Corectorului de Comă 0.95×",
+      "voice": "Charon",
+      "model": "gemini-3.8-flash-tts",
+      "default_file": "audio/slide_04.mp3",
+      "duration": 59.86,
+      "segments": [
+        {
+          "index": 0,
+          "subtitle": "La f/4, oglinda parabolică introduce comă: stelele de la marginea câmpului par mici comete.",
+          "spoken": "O oglindă parabolică atât de rapidă, la f pe patru, are însă un preț: spre marginile câmpului vizual, stelele nu mai sunt puncte perfecte, ci se alungesc precum niște mici comete. Aceasta este aberația de comă.",
+          "start": 0.25,
+          "end": 18.14,
+          "duration": 17.89
+        },
+        {
+          "index": 1,
+          "subtitle": "Corectorul 0.95× elimină coma pe tot câmpul și acționează simultan ca reductor focal.",
+          "spoken": "Pentru a îmblânzi lumina, introducem în focalizator corectorul de comă cu factor zero virgulă nouăzeci și cinci ori. El face două lucruri deodată: readuce stelele la forma unor vârfuri de ac pe tot câmpul... <short pause> și comprimă ușor conul de lumină.",
+          "start": 18.14,
+          "end": 39.86,
+          "duration": 21.72
+        },
+        {
+          "index": 2,
+          "subtitle": "Focală efectivă: F_ef = 600 mm × 0.95 = 570 mm → Raport focal accelerat la f/3.8!",
+          "spoken": "Înmulțind focala nativă de șase sute de milimetri cu zero virgulă nouăzeci și cinci, obținem o focală efectivă de cinci sute șaptezeci de milimetri. Telescopul nostru devine astfel și mai rapid: un astrograf f pe trei virgulă opt.",
+          "start": 39.86,
+          "end": 59.46,
+          "duration": 19.59
+        }
+      ]
+    },
+    {
+      "slide": 5,
+      "id": "slide_05",
+      "title": "Senzorul Răcit Sony IMX533: Geometrie și Performanță",
+      "voice": "Algenib",
+      "model": "gemini-3.8-flash-tts",
+      "default_file": "audio/slide_05.mp3",
+      "duration": 61.3,
+      "segments": [
+        {
+          "index": 0,
+          "subtitle": "Senzor CMOS BSI Sony IMX533 cu răcire TEC activă (până la -35°C sub temperatura ambiantă).",
+          "spoken": "În focarul acestui con de lumină așteaptă, răcită la zeci de grade sub zero, camera astronomică echipată cu senzorul Sony I-M-X cinci sute treizeci și trei.",
+          "start": 0.25,
+          "end": 16.65,
+          "duration": 16.4
+        },
+        {
+          "index": 1,
+          "subtitle": "Format pătrat 1\" (11.31 × 11.31 mm, 3008 × 3008 px, 9 MP), Zero Amp-Glow, QE > 80%.",
+          "spoken": "Este un senzor pătrat, cu latura de unsprezece virgulă treizeci și unu milimetri, alcătuit dintr-o matrice de trei mii opt pe trei mii opt pixeli. Fără pic de zgomot parazit de tip amp-glow, el transformă peste optzeci la sută din fotoni în semnal pur.",
+          "start": 16.65,
+          "end": 43.13,
+          "duration": 26.49
+        },
+        {
+          "index": 2,
+          "subtitle": "Parametrul critic pentru rezoluție: dimensiunea pixelului p = 3.76 µm × 3.76 µm.",
+          "spoken": "Iar piesa centrală a ecuației noastre este dimensiunea fiecărei celule fotosensibile: un pătrat microscopic cu latura de exact trei virgulă șaptezeci și șase micrometri.",
+          "start": 43.13,
+          "end": 60.9,
+          "duration": 17.76
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "id": "slide_06",
+      "title": "Calculul Exact Pas cu Pas: De la 600mm la 1.36\"/pixel",
+      "voice": "Charon",
+      "model": "gemini-3.8-flash-tts",
+      "default_file": "audio/slide_06.mp3",
+      "duration": 70.08,
+      "segments": [
+        {
+          "index": 0,
+          "subtitle": "Formula: Rezoluția (\"/px) = (206.265 × p [µm]) / F_efectiv [mm], unde 206.265 = 1 rad în arcsec / 1000.",
+          "spoken": "Acum, toate piesele poveștii se întâlnesc în formula clasică a rezoluției optice... <short pause> Înmulțim constanta astronomică două sute șase virgulă două sute șaizeci și cinci cu mărimea pixelului în micrometri, și împărțim totul la focala efectivă în milimetri.",
+          "start": 0.25,
+          "end": 24.21,
+          "duration": 23.96
+        },
+        {
+          "index": 1,
+          "subtitle": "Calcul: (206.265 × 3.76 µm) / 570 mm = 775.556 / 570 = 1.3606\"/pixel.",
+          "spoken": "Dacă am fi folosit telescopul gol, la șase sute de milimetri, am fi obținut unu virgulă douăzeci și nouă secunde de arc pe pixel. Dar cu corectorul nostru, la cinci sute șaptezeci de milimetri, împărțim șapte sute șaptezeci și cinci virgulă cinci la cinci sute șaptezeci.",
+          "start": 24.21,
+          "end": 48.71,
+          "duration": 24.5
+        },
+        {
+          "index": 2,
+          "subtitle": "Rezultat final: 1.36\"/pixel (1.361 arcsec/px) | Câmp vizual total (FOV): 1.14° × 1.14° (68.2' × 68.2').",
+          "spoken": "Rezultatul este limpede și rotund: unu virgulă treizeci și șase secunde de arc pe fiecare pixel... <short pause> Iar întregul senzor pătrat îmbrățișează pe cer o fereastră de unu virgulă paisprezece pe unu virgulă paisprezece grade.",
+          "start": 48.71,
+          "end": 69.68,
+          "duration": 20.97
+        }
+      ]
+    },
+    {
+      "slide": 7,
+      "id": "slide_07",
+      "title": "Eșantionarea Nyquist și Seeing-ul Atmosferic",
+      "voice": "Algenib",
+      "model": "gemini-3.8-flash-tts",
+      "default_file": "audio/slide_07.mp3",
+      "duration": 60.58,
+      "segments": [
+        {
+          "index": 0,
+          "subtitle": "Cum interacționează cei 1.36\"/px cu turbulența atmosferică (Seeing FWHM)?",
+          "spoken": "Dar oare ce înseamnă, sub cerul real, această valoare de unu virgulă treizeci și șase secunde de arc pe pixel? Aici intră în scenă atmosfera Pământului și turbulența ei neîncetată, pe care astronomii o numesc seeing.",
+          "start": 0.25,
+          "end": 18.98,
+          "duration": 18.73
+        },
+        {
+          "index": 1,
+          "subtitle": "Regula optimă de eșantionare: Seeing FWHM împărțit la 2 – 3 pixeli per stea.",
+          "spoken": "Criteriul de eșantionare ne spune că o stea nu trebuie să cadă pe un singur pixel — căci ar ieși pătrată — dar nici să se risipească pe prea mulți. Ideal este ca discul stelei să acopere între doi și trei pixeli.",
+          "start": 18.98,
+          "end": 37.37,
+          "duration": 18.39
+        },
+        {
+          "index": 2,
+          "subtitle": "La 1.36\"/px și seeing de 2.5\"–3.5\", steaua ocupă ~2.2 pixeli FWHM → Eșantionare Ideală (Sweet Spot)!",
+          "spoken": "Sub un cer obișnuit, cu un seeing de trei secunde de arc, rezoluția noastră de unu virgulă treizeci și șase secunde de arc pe pixel așază fiecare stea pe exact doi virgulă doi pixeli. Este echilibrul ideal: stele rotunde, fine și un raport semnal-zgomot excelent.",
+          "start": 37.37,
+          "end": 60.18,
+          "duration": 22.81
+        }
+      ]
+    },
+    {
+      "slide": 8,
+      "id": "slide_08",
+      "title": "Încadrarea pe Cer (FOV 1.14°) și Concluzii",
+      "voice": "Charon",
+      "model": "gemini-3.8-flash-tts",
+      "default_file": "audio/slide_08.mp3",
+      "duration": 58.44,
+      "segments": [
+        {
+          "index": 0,
+          "subtitle": "Cu 1.36\"/px și FOV de 1.14° × 1.14°, sistemul este extrem de versatil pentru Deep-Sky.",
+          "spoken": "Privind acum tabloul complet... <short pause> vedem cum această fereastră pătrată de unu virgulă paisprezece grade și rezoluția de unu virgulă treizeci și șase secunde de arc pe pixel ni se deschid către comorile cerului profund.",
+          "start": 0.25,
+          "end": 20.7,
+          "duration": 20.45
+        },
+        {
+          "index": 1,
+          "subtitle": "Ținte ideale: Nebuloasa Orion (M42), Galaxia M51, M13, M27, nucleul Rozetei și complexe H-alpha.",
+          "spoken": "În acest cadru încap la perfecție Marea Nebuloasă din Orion, roiul sclipitor M treisprezece din Hercule, sau brațele spirale ale galaxiei Vâltoarea, M cincizeci și unu.",
+          "start": 20.7,
+          "end": 35.71,
+          "duration": 15.01
+        },
+        {
+          "index": 2,
+          "subtitle": "Un echilibru optic remarcabil: f/3.8 rapid, 1.36\"/px eșantionare optimă și stele punctuale. Cer senin!",
+          "spoken": "Telescopul Newton de șase inci la șase sute de milimetri, corectorul de zero virgulă nouăzeci și cinci ori și camera răcită I-M-X cinci sute treizeci și trei alcătuiesc o armonie optică desăvârșită... <short pause> Cer senin, și nopți pline de stele!",
+          "start": 35.71,
+          "end": 58.04,
+          "duration": 22.33
+        }
+      ]
+    }
+  ]
+}
