@@ -565,17 +565,26 @@
       z-index: 1;
     }
 
+    #ssViewport {
+      touch-action: none;
+      cursor: grab;
+      background: #02040a;
+    }
+
+    #ssViewport.dragging {
+      cursor: grabbing;
+    }
+
     .ss-stage-img {
-      max-width: 100%;
-      max-height: 100%;
-      width: auto;
-      height: auto;
-      object-fit: contain;
+      max-width: none !important;
+      max-height: none !important;
+      flex-shrink: 0;
+      object-fit: cover;
       transform-origin: 50% 50%;
       will-change: transform;
       user-select: none;
       -webkit-user-drag: none;
-      filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.9));
+      pointer-events: none;
     }
 
     /* Reticle overlay when 100% Crop is active */
@@ -1642,24 +1651,32 @@
 
       <!-- Right Action Buttons -->
       <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-        <button id="ssBtnPlayPause" onclick="toggleSlideshowPlay()" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-500/25 hover:bg-emerald-500/35 border border-emerald-400/50 text-emerald-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition">
-          <span id="ssPlayIcon">⏸</span>
-          <span id="ssPlayText" class="hidden sm:inline">Auto (6s)</span>
+        <button id="ssBtnPlayPause" onclick="toggleSlideshowPlay()" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-500/25 hover:bg-emerald-500/35 border border-emerald-400/50 text-emerald-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition" title="Pornește sau oprește derularea automată a slideshow-ului (14s per imagine)">
+          <span id="ssPlayIcon">▶</span>
+          <span id="ssPlayText" class="hidden sm:inline">Slideshow (14s)</span>
         </button>
 
-        <button id="ssBtnManualCrop" onclick="toggleManual100Crop()" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-indigo-500/25 hover:bg-indigo-500/40 border border-indigo-400/50 text-indigo-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition" title="Comută instantaneu între Crop 100% și Cadru Întreg">
+        <button id="ssBtnZoomOut" onclick="stepUserZoom(-0.45)" class="px-2 sm:px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold cursor-pointer transition" title="Micșorează Zoom (-)">
+          ➖
+        </button>
+
+        <button id="ssBtnZoomIn" onclick="stepUserZoom(0.45)" class="px-2 sm:px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold cursor-pointer transition" title="Mărește Zoom (+)">
+          ➕
+        </button>
+
+        <button id="ssBtnManualCrop" onclick="toggleManual100Crop()" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-indigo-500/25 hover:bg-indigo-500/40 border border-indigo-400/50 text-indigo-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition" title="Comută instantaneu între Crop 100% și Modul Fill">
           <span>🔬</span>
           <span id="ssManualCropText">Crop 100%</span>
         </button>
 
         <button id="ssBtnMusic" onclick="toggleCosmicMusic()" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/35 border border-sky-400/40 text-sky-200 text-xs font-semibold flex items-center gap-1 cursor-pointer transition">
           <span id="ssMusicIcon">🔊</span>
-          <span id="ssMusicText" class="hidden sm:inline">Muzică ON</span>
+          <span id="ssMusicText" class="hidden lg:inline">Orgă Cosmică ON</span>
         </button>
 
         <a id="ssDownloadBtn" href="imagini/crescent_61ore.jpg" download="crescent_61ore.jpg" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold flex items-center gap-1 transition">
           <span>⬇</span>
-          <span class="hidden sm:inline">Descarcă</span>
+          <span class="hidden xl:inline">Descarcă</span>
         </a>
 
         <button onclick="closeAstroSlideshow()" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-rose-500/25 hover:bg-rose-500/45 border border-rose-400/50 text-rose-200 text-xs font-bold cursor-pointer transition">
@@ -2529,7 +2546,7 @@
     }
 
     // =========================================================================
-    // 7. SLIDE 9 ASTROPHOTOGRAPHY GALLERY & 100% CROP SLIDESHOW ENGINE
+    // 7. SLIDE 9 ASTROPHOTOGRAPHY GALLERY, FILL EXPLORER & 14s SLIDESHOW ENGINE
     // =========================================================================
     const astroGalleryItems = [
       {
@@ -2537,6 +2554,7 @@
         title: 'Nebuloasa Semiluna (NGC 6888)',
         badge: '61h Integrare HOO',
         dims: '4582 × 3462 px',
+        w: 4582, h: 3462,
         thumb: 'imagini/thumbs/crescent_61ore.jpg',
         hd: 'imagini/hd/crescent_61ore.jpg',
         orig: 'imagini/crescent_61ore.jpg',
@@ -2551,6 +2569,7 @@
         title: 'Nebuloasa Leul (Sh2-132)',
         badge: '52h Integrare SHO',
         dims: '2938 × 2934 px',
+        w: 2938, h: 2934,
         thumb: 'imagini/thumbs/SH2_132_52ore.jpg',
         hd: 'imagini/hd/SH2_132_52ore.jpg',
         orig: 'imagini/SH2_132_52ore.png',
@@ -2565,6 +2584,7 @@
         title: 'Nebuloasa Vrăjitorul (NGC 7380)',
         badge: '46h Integrare SHO',
         dims: '2891 × 2889 px',
+        w: 2891, h: 2889,
         thumb: 'imagini/thumbs/Wizard_SHO_46ore_V2.jpg',
         hd: 'imagini/hd/Wizard_SHO_46ore_V2.jpg',
         orig: 'imagini/Wizard_SHO_46ore_V2.jpg',
@@ -2579,6 +2599,7 @@
         title: 'Nebuloasa Cap de Cal & Flacăra (B33 / IC 434)',
         badge: '42h Integrare',
         dims: '2879 × 2888 px',
+        w: 2879, h: 2888,
         thumb: 'imagini/thumbs/horsehead_42h.jpg',
         hd: 'imagini/hd/horsehead_42h.jpg',
         orig: 'imagini/horsehead_42h.png',
@@ -2593,6 +2614,7 @@
         title: 'Nebuloasa Pacman (NGC 281)',
         badge: '23h Integrare SHO',
         dims: '2857 × 2876 px',
+        w: 2857, h: 2876,
         thumb: 'imagini/thumbs/Pacman_SHO_23ore.jpg',
         hd: 'imagini/hd/Pacman_SHO_23ore.jpg',
         orig: 'imagini/Pacman_SHO_23ore.jpg',
@@ -2607,6 +2629,7 @@
         title: 'Nebuloasa Peștera (Sh2-155 / Caldwell 9)',
         badge: '20h Integrare SHO',
         dims: '2853 × 2853 px',
+        w: 2853, h: 2853,
         thumb: 'imagini/thumbs/Cave_SHO_20ore.jpg',
         hd: 'imagini/hd/Cave_SHO_20ore.jpg',
         orig: 'imagini/Cave_SHO_20ore.jpg',
@@ -2621,6 +2644,7 @@
         title: 'Nebuloasa Cap de Maimuță (NGC 2174)',
         badge: '17h SHO • Drizzle 2×',
         dims: '5688 × 4548 px',
+        w: 5688, h: 4548,
         thumb: 'imagini/thumbs/MonkeyHead_SHO_17h_drizzle2X.jpg',
         hd: 'imagini/hd/MonkeyHead_SHO_17h_drizzle2X.jpg',
         orig: 'imagini/MonkeyHead_SHO_17h_drizzle2X.png',
@@ -2635,6 +2659,7 @@
         title: 'Nebuloasa Wolf-Rayet WR 134',
         badge: 'Paletă OHS Ultra-HD',
         dims: '9462 × 6275 px',
+        w: 9462, h: 6275,
         thumb: 'imagini/thumbs/WR134_OHS.jpg',
         hd: 'imagini/hd/WR134_OHS.jpg',
         orig: 'imagini/WR134_OHS.jpg',
@@ -2649,6 +2674,7 @@
         title: 'Nebuloasa Sufletul (IC 1848)',
         badge: 'Paletă SHO',
         dims: '4447 × 4466 px',
+        w: 4447, h: 4466,
         thumb: 'imagini/thumbs/SoulNebula.jpg',
         hd: 'imagini/hd/SoulNebula.jpg',
         orig: 'imagini/SoulNebula.jpg',
@@ -2663,6 +2689,7 @@
         title: 'Trompa de Elefant (IC 1396A)',
         badge: '7h Integrare SHO',
         dims: '2990 × 2982 px',
+        w: 2990, h: 2982,
         thumb: 'imagini/thumbs/7%20ore%20SHO_stars.jpg',
         hd: 'imagini/hd/7%20ore%20SHO_stars.jpg',
         orig: 'imagini/7%20ore%20SHO_stars.png',
@@ -2677,6 +2704,7 @@
         title: 'Marea Nebuloasă din Orion (M42 & M43)',
         badge: 'HDR Broadband',
         dims: '2896 × 2886 px',
+        w: 2896, h: 2886,
         thumb: 'imagini/thumbs/M42.jpg',
         hd: 'imagini/hd/M42.jpg',
         orig: 'imagini/M42.jpg',
@@ -2693,16 +2721,17 @@
       const strip = document.getElementById('ssThumbStrip');
       if (!grid) return;
 
+      // Clicking a thumbnail card opens Interactive Fill Explorer Mode (autoPlay = false) so the user savors the photo at their own pace!
       grid.innerHTML = astroGalleryItems.map((item, idx) => `
         <div class="gallery-thumb-card flex flex-col justify-between group">
-          <div onclick="openAstroSlideshow(${idx}, true)" class="relative aspect-[16/10] w-full overflow-hidden bg-slate-950 cursor-pointer">
+          <div onclick="openAstroSlideshow(${idx}, false)" class="relative aspect-[16/10] w-full overflow-hidden bg-slate-950 cursor-pointer" title="Click pentru a deschide imaginea în modul Fill Interactiv (Zoom &amp; Pan liber)">
             <img src="${item.thumb}" alt="${item.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/35 opacity-85"></div>
             <div class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-slate-950/85 border border-sky-400/40 text-[10px] font-mono-code font-bold text-sky-300">
               #${idx + 1} • ${item.badge}
             </div>
             <div class="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-emerald-500/20 border border-emerald-400/50 text-[10px] font-mono-code text-emerald-300 opacity-0 group-hover:opacity-100 transition">
-              🔬 100% Crop
+              🖐️ Zoom &amp; Pan
             </div>
             <div class="absolute bottom-2 left-2.5 right-2.5">
               <div class="text-xs sm:text-sm font-bold text-white leading-tight drop-shadow truncate">${item.title}</div>
@@ -2711,9 +2740,9 @@
           </div>
 
           <div class="p-2 sm:p-2.5 flex items-center justify-between gap-1.5 bg-slate-950/90 border-t border-white/10">
-            <button onclick="openAstroSlideshow(${idx}, true)" class="flex-1 px-2.5 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/35 border border-sky-400/40 text-sky-200 text-[11px] font-semibold flex items-center justify-center gap-1 cursor-pointer transition">
+            <button onclick="openAstroSlideshow(${idx}, false)" class="flex-1 px-2.5 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/35 border border-sky-400/40 text-sky-200 text-[11px] font-semibold flex items-center justify-center gap-1 cursor-pointer transition">
               <span>🔍</span>
-              <span>Slideshow 100%</span>
+              <span>Explorează (Fill &amp; Zoom)</span>
             </button>
             <a href="${item.orig}" download="${item.downloadName}" class="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-emerald-500/30 border border-white/20 hover:border-emerald-400/50 text-slate-100 hover:text-emerald-200 text-[11px] font-semibold flex items-center gap-1 transition shrink-0" title="Descarcă imaginea originală (${item.dims})">
               <span>⬇</span>
@@ -2732,20 +2761,43 @@
       }
     }
 
-    // Slideshow State & 60fps Animation Controller
+    // Slideshow & Interactive Fill Explorer State
     const ssState = {
       isOpen: false,
-      isPlaying: true,
+      isPlaying: false,       // False when user clicks a thumbnail (Interactive Explorer); True when clicking "Pornește Slideshow"
       currentIndex: 0,
-      activeLayer: 'A', // 'A' or 'B'
+      activeLayer: 'A',       // 'A' or 'B'
       cycleStartTs: 0,
       pausedElapsedMs: 0,
-      cycleDurationMs: 6000, // 6 seconds per image (Zoom + 100% Crop + Pan + Cross-Fade)
-      manualCropLock: false
+      cycleDurationMs: 14000, // 14 seconds per image in automated slideshow mode!
+      // Interactive Fill / Cover & Pan/Zoom state (Zero black borders!)
+      vw: 1280,
+      vh: 720,
+      baseW: 1280,
+      baseH: 1280,
+      userZoom: 1.15,         // 1.00 = exact Fill (0 black bars), 1.15 = immediate 2D pan freedom on both X & Y axes, up to 4.50x
+      panX: 0,
+      panY: 0,
+      isDragging: false,
+      dragStartX: 0,
+      dragStartY: 0,
+      dragStartPanX: 0,
+      dragStartPanY: 0,
+      pinchStartDist: 0,
+      pinchStartZoom: 1.15,
+      pinchMidX: 0,
+      pinchMidY: 0,
+      lastTapTs: 0
     };
 
+    // Seamless Gapless Pipe-Organ Space Soundtrack Engine (Web Audio API + <audio> fallback)
     const cosmicMusicEl = document.getElementById('cosmicMusicAudio');
     let isCosmicMusicPlaying = false;
+    let organAudioCtx = null;
+    let organBuffer = null;
+    let organSourceNode = null;
+    let organGainNode = null;
+    let organLoadingPromise = null;
 
     function updateCosmicMusicUI() {
       const deckIcon = document.getElementById('ambientDeckIcon');
@@ -2757,7 +2809,7 @@
         if (deckIcon) deckIcon.textContent = '🔊';
         if (deckText) deckText.textContent = 'Muzică Cosmică: ON';
         if (ssIcon) ssIcon.textContent = '🔊';
-        if (ssText) ssText.textContent = 'Muzică ON';
+        if (ssText) ssText.textContent = 'Orgă Cosmică ON';
       } else {
         if (deckIcon) deckIcon.textContent = '🎵';
         if (deckText) deckText.textContent = 'Muzică Cosmică: OFF';
@@ -2766,24 +2818,171 @@
       }
     }
 
-    function toggleCosmicMusic(forceState = null) {
-      if (!cosmicMusicEl) return;
-      const targetPlay = forceState !== null ? forceState : cosmicMusicEl.paused;
-      if (targetPlay) {
-        cosmicMusicEl.volume = 0.55;
-        cosmicMusicEl.play().then(() => {
-          isCosmicMusicPlaying = true;
-          updateCosmicMusicUI();
-        }).catch(() => {});
-      } else {
-        cosmicMusicEl.pause();
-        isCosmicMusicPlaying = false;
+    async function startGaplessOrganLoop() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) throw new Error('No WebAudio');
+        if (!organAudioCtx) {
+          organAudioCtx = new AudioCtx();
+        }
+        if (organAudioCtx.state === 'suspended') {
+          await organAudioCtx.resume();
+        }
+        if (!organBuffer) {
+          if (!organLoadingPromise) {
+            organLoadingPromise = fetch('audio/cosmic_ambient_loop.mp3')
+              .then(r => r.arrayBuffer())
+              .then(ab => organAudioCtx.decodeAudioData(ab));
+          }
+          organBuffer = await organLoadingPromise;
+        }
+        if (organSourceNode) {
+          try { organSourceNode.stop(); organSourceNode.disconnect(); } catch (e) {}
+        }
+        organGainNode = organAudioCtx.createGain();
+        organGainNode.gain.setValueAtTime(0.01, organAudioCtx.currentTime);
+        organGainNode.gain.linearRampToValueAtTime(0.62, organAudioCtx.currentTime + 1.2);
+        organGainNode.connect(organAudioCtx.destination);
+
+        organSourceNode = organAudioCtx.createBufferSource();
+        organSourceNode.buffer = organBuffer;
+        organSourceNode.loop = true;
+        // Trim 0.025s MP3 encoder frame padding at start/end for 100% sample-accurate seamless loop
+        const dur = organBuffer.duration;
+        if (dur > 2.0) {
+          organSourceNode.loopStart = 0.03;
+          organSourceNode.loopEnd = dur - 0.03;
+        }
+        organSourceNode.connect(organGainNode);
+        organSourceNode.start(0, 0.03);
+        isCosmicMusicPlaying = true;
         updateCosmicMusicUI();
+      } catch (err) {
+        // Fallback to HTML5 <audio loop>
+        if (cosmicMusicEl) {
+          cosmicMusicEl.volume = 0.6;
+          cosmicMusicEl.play().then(() => {
+            isCosmicMusicPlaying = true;
+            updateCosmicMusicUI();
+          }).catch(() => {});
+        }
       }
     }
 
-    function openAstroSlideshow(startIndex = 0, autoPlay = true) {
-      // Pause narrator voiceover if active so ambient cosmic soundtrack plays cleanly
+    function stopGaplessOrganLoop() {
+      if (organSourceNode) {
+        try {
+          organSourceNode.stop();
+          organSourceNode.disconnect();
+        } catch (e) {}
+        organSourceNode = null;
+      }
+      if (cosmicMusicEl && !cosmicMusicEl.paused) {
+        cosmicMusicEl.pause();
+      }
+      isCosmicMusicPlaying = false;
+      updateCosmicMusicUI();
+    }
+
+    function toggleCosmicMusic(forceState = null) {
+      const targetPlay = forceState !== null ? forceState : !isCosmicMusicPlaying;
+      if (targetPlay) {
+        if (!isCosmicMusicPlaying) startGaplessOrganLoop();
+      } else {
+        stopGaplessOrganLoop();
+      }
+    }
+
+    // Compute exact Fill / Cover base dimensions so the image ALWAYS fills 100% of #ssViewport with ZERO black borders
+    function updateViewportCoverMetrics(targetImgEl = null) {
+      const vp = document.getElementById('ssViewport');
+      if (!vp) return;
+      const vw = vp.clientWidth || window.innerWidth;
+      const vh = vp.clientHeight || (window.innerHeight - 110);
+      ssState.vw = vw;
+      ssState.vh = vh;
+
+      const item = astroGalleryItems[ssState.currentIndex] || astroGalleryItems[0];
+      const iw = item.w || 3000;
+      const ih = item.h || 3000;
+      // Cover scale ensures baseW >= vw AND baseH >= vh (zero black borders!)
+      const scaleCover = Math.max(vw / iw, vh / ih);
+      ssState.baseW = Math.ceil(iw * scaleCover) + 2;
+      ssState.baseH = Math.ceil(ih * scaleCover) + 2;
+
+      const imgA = document.getElementById('ssImgA');
+      const imgB = document.getElementById('ssImgB');
+      [imgA, imgB].forEach(img => {
+        if (img && (!targetImgEl || img === targetImgEl)) {
+          img.style.width = `${ssState.baseW}px`;
+          img.style.height = `${ssState.baseH}px`;
+        }
+      });
+    }
+
+    function clampPanOffsets(zoom, panX, panY) {
+      const curW = ssState.baseW * zoom;
+      const curH = ssState.baseH * zoom;
+      const maxPanX = Math.max(0, (curW - ssState.vw) / 2);
+      const maxPanY = Math.max(0, (curH - ssState.vh) / 2);
+      return {
+        panX: Math.max(-maxPanX, Math.min(maxPanX, panX)),
+        panY: Math.max(-maxPanY, Math.min(maxPanY, panY)),
+        maxPanX,
+        maxPanY,
+        curW,
+        curH
+      };
+    }
+
+    function setManualZoomAndPan(newZoom, newPanX, newPanY) {
+      const z = Math.max(1.0, Math.min(4.5, newZoom));
+      const clamped = clampPanOffsets(z, newPanX, newPanY);
+      ssState.userZoom = z;
+      ssState.panX = clamped.panX;
+      ssState.panY = clamped.panY;
+
+      const btnTxt = document.getElementById('ssManualCropText');
+      if (btnTxt) {
+        btnTxt.textContent = z >= 2.2 ? 'Fill 1×' : 'Crop 100%';
+      }
+    }
+
+    function zoomAroundViewportPoint(newZoom, clientX, clientY) {
+      const vp = document.getElementById('ssViewport');
+      if (!vp) return;
+      // If slideshow was auto-playing, switch smoothly to manual explorer mode so user controls it
+      if (ssState.isPlaying) {
+        pauseSlideshowForManualExplore();
+      }
+      const rect = vp.getBoundingClientRect();
+      const ox = clientX - (rect.left + rect.width / 2);
+      const oy = clientY - (rect.top + rect.height / 2);
+      const oldZoom = ssState.userZoom;
+      const targetZoom = Math.max(1.0, Math.min(4.5, newZoom));
+      const ratio = targetZoom / oldZoom;
+
+      const nextPanX = ox - (ox - ssState.panX) * ratio;
+      const nextPanY = oy - (oy - ssState.panY) * ratio;
+      setManualZoomAndPan(targetZoom, nextPanX, nextPanY);
+    }
+
+    function stepUserZoom(delta) {
+      const vp = document.getElementById('ssViewport');
+      if (!vp) return;
+      const rect = vp.getBoundingClientRect();
+      zoomAroundViewportPoint(ssState.userZoom + delta, rect.left + rect.width / 2, rect.top + rect.height / 2);
+    }
+
+    function pauseSlideshowForManualExplore() {
+      if (!ssState.isPlaying) return;
+      ssState.isPlaying = false;
+      ssState.pausedElapsedMs = performance.now() - ssState.cycleStartTs;
+      updateSlideshowPlayButtonUI();
+    }
+
+    function openAstroSlideshow(startIndex = 0, autoPlay = false) {
+      // Pause narrator voiceover if active so ambient pipe-organ space soundtrack plays cleanly
       if (audioEl && !audioEl.paused) {
         audioEl.pause();
         isPlayingNarration = false;
@@ -2793,14 +2992,13 @@
 
       ssState.isOpen = true;
       ssState.isPlaying = autoPlay;
-      ssState.manualCropLock = false;
       ssState.activeLayer = 'A';
 
       const modal = document.getElementById('astroSlideshowModal');
       modal.classList.add('open');
       modal.setAttribute('aria-hidden', 'false');
 
-      // Start ambient cosmic music loop automatically when opening slideshow
+      // Start seamless pipe-organ space soundtrack
       toggleCosmicMusic(true);
       updateSlideshowPlayButtonUI();
       loadSlideshowSlide(startIndex, true);
@@ -2808,6 +3006,7 @@
 
     function closeAstroSlideshow() {
       ssState.isOpen = false;
+      ssState.isDragging = false;
       const modal = document.getElementById('astroSlideshowModal');
       if (modal) {
         modal.classList.remove('open');
@@ -2818,21 +3017,23 @@
     function updateSlideshowPlayButtonUI() {
       const icon = document.getElementById('ssPlayIcon');
       const txt = document.getElementById('ssPlayText');
+      const btn = document.getElementById('ssBtnPlayPause');
       if (ssState.isPlaying) {
         if (icon) icon.textContent = '⏸';
-        if (txt) txt.textContent = 'Auto (6s)';
+        if (txt) txt.textContent = 'Pauză (14s)';
+        if (btn) btn.className = 'px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-500/25 hover:bg-amber-500/40 border border-amber-400/60 text-amber-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition';
       } else {
         if (icon) icon.textContent = '▶';
-        if (txt) txt.textContent = 'Pauză';
+        if (txt) txt.textContent = 'Slideshow (14s)';
+        if (btn) btn.className = 'px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-500/25 hover:bg-emerald-500/35 border border-emerald-400/50 text-emerald-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition';
       }
     }
 
     function toggleSlideshowPlay() {
       ssState.isPlaying = !ssState.isPlaying;
       if (ssState.isPlaying) {
-        ssState.manualCropLock = false;
-        document.getElementById('ssManualCropText').textContent = 'Crop 100%';
-        ssState.cycleStartTs = performance.now() - ssState.pausedElapsedMs;
+        ssState.cycleStartTs = performance.now();
+        ssState.pausedElapsedMs = 0;
       } else {
         ssState.pausedElapsedMs = performance.now() - ssState.cycleStartTs;
       }
@@ -2840,36 +3041,36 @@
     }
 
     function toggleManual100Crop() {
-      ssState.manualCropLock = !ssState.manualCropLock;
-      const btnTxt = document.getElementById('ssManualCropText');
-      if (ssState.manualCropLock) {
-        // Jump straight to 100% crop phase (3.2s mark in cycle)
-        ssState.cycleStartTs = performance.now() - 3200;
-        ssState.pausedElapsedMs = 3200;
-        if (btnTxt) btnTxt.textContent = 'Ansamblu 1×';
+      const item = astroGalleryItems[ssState.currentIndex] || astroGalleryItems[0];
+      if (ssState.isPlaying) {
+        pauseSlideshowForManualExplore();
+      }
+      if (ssState.userZoom < 2.2) {
+        // Zoom into 100% crop focused on item's primary nebula coordinates (startX, startY)
+        const targetZ = item.cropZoom || 2.85;
+        const curW = ssState.baseW * targetZ;
+        const curH = ssState.baseH * targetZ;
+        const targetPanX = ((50.0 - item.startX) / 100.0) * curW;
+        const targetPanY = ((50.0 - item.startY) / 100.0) * curH;
+        setManualZoomAndPan(targetZ, targetPanX, targetPanY);
       } else {
-        // Jump back to full-frame overview (0.4s mark)
-        ssState.cycleStartTs = performance.now() - 400;
-        ssState.pausedElapsedMs = 400;
-        if (btnTxt) btnTxt.textContent = 'Crop 100%';
+        // Reset back to Fill mode (1.15x so 2D drag on all axes remains active with zero black bars)
+        setManualZoomAndPan(1.15, 0, 0);
       }
     }
 
     function selectSlideshowImage(index) {
-      ssState.manualCropLock = false;
-      const btnTxt = document.getElementById('ssManualCropText');
-      if (btnTxt) btnTxt.textContent = 'Crop 100%';
       loadSlideshowSlide(index, false);
     }
 
     function nextSlideshowImage() {
       const nextIdx = (ssState.currentIndex + 1) % astroGalleryItems.length;
-      selectSlideshowImage(nextIdx);
+      loadSlideshowSlide(nextIdx, false);
     }
 
     function prevSlideshowImage() {
       const prevIdx = (ssState.currentIndex - 1 + astroGalleryItems.length) % astroGalleryItems.length;
-      selectSlideshowImage(prevIdx);
+      loadSlideshowSlide(prevIdx, false);
     }
 
     function loadSlideshowSlide(index, isInitial = false) {
@@ -2878,35 +3079,45 @@
       ssState.pausedElapsedMs = 0;
 
       const item = astroGalleryItems[index];
+      updateViewportCoverMetrics();
+
+      // In Interactive Explorer Mode, start at 1.15x Fill centered on the nebula so user can immediately pan on BOTH X and Y axes with zero black borders!
+      const initZoom = ssState.isPlaying ? 1.04 : 1.15;
+      const curW = ssState.baseW * initZoom;
+      const curH = ssState.baseH * initZoom;
+      const initPanX = ((50.0 - item.startX) / 100.0) * curW * 0.35;
+      const initPanY = ((50.0 - item.startY) / 100.0) * curH * 0.35;
+      setManualZoomAndPan(initZoom, initPanX, initPanY);
+
       const layerA = document.getElementById('ssLayerA');
       const layerB = document.getElementById('ssLayerB');
       const imgA = document.getElementById('ssImgA');
       const imgB = document.getElementById('ssImgB');
+      const initTransform = `translate3d(${ssState.panX.toFixed(1)}px, ${ssState.panY.toFixed(1)}px, 0) scale(${ssState.userZoom.toFixed(3)})`;
 
       if (isInitial) {
         ssState.activeLayer = 'A';
         imgA.src = item.hd;
-        imgA.style.transform = 'scale(1) translate3d(0%, 0%, 0)';
+        imgA.style.transform = initTransform;
         layerA.className = 'ss-stage-layer active-layer';
         layerB.className = 'ss-stage-layer fading-layer';
       } else {
-        // Cross-fade between Layer A and Layer B
         if (ssState.activeLayer === 'A') {
           ssState.activeLayer = 'B';
           imgB.src = item.hd;
-          imgB.style.transform = 'scale(1) translate3d(0%, 0%, 0)';
+          imgB.style.transform = initTransform;
           layerB.className = 'ss-stage-layer active-layer';
           layerA.className = 'ss-stage-layer fading-layer';
         } else {
           ssState.activeLayer = 'A';
           imgA.src = item.hd;
-          imgA.style.transform = 'scale(1) translate3d(0%, 0%, 0)';
+          imgA.style.transform = initTransform;
           layerA.className = 'ss-stage-layer active-layer';
           layerB.className = 'ss-stage-layer fading-layer';
         }
       }
 
-      // Preload next image HD in background for zero-lag transition
+      // Preload next image HD in background
       const nextItem = astroGalleryItems[(index + 1) % astroGalleryItems.length];
       const preloadImg = new Image();
       preloadImg.src = nextItem.hd;
@@ -2938,6 +3149,130 @@
       });
     }
 
+    // Interactive Desktop Mouse & Mobile Touch (1-Finger Pan on all axes + 2-Finger Pinch-to-Zoom + Double-Tap)
+    function initSlideshowTouchAndMouseControls() {
+      const vp = document.getElementById('ssViewport');
+      if (!vp) return;
+
+      // 1. Desktop Mouse Wheel Zoom
+      vp.addEventListener('wheel', (e) => {
+        if (!ssState.isOpen) return;
+        e.preventDefault();
+        const zoomDelta = -e.deltaY * 0.0022;
+        zoomAroundViewportPoint(ssState.userZoom * (1 + zoomDelta), e.clientX, e.clientY);
+      }, { passive: false });
+
+      // 2. Desktop Mouse Drag (2D Pan on all axes)
+      vp.addEventListener('mousedown', (e) => {
+        if (!ssState.isOpen || e.button !== 0) return;
+        if (e.target.closest('button')) return;
+        pauseSlideshowForManualExplore();
+        ssState.isDragging = true;
+        ssState.dragStartX = e.clientX;
+        ssState.dragStartY = e.clientY;
+        ssState.dragStartPanX = ssState.panX;
+        ssState.dragStartPanY = ssState.panY;
+        vp.classList.add('dragging');
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!ssState.isOpen || !ssState.isDragging) return;
+        const dx = e.clientX - ssState.dragStartX;
+        const dy = e.clientY - ssState.dragStartY;
+        setManualZoomAndPan(ssState.userZoom, ssState.dragStartPanX + dx, ssState.dragStartPanY + dy);
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (ssState.isDragging) {
+          ssState.isDragging = false;
+          vp.classList.remove('dragging');
+        }
+      });
+
+      // 3. Desktop Double-Click to Toggle 100% Crop at Clicked Point
+      vp.addEventListener('dblclick', (e) => {
+        if (!ssState.isOpen || e.target.closest('button')) return;
+        const item = astroGalleryItems[ssState.currentIndex] || astroGalleryItems[0];
+        const targetZ = ssState.userZoom < 2.1 ? (item.cropZoom || 2.85) : 1.15;
+        zoomAroundViewportPoint(targetZ, e.clientX, e.clientY);
+      });
+
+      // 4. Mobile Touch: 1-Finger 2D Pan + 2-Finger Pinch-to-Zoom + Double-Tap
+      vp.addEventListener('touchstart', (e) => {
+        if (!ssState.isOpen) return;
+        if (e.target.closest('button')) return;
+        pauseSlideshowForManualExplore();
+
+        if (e.touches.length === 1) {
+          const now = performance.now();
+          const t = e.touches[0];
+          if (now - ssState.lastTapTs < 280) {
+            // Double-tap on mobile toggles 100% Crop at tapped coordinates!
+            const item = astroGalleryItems[ssState.currentIndex] || astroGalleryItems[0];
+            const targetZ = ssState.userZoom < 2.1 ? (item.cropZoom || 2.85) : 1.15;
+            zoomAroundViewportPoint(targetZ, t.clientX, t.clientY);
+            ssState.lastTapTs = 0;
+            return;
+          }
+          ssState.lastTapTs = now;
+
+          ssState.isDragging = true;
+          ssState.dragStartX = t.clientX;
+          ssState.dragStartY = t.clientY;
+          ssState.dragStartPanX = ssState.panX;
+          ssState.dragStartPanY = ssState.panY;
+        } else if (e.touches.length === 2) {
+          ssState.isDragging = false;
+          const t1 = e.touches[0];
+          const t2 = e.touches[1];
+          ssState.pinchStartDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+          ssState.pinchStartZoom = ssState.userZoom;
+          ssState.pinchMidX = (t1.clientX + t2.clientX) / 2;
+          ssState.pinchMidY = (t1.clientY + t2.clientY) / 2;
+        }
+      }, { passive: true });
+
+      vp.addEventListener('touchmove', (e) => {
+        if (!ssState.isOpen) return;
+        if (e.touches.length === 1 && ssState.isDragging) {
+          e.preventDefault();
+          const t = e.touches[0];
+          const dx = t.clientX - ssState.dragStartX;
+          const dy = t.clientY - ssState.dragStartY;
+          setManualZoomAndPan(ssState.userZoom, ssState.dragStartPanX + dx, ssState.dragStartPanY + dy);
+        } else if (e.touches.length === 2 && ssState.pinchStartDist > 10) {
+          e.preventDefault();
+          const t1 = e.touches[0];
+          const t2 = e.touches[1];
+          const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+          const scaleFactor = dist / ssState.pinchStartDist;
+          const midX = (t1.clientX + t2.clientX) / 2;
+          const midY = (t1.clientY + t2.clientY) / 2;
+          zoomAroundViewportPoint(ssState.pinchStartZoom * scaleFactor, midX, midY);
+        }
+      }, { passive: false });
+
+      vp.addEventListener('touchend', (e) => {
+        if (e.touches.length === 0) {
+          ssState.isDragging = false;
+        } else if (e.touches.length === 1) {
+          const t = e.touches[0];
+          ssState.isDragging = true;
+          ssState.dragStartX = t.clientX;
+          ssState.dragStartY = t.clientY;
+          ssState.dragStartPanX = ssState.panX;
+          ssState.dragStartPanY = ssState.panY;
+        }
+      });
+
+      window.addEventListener('resize', () => {
+        if (ssState.isOpen) {
+          updateViewportCoverMetrics();
+          setManualZoomAndPan(ssState.userZoom, ssState.panX, ssState.panY);
+        }
+      });
+    }
+
     function easeInOutCubic(t) {
       return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     }
@@ -2946,66 +3281,79 @@
       const item = astroGalleryItems[ssState.currentIndex];
       if (!item) return;
 
-      const elapsed = ssState.isPlaying
-        ? (ts - ssState.cycleStartTs)
-        : ssState.pausedElapsedMs;
-
-      const dur = ssState.cycleDurationMs; // 6000 ms
-      const progressPct = Math.min(100, Math.max(0, (elapsed / dur) * 100));
-      const progBar = document.getElementById('ssCycleProgressBar');
-      if (progBar) progBar.style.width = `${progressPct.toFixed(1)}%`;
-
-      // Advance to next image when cycle completes
-      if (ssState.isPlaying && !ssState.manualCropLock && elapsed >= dur) {
-        nextSlideshowImage();
-        return;
-      }
-
-      // Compute Multi-Stage Zoom, 100% Crop & Slow Pan coordinates:
-      // Stage 1 (0.0s -> 1.2s): Full-frame overview (scale 1.00 -> 1.14, center 50%, 50%)
-      // Stage 2 (1.2s -> 2.5s): Smooth Zoom into 100% Crop (scale 1.14 -> item.cropZoom) to (startX, startY)
-      // Stage 3 (2.5s -> 5.4s): Slow Pan at 100% Crop from (startX, startY) -> (endX, endY)
-      // Stage 4 (5.4s -> 6.0s): Hold / Gentle glide into cross-fade
-      let scale = 1.0;
-      let fx = 50.0;
-      let fy = 50.0;
-      let phaseText = '🌌 CADRU COMPLET — VEDERE DE ANSAMBLU';
-      let mobilePhase = '🌌 CADRU COMPLET (1.0×)';
+      let phaseText = '';
+      let mobilePhase = '';
       let isCropActive = false;
 
-      if (ssState.manualCropLock) {
-        // Manual 100% crop mode with slow gentle pan oscillation
-        const osc = 0.5 + 0.5 * Math.sin(ts * 0.0008);
-        scale = item.cropZoom;
-        fx = item.startX + (item.endX - item.startX) * osc;
-        fy = item.startY + (item.endY - item.startY) * osc;
-        phaseText = '🔬 CROP 100% ACTIV — DETALII LA NIVEL DE PIXEL';
-        mobilePhase = '🔬 CROP 100% ACTIV';
-        isCropActive = true;
-      } else if (elapsed < 1200) {
-        const p = Math.max(0, elapsed / 1200);
-        scale = 1.0 + 0.14 * easeInOutCubic(p);
-        fx = 50.0;
-        fy = 50.0;
-        phaseText = '🌌 CADRU COMPLET — VEDERE DE ANSAMBLU';
-        mobilePhase = '🌌 CADRU COMPLET';
-        isCropActive = false;
-      } else if (elapsed < 2500) {
-        const p = easeInOutCubic((elapsed - 1200) / 1300);
-        scale = 1.14 + (item.cropZoom - 1.14) * p;
-        fx = 50.0 + (item.startX - 50.0) * p;
-        fy = 50.0 + (item.startY - 50.0) * p;
-        phaseText = '🔍 ZOOM SPRE CROP 100% — FOCALIZARE PE NUCLEU';
-        mobilePhase = '🔍 ZOOM SPRE CROP 100%';
-        isCropActive = p > 0.55;
+      if (ssState.isPlaying) {
+        // AUTOMATED 14-SECOND SLIDESHOW MODE (Slow, relaxing Zoom + 100% Crop + Pan)
+        const elapsed = ts - ssState.cycleStartTs;
+        const dur = ssState.cycleDurationMs; // 14000 ms (14 seconds per image!)
+        const progressPct = Math.min(100, Math.max(0, (elapsed / dur) * 100));
+        const progBar = document.getElementById('ssCycleProgressBar');
+        if (progBar) progBar.style.width = `${progressPct.toFixed(1)}%`;
+
+        if (elapsed >= dur) {
+          nextSlideshowImage();
+          return;
+        }
+
+        // 14-Second Timeline Breakdown:
+        // Stage 1 (0.0s -> 2.6s): Full-Screen Fill Overview (zoom 1.04 -> 1.18, gentle drift toward center)
+        // Stage 2 (2.6s -> 5.6s): Unhurried Zoom into 100% Crop (zoom 1.18 -> item.cropZoom) at (startX, startY)
+        // Stage 3 (5.6s -> 12.6s): 7 Full Seconds of Slow, Majestic Panning at 100% Crop from (startX, startY) -> (endX, endY)
+        // Stage 4 (12.6s -> 14.0s): Contemplative Hold before Cross-Fade to next nebula
+        let scale = 1.04;
+        let fx = 50.0;
+        let fy = 50.0;
+
+        if (elapsed < 2600) {
+          const p = Math.max(0, elapsed / 2600);
+          scale = 1.04 + 0.14 * easeInOutCubic(p);
+          fx = 50.0 + (item.startX - 50.0) * 0.25 * p;
+          fy = 50.0 + (item.startY - 50.0) * 0.25 * p;
+          phaseText = '🌌 SLIDESHOW (14s) • VEDERE DE ANSAMBLU (FILL)';
+          mobilePhase = '🌌 ANSAMBLU FILL';
+          isCropActive = false;
+        } else if (elapsed < 5600) {
+          const p = easeInOutCubic((elapsed - 2600) / 3000);
+          scale = 1.18 + (item.cropZoom - 1.18) * p;
+          const sx0 = 50.0 + (item.startX - 50.0) * 0.25;
+          const sy0 = 50.0 + (item.startY - 50.0) * 0.25;
+          fx = sx0 + (item.startX - sx0) * p;
+          fy = sy0 + (item.startY - sy0) * p;
+          phaseText = '🔍 APROPIERE LINĂ SPRE CROP 100% — FOCALIZARE DETALII';
+          mobilePhase = '🔍 ZOOM SPRE CROP 100%';
+          isCropActive = p > 0.55;
+        } else {
+          const p = easeInOutCubic(Math.min(1, (elapsed - 5600) / 7000));
+          scale = item.cropZoom;
+          fx = item.startX + (item.endX - item.startX) * p;
+          fy = item.startY + (item.endY - item.startY) * p;
+          phaseText = '🔬 CROP 100% & DERULARE LENTĂ — EXPLORARE LA NIVEL DE PIXEL';
+          mobilePhase = '🔬 DERULARE CROP 100%';
+          isCropActive = true;
+        }
+
+        const curW = ssState.baseW * scale;
+        const curH = ssState.baseH * scale;
+        const rawPanX = ((50.0 - fx) / 100.0) * curW;
+        const rawPanY = ((50.0 - fy) / 100.0) * curH;
+        const clamped = clampPanOffsets(scale, rawPanX, rawPanY);
+        ssState.userZoom = scale;
+        ssState.panX = clamped.panX;
+        ssState.panY = clamped.panY;
       } else {
-        const p = easeInOutCubic(Math.min(1, (elapsed - 2500) / 3300));
-        scale = item.cropZoom;
-        fx = item.startX + (item.endX - item.startX) * p;
-        fy = item.startY + (item.endY - item.startY) * p;
-        phaseText = '🔬 CROP 100% & DERULARE — EXPLORARE DETALII FINE';
-        mobilePhase = '🔬 DERULARE LA CROP 100%';
-        isCropActive = true;
+        // INTERACTIVE FILL EXPLORER MODE (User controls Zoom & 2D Pan at their own pace!)
+        const progBar = document.getElementById('ssCycleProgressBar');
+        if (progBar) progBar.style.width = '0%';
+        isCropActive = ssState.userZoom >= 2.15;
+        phaseText = isCropActive
+          ? `🔬 EXPLORARE CROP 100% (${ssState.userZoom.toFixed(2)}×) • TRAGE ÎN ORICE DIRECȚIE`
+          : `🖐️ MOD INTERACTIV FILL (${ssState.userZoom.toFixed(2)}×) • TRAGE (PAN) & ZOOM (ROTIȚĂ / PINCH)`;
+        mobilePhase = isCropActive
+          ? `🔬 CROP (${ssState.userZoom.toFixed(1)}×) • TRAGE / PINCH`
+          : `🖐️ TRAGE & PINCH ZOOM (${ssState.userZoom.toFixed(1)}×)`;
       }
 
       const activeImg = ssState.activeLayer === 'A'
@@ -3013,12 +3361,10 @@
         : document.getElementById('ssImgB');
 
       if (activeImg) {
-        const tx = 50.0 - fx;
-        const ty = 50.0 - fy;
-        activeImg.style.transform = `scale(${scale.toFixed(3)}) translate3d(${tx.toFixed(2)}%, ${ty.toFixed(2)}%, 0)`;
+        activeImg.style.transform = `translate3d(${ssState.panX.toFixed(1)}px, ${ssState.panY.toFixed(1)}px, 0) scale(${ssState.userZoom.toFixed(4)})`;
       }
 
-      // Update HUD Phase Badge & Optical Reticle
+      // Update HUD Phase Badge & Corner Brackets
       const badge = document.getElementById('ssCropStatusBadge');
       const pTextEl = document.getElementById('ssPhaseText');
       const mPhaseEl = document.getElementById('ssMobilePhaseLabel');
@@ -3028,20 +3374,28 @@
       if (badge) badge.classList.toggle('crop-active', isCropActive);
       if (reticle) reticle.style.opacity = isCropActive ? '1' : '0';
 
-      // Update Live Mini-Map Navigator Box
+      // Update Live Mini-Map Navigator Box from current (userZoom, panX, panY)
       const mmBox = document.getElementById('ssMiniMapBox');
       const zLbl = document.getElementById('ssZoomFactorLabel');
+      const curW = Math.max(1, ssState.baseW * ssState.userZoom);
+      const curH = Math.max(1, ssState.baseH * ssState.userZoom);
+      const fxNow = 50.0 - (ssState.panX / curW) * 100.0;
+      const fyNow = 50.0 - (ssState.panY / curH) * 100.0;
+
       if (mmBox) {
-        const boxSize = Math.max(24, Math.min(96, 100 / scale));
-        const left = Math.max(2, Math.min(98 - boxSize, fx - boxSize / 2));
-        const top = Math.max(2, Math.min(98 - boxSize, fy - boxSize / 2));
-        mmBox.style.width = `${boxSize.toFixed(1)}%`;
-        mmBox.style.height = `${boxSize.toFixed(1)}%`;
+        const boxW = Math.max(18, Math.min(96, (ssState.vw / curW) * 100));
+        const boxH = Math.max(18, Math.min(96, (ssState.vh / curH) * 100));
+        const left = Math.max(2, Math.min(98 - boxW, fxNow - boxW / 2));
+        const top = Math.max(2, Math.min(98 - boxH, fyNow - boxH / 2));
+        mmBox.style.width = `${boxW.toFixed(1)}%`;
+        mmBox.style.height = `${boxH.toFixed(1)}%`;
         mmBox.style.left = `${left.toFixed(1)}%`;
         mmBox.style.top = `${top.toFixed(1)}%`;
       }
       if (zLbl) {
-        zLbl.textContent = isCropActive ? `CROP 100% (${scale.toFixed(1)}×)` : `ZOOM ${scale.toFixed(2)}×`;
+        zLbl.textContent = isCropActive
+          ? `CROP 100% (${ssState.userZoom.toFixed(1)}×)`
+          : `FILL ${ssState.userZoom.toFixed(2)}×`;
       }
     }
 
@@ -3049,6 +3403,7 @@
     resizeBg();
     initDots();
     renderAstroGalleryGrid();
+    initSlideshowTouchAndMouseControls();
     init3DTiltAndLiquidCaustics();
     updateCoolingSim(-10);
     updateSlide7Seeing(3.0);
