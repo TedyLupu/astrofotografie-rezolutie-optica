@@ -494,6 +494,108 @@
     input[type="range"]::-webkit-slider-thumb:hover {
       transform: scale(1.22);
     }
+
+    /* ===================================================================== */
+    /* SLIDE 9 GALLERY & CINEMATIC 100% CROP SLIDESHOW ENGINE                */
+    /* ===================================================================== */
+    @media (min-width: 1024px) {
+      .slide-section[data-slide="8"] {
+        justify-content: flex-start;
+        padding-top: 0.75rem;
+        padding-bottom: 1rem;
+      }
+    }
+
+    .gallery-thumb-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1rem;
+      background: linear-gradient(155deg, rgba(15, 23, 42, 0.9) 0%, rgba(2, 6, 23, 0.96) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 12px 26px -8px rgba(0, 0, 0, 0.7);
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.28s ease, box-shadow 0.28s ease;
+    }
+
+    @media (min-width: 1024px) {
+      .gallery-thumb-card:hover {
+        transform: translateY(-4px) scale(1.012);
+        border-color: rgba(56, 189, 248, 0.65);
+        box-shadow: 0 20px 38px -10px rgba(56, 189, 248, 0.28), 0 0 22px rgba(129, 140, 248, 0.18);
+      }
+    }
+
+    /* Fullscreen Slideshow Modal */
+    #astroSlideshowModal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: radial-gradient(circle at 50% 45%, #070d1f 0%, #02040a 75%, #000000 100%);
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    #astroSlideshowModal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Dual Cross-Fade Stage Layers */
+    .ss-stage-layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity;
+    }
+
+    .ss-stage-layer.active-layer {
+      opacity: 1;
+      z-index: 2;
+    }
+
+    .ss-stage-layer.fading-layer {
+      opacity: 0;
+      z-index: 1;
+    }
+
+    .ss-stage-img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      transform-origin: 50% 50%;
+      will-change: transform;
+      user-select: none;
+      -webkit-user-drag: none;
+      filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.9));
+    }
+
+    /* Reticle overlay when 100% Crop is active */
+    .crop-reticle-badge {
+      transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .crop-reticle-badge.crop-active {
+      background: rgba(16, 185, 129, 0.22);
+      border-color: rgba(52, 211, 153, 0.85);
+      box-shadow: 0 0 22px rgba(52, 211, 153, 0.35);
+    }
+
+    /* Thumbnail strip inside modal */
+    #ssThumbStrip::-webkit-scrollbar {
+      height: 4px;
+    }
+    #ssThumbStrip::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.4);
+      border-radius: 999px;
+    }
   </style>
 </head>
 <body class="relative">
@@ -1417,16 +1519,24 @@
             <strong class="text-sky-300">Galaxia Vâltoarea (M51 — 11' × 7'):</strong> La 1.36"/px, nucleul și brațele spirale ocupă ~500 × 310 pixeli, oferind detalii spectaculoase în benzile de praf, în timp ce cadrul pătrat de 68.2' lasă spațiu generos în jurul galaxiei.
           </div>
 
-          <!-- Final Summary Scorecard -->
-          <div class="stagger-4 glass-panel tilt-3d rounded-2xl p-4 border border-emerald-400/50 space-y-2" data-narrator-step="2">
-            <div class="text-xs font-bold text-emerald-300 uppercase tracking-wider">🏆 Rezumatul Configurației Tale Optice</div>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs font-mono-code">
-              <div class="p-2 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Focală ef.:</span> <strong class="text-white">570 mm</strong></div>
-              <div class="p-2 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Raport f/:</span> <strong class="text-sky-300">f/3.80</strong></div>
-              <div class="p-2 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Rezoluție:</span> <strong class="text-emerald-300">1.361"/px</strong></div>
-              <div class="p-2 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Câmp FOV:</span> <strong class="text-indigo-200">1.14° × 1.14°</strong></div>
-              <div class="p-2 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Disc Airy:</span> <strong class="text-amber-300">5.02 µm</strong></div>
-              <div class="p-2 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Seeing 3":</span> <strong class="text-emerald-300">2.2 px (Optim)</strong></div>
+          <!-- Final Summary Scorecard + Epic Invitation to Slide 9 Gallery -->
+          <div class="stagger-4 glass-panel tilt-3d rounded-2xl p-3.5 border border-emerald-400/50 space-y-2.5" data-narrator-step="2">
+            <div class="text-xs font-bold text-emerald-300 uppercase tracking-wider">🏆 Rezumatul Configurației Optice &amp; Invitație în Galerie</div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5 text-xs font-mono-code">
+              <div class="p-1.5 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Focală ef.:</span> <strong class="text-white">570 mm</strong></div>
+              <div class="p-1.5 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Raport f/:</span> <strong class="text-sky-300">f/3.80</strong></div>
+              <div class="p-1.5 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Rezoluție:</span> <strong class="text-emerald-300">1.361"/px</strong></div>
+              <div class="p-1.5 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Câmp FOV:</span> <strong class="text-indigo-200">1.14° × 1.14°</strong></div>
+              <div class="p-1.5 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Disc Airy:</span> <strong class="text-amber-300">5.02 µm</strong></div>
+              <div class="p-1.5 rounded-xl bg-slate-950/70 border border-white/10"><span class="text-slate-300">Seeing 3":</span> <strong class="text-emerald-300">2.2 px (Optim)</strong></div>
+            </div>
+            <div class="pt-1 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 border-t border-white/10">
+              <p class="text-[11px] sm:text-xs text-amber-200/95 italic leading-snug">
+                „Descoperă lumina ascunsă în întunericul etern al universului, surprinsă de ochiul digital al telescopului!”
+              </p>
+              <button onclick="goToSlide(8)" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-500 hover:from-indigo-400 hover:to-emerald-400 text-white text-xs font-bold shadow-lg shadow-sky-500/30 border border-white/30 shrink-0 cursor-pointer transition">
+                🌌 Descoperă Galeria Foto (Slide 9) →
+              </button>
             </div>
           </div>
         </div>
@@ -1458,7 +1568,164 @@
       </div>
     </section>
 
+    <!-- ===================================================================== -->
+    <!-- SLIDE 9: GALERIA FOTO ASTROFOTOGRAFIE & SLIDESHOW CINEMATIC 100% CROP -->
+    <!-- ===================================================================== -->
+    <section class="slide-section" data-slide="8">
+      <div class="max-w-7xl mx-auto w-full space-y-3 pb-2">
+        <!-- Gallery Header & Controls -->
+        <div class="stagger-1 glass-panel rounded-2xl sm:rounded-3xl p-3 sm:p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3 border border-sky-400/35" data-narrator-step="0">
+          <div class="space-y-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-indigo-500/25 border border-indigo-300/40 text-indigo-200 text-[11px] font-semibold">
+                ETAPA 8 • EXPOZIȚIE ASTROFOTOGRAFICĂ PERSONALĂ
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[11px] font-mono-code font-semibold">
+                11 Capturi Deep-Sky • &gt;310 Ore Integrare
+              </span>
+            </div>
+            <h2 class="text-xl sm:text-2xl xl:text-3xl font-extrabold text-white tracking-tight">
+              Lumina Ascunsă în <span class="bg-gradient-to-r from-sky-300 via-indigo-300 to-emerald-300 bg-clip-text text-transparent">Întunericul Etern</span>
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 leading-snug">
+              Fotoni călătoriți mii de ani-lumină, surprinși de ochiul digital al telescopului. Vizualizează în mod <strong>Thumbnail</strong>, descarcă fiecare imagine la rezoluție originală sau lansează <strong>Proiecția Slideshow cu Zoom &amp; Derulare la 100% Crop</strong>.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 shrink-0" data-narrator-step="1">
+            <button id="btnStartSlideshowMain" onclick="openAstroSlideshow(0, true)" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 via-indigo-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-white text-xs sm:text-sm font-bold shadow-lg shadow-sky-500/30 border border-white/30 flex items-center gap-2 cursor-pointer transition glow-badge">
+              <span>🎬</span>
+              <span>Pornește Slideshow (Zoom &amp; 100% Crop)</span>
+            </button>
+
+            <button id="btnToggleAmbientDeck" onclick="toggleCosmicMusic()" class="px-3.5 py-2.5 rounded-xl glass-card hover:bg-white/15 text-xs sm:text-sm font-semibold text-sky-200 border border-sky-400/40 flex items-center gap-1.5 cursor-pointer transition">
+              <span id="ambientDeckIcon">🎵</span>
+              <span id="ambientDeckText">Muzică Cosmică: OFF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Responsive Thumbnail Grid (11 Astrophotographs with Direct Download & Slideshow Trigger) -->
+        <div id="astroGalleryGrid" class="stagger-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3">
+          <!-- Populated dynamically by renderAstroGalleryGrid() -->
+        </div>
+      </div>
+    </section>
+
   </main>
+
+  <!-- ===================================================================== -->
+  <!-- FULLSCREEN PREMIUM SLIDESHOW MODAL (100% CROP, PAN & CROSS-FADE)      -->
+  <!-- ===================================================================== -->
+  <div id="astroSlideshowModal" aria-hidden="true">
+    <!-- Top HUD Bar -->
+    <div class="relative z-20 px-3 sm:px-6 py-2.5 bg-slate-950/85 border-b border-white/15 backdrop-blur-xl flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <span id="ssCounterBadge" class="px-2.5 py-1 rounded-lg bg-sky-500/25 border border-sky-400/50 font-mono-code text-xs font-bold text-sky-300 shrink-0">
+          1 / 11
+        </span>
+        <div class="min-w-0">
+          <h3 id="ssTitle" class="text-sm sm:text-base font-bold text-white truncate">
+            Nebuloasa Semiluna (NGC 6888)
+          </h3>
+          <div id="ssMetaSubtitle" class="text-[11px] sm:text-xs font-mono-code text-slate-300 truncate">
+            61h Integrare HOO • 4582 × 3462 px
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Live Phase / 100% Crop Status HUD Badge -->
+      <div id="ssCropStatusBadge" class="crop-reticle-badge hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/90 border border-white/20 text-xs font-mono-code text-slate-200">
+        <span id="ssPhaseDot" class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+        <span id="ssPhaseText">🌌 CADRU COMPLET — VEDERE DE ANSAMBLU</span>
+      </div>
+
+      <!-- Right Action Buttons -->
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <button id="ssBtnPlayPause" onclick="toggleSlideshowPlay()" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-500/25 hover:bg-emerald-500/35 border border-emerald-400/50 text-emerald-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition">
+          <span id="ssPlayIcon">⏸</span>
+          <span id="ssPlayText" class="hidden sm:inline">Auto (6s)</span>
+        </button>
+
+        <button id="ssBtnManualCrop" onclick="toggleManual100Crop()" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-indigo-500/25 hover:bg-indigo-500/40 border border-indigo-400/50 text-indigo-200 text-xs font-bold flex items-center gap-1 cursor-pointer transition" title="Comută instantaneu între Crop 100% și Cadru Întreg">
+          <span>🔬</span>
+          <span id="ssManualCropText">Crop 100%</span>
+        </button>
+
+        <button id="ssBtnMusic" onclick="toggleCosmicMusic()" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/35 border border-sky-400/40 text-sky-200 text-xs font-semibold flex items-center gap-1 cursor-pointer transition">
+          <span id="ssMusicIcon">🔊</span>
+          <span id="ssMusicText" class="hidden sm:inline">Muzică ON</span>
+        </button>
+
+        <a id="ssDownloadBtn" href="imagini/crescent_61ore.jpg" download="crescent_61ore.jpg" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold flex items-center gap-1 transition">
+          <span>⬇</span>
+          <span class="hidden sm:inline">Descarcă</span>
+        </a>
+
+        <button onclick="closeAstroSlideshow()" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-rose-500/25 hover:bg-rose-500/45 border border-rose-400/50 text-rose-200 text-xs font-bold cursor-pointer transition">
+          ✕ <span class="hidden sm:inline">Închide</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Optical Viewport Stage with Dual Cross-Fade Layers -->
+    <div id="ssViewport" class="relative flex-1 min-h-0 w-full overflow-hidden select-none">
+      <!-- Layer A -->
+      <div id="ssLayerA" class="ss-stage-layer active-layer">
+        <img id="ssImgA" class="ss-stage-img" src="" alt="Astrofotografie Layer A" />
+      </div>
+      <!-- Layer B -->
+      <div id="ssLayerB" class="ss-stage-layer fading-layer">
+        <img id="ssImgB" class="ss-stage-img" src="" alt="Astrofotografie Layer B" />
+      </div>
+
+      <!-- Subtle Non-Intrusive Edge Corner Brackets (Zero obstruction in center of nebula) -->
+      <div id="ssOpticalReticle" class="pointer-events-none absolute inset-4 sm:inset-7 opacity-0 transition-opacity duration-500 z-10">
+        <div class="w-5 h-5 border-t-2 border-l-2 border-emerald-400/55 rounded-tl-md absolute top-0 left-0"></div>
+        <div class="w-5 h-5 border-t-2 border-r-2 border-emerald-400/55 rounded-tr-md absolute top-0 right-0"></div>
+        <div class="w-5 h-5 border-b-2 border-l-2 border-emerald-400/55 rounded-bl-md absolute bottom-16 left-0"></div>
+      </div>
+
+      <!-- Prev / Next Floating Controls -->
+      <button onclick="prevSlideshowImage()" class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-slate-950/75 hover:bg-sky-500/40 border border-white/25 text-white flex items-center justify-center text-sm sm:text-base shadow-xl cursor-pointer transition">
+        ◀
+      </button>
+      <button onclick="nextSlideshowImage()" class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-slate-950/75 hover:bg-sky-500/40 border border-white/25 text-white flex items-center justify-center text-sm sm:text-base shadow-xl cursor-pointer transition">
+        ▶
+      </button>
+
+      <!-- Live 100% Crop Mini-Map Navigator (Bottom-Right of Stage) -->
+      <div class="absolute bottom-3 right-3 z-20 w-24 h-24 sm:w-32 sm:h-32 rounded-xl overflow-hidden bg-slate-950/90 border border-white/25 shadow-2xl pointer-events-none">
+        <img id="ssMiniMapImg" src="" alt="MiniMap" class="w-full h-full object-cover opacity-80" />
+        <div id="ssMiniMapBox" class="absolute border-2 border-emerald-400 bg-emerald-400/15 shadow-[0_0_10px_rgba(52,211,153,0.8)] rounded-sm transition-none" style="left:10%;top:10%;width:80%;height:80%;"></div>
+        <div class="absolute bottom-0 inset-x-0 bg-slate-950/80 text-[9px] font-mono-code text-center text-emerald-300 py-0.5">
+          <span id="ssZoomFactorLabel">ZOOM 1.00×</span>
+        </div>
+      </div>
+
+      <!-- Mobile Phase Badge & Description Overlay (Bottom-Left of Stage) -->
+      <div class="absolute bottom-3 left-3 right-32 sm:right-40 z-20 pointer-events-none">
+        <div class="inline-block max-w-xl px-3 py-2 rounded-xl bg-slate-950/80 border border-white/15 backdrop-blur-md">
+          <div id="ssMobilePhaseLabel" class="md:hidden text-[10px] font-mono-code text-emerald-300 font-bold mb-0.5">
+            🌌 CADRU COMPLET
+          </div>
+          <p id="ssDescText" class="text-[11px] sm:text-xs text-slate-200 leading-snug line-clamp-2">
+            Detalii spectaculoase surprinse în banda îngustă și broadband.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Per-Image Timeline Progress Bar (6.0s Zoom + 100% Crop + Pan Cycle) -->
+    <div class="relative z-20 h-1.5 w-full bg-slate-900">
+      <div id="ssCycleProgressBar" class="h-full bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 w-0"></div>
+    </div>
+
+    <!-- Bottom Thumbnail Strip inside Slideshow Modal -->
+    <div id="ssThumbStrip" class="relative z-20 px-3 sm:px-6 py-2 bg-slate-950/95 border-t border-white/15 flex items-center gap-2 overflow-x-auto">
+      <!-- Populated dynamically -->
+    </div>
+  </div>
 
   <!-- ===================================================================== -->
   <!-- BOTTOM CONTROL BAR & SYNCHRONIZED STORYTELLER SUBTITLES (FLEX ITEM)   -->
@@ -1481,7 +1748,7 @@
           ◀ <span class="hidden sm:inline">Anterior</span>
         </button>
         <span id="slideCounter" class="font-mono-code text-[11px] sm:text-xs font-bold text-sky-300 px-1 sm:px-2">
-          1 / 8
+          1 / 9
         </span>
         <button onclick="nextSlide()" class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-[11px] sm:text-xs font-semibold text-white border border-white/15 transition cursor-pointer">
           <span class="hidden sm:inline">Următor</span> ▶
@@ -1521,6 +1788,7 @@
   </footer>
 
   <audio id="narratorAudio" preload="auto"></audio>
+  <audio id="cosmicMusicAudio" src="audio/cosmic_ambient_loop.mp3" loop preload="auto"></audio>
 
   <script>
     // =========================================================================
@@ -1626,10 +1894,14 @@
           { start: 20, end: 40, subtitle: "Regula optimă de eșantionare: Seeing FWHM împărțit la 2 – 3 pixeli per stea." },
           { start: 40, end: 65, subtitle: "La 1.36\"/px și seeing de 2.5\"–3.5\", steaua ocupă ~2.2 pixeli FWHM → Eșantionare Ideală (Sweet Spot)!" }
         ]},
-        { slide: 8, id: "slide_08", title: "Încadrare FOV & Concluzii", default_file: "audio/slide_08.mp3", segments: [
-          { start: 0, end: 20, subtitle: "Cu 1.36\"/px și FOV de 1.14° × 1.14°, sistemul este extrem de versatil pentru Deep-Sky." },
-          { start: 20, end: 40, subtitle: "Ținte ideale: Nebuloasa Orion (M42), Galaxia M51, M13, M27, nucleul Rozetei și complexe H-alpha." },
-          { start: 40, end: 65, subtitle: "Un echilibru optic remarcabil: f/3.8 rapid, 1.36\"/px eșantionare optimă și stele punctuale. Cer senin!" }
+        { slide: 8, id: "slide_08", title: "Încadrarea pe Cer (FOV 1.14°) și Invitație în Galerie", default_file: "audio/slide_08.mp3", segments: [
+          { start: 0, end: 19.4, subtitle: "Cu 1.36\"/px și FOV de 1.14° × 1.14°, sistemul este extrem de versatil pentru Deep-Sky." },
+          { start: 19.4, end: 33.46, subtitle: "Ținte ideale: Nebuloasa Orion (M42), Galaxia M51, M13, M27, nucleul Rozetei și complexe H-alpha." },
+          { start: 33.46, end: 66, subtitle: "Pășește dincolo de formule: descoperă în galeria următoare lumina antică a universului, surprinsă de ochiul digital al telescopului!" }
+        ]},
+        { slide: 9, id: "slide_09", title: "Galeria Cerului Profund: Lumina Ascunsă în Întunericul Etern", default_file: "audio/slide_09.mp3", segments: [
+          { start: 0, end: 16.7, subtitle: "Galeria Cerului Profund: peste 310 ore cumulate de integrare fotonică prin filtre SHO, OHS și Broadband." },
+          { start: 16.7, end: 39, subtitle: "Apasă pe „🎬 Pornește Slideshow 100% Crop” pentru proiecția cu zoom la nivel de pixel și coloană sonoră cosmică!" }
         ]}
       ]
     };
@@ -1648,7 +1920,7 @@
     // 3. SLIDE NAVIGATION WITH 3D WARP & LIQUID REFRACTION WAVE
     // =========================================================================
     let currentSlide = 0;
-    const totalSlides = 8;
+    const totalSlides = 9;
     let isPlayingNarration = false;
     let starWarpBoost = 0;
     let lastChoreoSeg = -1;
@@ -1826,6 +2098,17 @@
     }
 
     window.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('astroSlideshowModal');
+      if (modal && modal.classList.contains('open')) {
+        if (e.key === 'Escape') closeAstroSlideshow();
+        else if (e.key === 'ArrowRight') nextSlideshowImage();
+        else if (e.key === 'ArrowLeft') prevSlideshowImage();
+        else if (e.key === ' ') {
+          e.preventDefault();
+          toggleSlideshowPlay();
+        }
+        return;
+      }
       if (e.key === 'ArrowRight') nextSlide();
       else if (e.key === 'ArrowLeft') prevSlide();
       else if (e.key === ' ') {
@@ -2237,12 +2520,535 @@
         renderNyquistFrame(ts);
       }
 
+      // Keep Fullscreen 100% Crop & Pan Slideshow running smoothly at 60fps!
+      if (ssState.isOpen) {
+        updateSlideshowAnimationFrame(ts);
+      }
+
       requestAnimationFrame(animateBg);
+    }
+
+    // =========================================================================
+    // 7. SLIDE 9 ASTROPHOTOGRAPHY GALLERY & 100% CROP SLIDESHOW ENGINE
+    // =========================================================================
+    const astroGalleryItems = [
+      {
+        id: 'crescent',
+        title: 'Nebuloasa Semiluna (NGC 6888)',
+        badge: '61h Integrare HOO',
+        dims: '4582 × 3462 px',
+        thumb: 'imagini/thumbs/crescent_61ore.jpg',
+        hd: 'imagini/hd/crescent_61ore.jpg',
+        orig: 'imagini/crescent_61ore.jpg',
+        downloadName: 'NGC6888_Crescent_61ore.jpg',
+        desc: '61 de ore de integrare HOO dezvăluie învelișul exterior de Oxigen dublu ionizat (OIII — turcoaz) și filamentele dramatice de Hidrogen (Hα) sculptate de vântul stelar al stelei Wolf-Rayet WR 136.',
+        startX: 51, startY: 54,
+        endX: 43, endY: 42,
+        cropZoom: 2.85
+      },
+      {
+        id: 'sh2_132',
+        title: 'Nebuloasa Leul (Sh2-132)',
+        badge: '52h Integrare SHO',
+        dims: '2938 × 2934 px',
+        thumb: 'imagini/thumbs/SH2_132_52ore.jpg',
+        hd: 'imagini/hd/SH2_132_52ore.jpg',
+        orig: 'imagini/SH2_132_52ore.png',
+        downloadName: 'Sh2-132_Nebuloasa_Leul_52ore.png',
+        desc: '52 de ore de expunere cumulată la granița constelațiilor Cefeu și Șopârla: fronturi de șoc ionizate și structuri întunecate de praf cosmic în paleta Hubble.',
+        startX: 46, startY: 45,
+        endX: 66, endY: 68,
+        cropZoom: 2.80
+      },
+      {
+        id: 'wizard',
+        title: 'Nebuloasa Vrăjitorul (NGC 7380)',
+        badge: '46h Integrare SHO',
+        dims: '2891 × 2889 px',
+        thumb: 'imagini/thumbs/Wizard_SHO_46ore_V2.jpg',
+        hd: 'imagini/hd/Wizard_SHO_46ore_V2.jpg',
+        orig: 'imagini/Wizard_SHO_46ore_V2.jpg',
+        downloadName: 'NGC7380_Wizard_SHO_46ore.jpg',
+        desc: '46 de ore în paleta SHO (Sulf-Hidrogen-Oxigen): piloni denși de gaz și praf stelar iluminați din interior de tânărul roi deschis NGC 7380 din Cefeu.',
+        startX: 42, startY: 56,
+        endX: 54, endY: 68,
+        cropZoom: 2.85
+      },
+      {
+        id: 'horsehead',
+        title: 'Nebuloasa Cap de Cal & Flacăra (B33 / IC 434)',
+        badge: '42h Integrare',
+        dims: '2879 × 2888 px',
+        thumb: 'imagini/thumbs/horsehead_42h.jpg',
+        hd: 'imagini/hd/horsehead_42h.jpg',
+        orig: 'imagini/horsehead_42h.png',
+        downloadName: 'B33_IC434_Horsehead_42h.png',
+        desc: '42 de ore de integrare în centura lui Orion: silueta întunecată a nebuloasei obscure Barnard 33 proiectată pe cortina incandescentă H-alpha și structura dantelată din Nebuloasa Flacăra (NGC 2024).',
+        startX: 49, startY: 60,
+        endX: 25, endY: 64,
+        cropZoom: 2.85
+      },
+      {
+        id: 'pacman',
+        title: 'Nebuloasa Pacman (NGC 281)',
+        badge: '23h Integrare SHO',
+        dims: '2857 × 2876 px',
+        thumb: 'imagini/thumbs/Pacman_SHO_23ore.jpg',
+        hd: 'imagini/hd/Pacman_SHO_23ore.jpg',
+        orig: 'imagini/Pacman_SHO_23ore.jpg',
+        downloadName: 'NGC281_Pacman_SHO_23ore.jpg',
+        desc: '23 de ore în paleta SHO: globulele întunecate Bok și coloanele de praf rece contrastează spectaculos cu miezul albastru-turcoaz de Oxigen-III din constelația Cassiopeia.',
+        startX: 45, startY: 42,
+        endX: 55, endY: 56,
+        cropZoom: 2.80
+      },
+      {
+        id: 'cave',
+        title: 'Nebuloasa Peștera (Sh2-155 / Caldwell 9)',
+        badge: '20h Integrare SHO',
+        dims: '2853 × 2853 px',
+        thumb: 'imagini/thumbs/Cave_SHO_20ore.jpg',
+        hd: 'imagini/hd/Cave_SHO_20ore.jpg',
+        orig: 'imagini/Cave_SHO_20ore.jpg',
+        downloadName: 'Sh2-155_Cave_SHO_20ore.jpg',
+        desc: '20 de ore de integrare: arcul luminos al „peșterii” cosmice excavate de radiația ultravioletă a stelelor tinere din complexul molecular Cefeu B.',
+        startX: 46, startY: 36,
+        endX: 56, endY: 54,
+        cropZoom: 2.80
+      },
+      {
+        id: 'monkeyhead',
+        title: 'Nebuloasa Cap de Maimuță (NGC 2174)',
+        badge: '17h SHO • Drizzle 2×',
+        dims: '5688 × 4548 px',
+        thumb: 'imagini/thumbs/MonkeyHead_SHO_17h_drizzle2X.jpg',
+        hd: 'imagini/hd/MonkeyHead_SHO_17h_drizzle2X.jpg',
+        orig: 'imagini/MonkeyHead_SHO_17h_drizzle2X.png',
+        downloadName: 'NGC2174_MonkeyHead_SHO_17h_Drizzle2x.png',
+        desc: '17 ore procesate cu algoritmul Drizzle 2× (5688 × 4548 px): la zoom 100% se disting cu o claritate chirurgicală pilonii de gaz erodați de vânturile stelare.',
+        startX: 48, startY: 38,
+        endX: 38, endY: 58,
+        cropZoom: 2.95
+      },
+      {
+        id: 'wr134',
+        title: 'Nebuloasa Wolf-Rayet WR 134',
+        badge: 'Paletă OHS Ultra-HD',
+        dims: '9462 × 6275 px',
+        thumb: 'imagini/thumbs/WR134_OHS.jpg',
+        hd: 'imagini/hd/WR134_OHS.jpg',
+        orig: 'imagini/WR134_OHS.jpg',
+        downloadName: 'WR134_OHS_Nebula.jpg',
+        desc: 'Inelul delicat de Oxigen-III aruncat în spațiu de steaua extremă Wolf-Rayet WR 134 din Lebăda, surprins pe un fundal incandescent de nori de Hidrogen și Sulf în paleta OHS.',
+        startX: 47, startY: 44,
+        endX: 58, endY: 56,
+        cropZoom: 2.95
+      },
+      {
+        id: 'soul',
+        title: 'Nebuloasa Sufletul (IC 1848)',
+        badge: 'Paletă SHO',
+        dims: '4447 × 4466 px',
+        thumb: 'imagini/thumbs/SoulNebula.jpg',
+        hd: 'imagini/hd/SoulNebula.jpg',
+        orig: 'imagini/SoulNebula.jpg',
+        downloadName: 'IC1848_SoulNebula_SHO.jpg',
+        desc: 'Cavernele stelare din Nebuloasa Sufletul (IC 1848 — Cassiopeia): tranziții aurii și turcoaz între fronturile de ionizare și munții cosmici de praf.',
+        startX: 62, startY: 42,
+        endX: 54, endY: 66,
+        cropZoom: 2.85
+      },
+      {
+        id: 'elephant',
+        title: 'Trompa de Elefant (IC 1396A)',
+        badge: '7h Integrare SHO',
+        dims: '2990 × 2982 px',
+        thumb: 'imagini/thumbs/7%20ore%20SHO_stars.jpg',
+        hd: 'imagini/hd/7%20ore%20SHO_stars.jpg',
+        orig: 'imagini/7%20ore%20SHO_stars.png',
+        downloadName: 'IC1396_ElephantTrunk_7ore_SHO.png',
+        desc: 'Globula sinuoasă IC 1396A (vdB 142): o maternitate stelară comprimată de radiația stelei masive HD 206267, cu stele punctuale pe întregul câmp.',
+        startX: 36, startY: 48,
+        endX: 42, endY: 70,
+        cropZoom: 2.85
+      },
+      {
+        id: 'm42',
+        title: 'Marea Nebuloasă din Orion (M42 & M43)',
+        badge: 'HDR Broadband',
+        dims: '2896 × 2886 px',
+        thumb: 'imagini/thumbs/M42.jpg',
+        hd: 'imagini/hd/M42.jpg',
+        orig: 'imagini/M42.jpg',
+        downloadName: 'M42_Orion_Nebula.jpg',
+        desc: 'Procesare cu gamă dinamică înaltă (HDR): atât regiunea centrală Trapezium, cât și vălurile periferice de praf și Nebuloasa Running Man sunt vizibile simultan în fereastra de 1.14°.',
+        startX: 54, startY: 48,
+        endX: 34, endY: 46,
+        cropZoom: 2.80
+      }
+    ];
+
+    function renderAstroGalleryGrid() {
+      const grid = document.getElementById('astroGalleryGrid');
+      const strip = document.getElementById('ssThumbStrip');
+      if (!grid) return;
+
+      grid.innerHTML = astroGalleryItems.map((item, idx) => `
+        <div class="gallery-thumb-card flex flex-col justify-between group">
+          <div onclick="openAstroSlideshow(${idx}, true)" class="relative aspect-[16/10] w-full overflow-hidden bg-slate-950 cursor-pointer">
+            <img src="${item.thumb}" alt="${item.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/35 opacity-85"></div>
+            <div class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-slate-950/85 border border-sky-400/40 text-[10px] font-mono-code font-bold text-sky-300">
+              #${idx + 1} • ${item.badge}
+            </div>
+            <div class="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-emerald-500/20 border border-emerald-400/50 text-[10px] font-mono-code text-emerald-300 opacity-0 group-hover:opacity-100 transition">
+              🔬 100% Crop
+            </div>
+            <div class="absolute bottom-2 left-2.5 right-2.5">
+              <div class="text-xs sm:text-sm font-bold text-white leading-tight drop-shadow truncate">${item.title}</div>
+              <div class="text-[10px] font-mono-code text-slate-300">${item.dims}</div>
+            </div>
+          </div>
+
+          <div class="p-2 sm:p-2.5 flex items-center justify-between gap-1.5 bg-slate-950/90 border-t border-white/10">
+            <button onclick="openAstroSlideshow(${idx}, true)" class="flex-1 px-2.5 py-1.5 rounded-lg bg-sky-500/20 hover:bg-sky-500/35 border border-sky-400/40 text-sky-200 text-[11px] font-semibold flex items-center justify-center gap-1 cursor-pointer transition">
+              <span>🔍</span>
+              <span>Slideshow 100%</span>
+            </button>
+            <a href="${item.orig}" download="${item.downloadName}" class="px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-emerald-500/30 border border-white/20 hover:border-emerald-400/50 text-slate-100 hover:text-emerald-200 text-[11px] font-semibold flex items-center gap-1 transition shrink-0" title="Descarcă imaginea originală (${item.dims})">
+              <span>⬇</span>
+              <span>Descarcă</span>
+            </a>
+          </div>
+        </div>
+      `).join('');
+
+      if (strip) {
+        strip.innerHTML = astroGalleryItems.map((item, idx) => `
+          <button id="ssThumbBtn_${idx}" onclick="selectSlideshowImage(${idx})" class="relative w-14 h-10 sm:w-16 sm:h-11 rounded-lg overflow-hidden border-2 border-transparent opacity-60 hover:opacity-100 shrink-0 cursor-pointer transition">
+            <img src="${item.thumb}" alt="${item.title}" class="w-full h-full object-cover" />
+          </button>
+        `).join('');
+      }
+    }
+
+    // Slideshow State & 60fps Animation Controller
+    const ssState = {
+      isOpen: false,
+      isPlaying: true,
+      currentIndex: 0,
+      activeLayer: 'A', // 'A' or 'B'
+      cycleStartTs: 0,
+      pausedElapsedMs: 0,
+      cycleDurationMs: 6000, // 6 seconds per image (Zoom + 100% Crop + Pan + Cross-Fade)
+      manualCropLock: false
+    };
+
+    const cosmicMusicEl = document.getElementById('cosmicMusicAudio');
+    let isCosmicMusicPlaying = false;
+
+    function updateCosmicMusicUI() {
+      const deckIcon = document.getElementById('ambientDeckIcon');
+      const deckText = document.getElementById('ambientDeckText');
+      const ssIcon = document.getElementById('ssMusicIcon');
+      const ssText = document.getElementById('ssMusicText');
+
+      if (isCosmicMusicPlaying) {
+        if (deckIcon) deckIcon.textContent = '🔊';
+        if (deckText) deckText.textContent = 'Muzică Cosmică: ON';
+        if (ssIcon) ssIcon.textContent = '🔊';
+        if (ssText) ssText.textContent = 'Muzică ON';
+      } else {
+        if (deckIcon) deckIcon.textContent = '🎵';
+        if (deckText) deckText.textContent = 'Muzică Cosmică: OFF';
+        if (ssIcon) ssIcon.textContent = '🔇';
+        if (ssText) ssText.textContent = 'Muzică OFF';
+      }
+    }
+
+    function toggleCosmicMusic(forceState = null) {
+      if (!cosmicMusicEl) return;
+      const targetPlay = forceState !== null ? forceState : cosmicMusicEl.paused;
+      if (targetPlay) {
+        cosmicMusicEl.volume = 0.55;
+        cosmicMusicEl.play().then(() => {
+          isCosmicMusicPlaying = true;
+          updateCosmicMusicUI();
+        }).catch(() => {});
+      } else {
+        cosmicMusicEl.pause();
+        isCosmicMusicPlaying = false;
+        updateCosmicMusicUI();
+      }
+    }
+
+    function openAstroSlideshow(startIndex = 0, autoPlay = true) {
+      // Pause narrator voiceover if active so ambient cosmic soundtrack plays cleanly
+      if (audioEl && !audioEl.paused) {
+        audioEl.pause();
+        isPlayingNarration = false;
+        document.getElementById('playIcon').textContent = '▶';
+        document.getElementById('playBtnText').textContent = 'Continuă Povestitorul';
+      }
+
+      ssState.isOpen = true;
+      ssState.isPlaying = autoPlay;
+      ssState.manualCropLock = false;
+      ssState.activeLayer = 'A';
+
+      const modal = document.getElementById('astroSlideshowModal');
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+
+      // Start ambient cosmic music loop automatically when opening slideshow
+      toggleCosmicMusic(true);
+      updateSlideshowPlayButtonUI();
+      loadSlideshowSlide(startIndex, true);
+    }
+
+    function closeAstroSlideshow() {
+      ssState.isOpen = false;
+      const modal = document.getElementById('astroSlideshowModal');
+      if (modal) {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    }
+
+    function updateSlideshowPlayButtonUI() {
+      const icon = document.getElementById('ssPlayIcon');
+      const txt = document.getElementById('ssPlayText');
+      if (ssState.isPlaying) {
+        if (icon) icon.textContent = '⏸';
+        if (txt) txt.textContent = 'Auto (6s)';
+      } else {
+        if (icon) icon.textContent = '▶';
+        if (txt) txt.textContent = 'Pauză';
+      }
+    }
+
+    function toggleSlideshowPlay() {
+      ssState.isPlaying = !ssState.isPlaying;
+      if (ssState.isPlaying) {
+        ssState.manualCropLock = false;
+        document.getElementById('ssManualCropText').textContent = 'Crop 100%';
+        ssState.cycleStartTs = performance.now() - ssState.pausedElapsedMs;
+      } else {
+        ssState.pausedElapsedMs = performance.now() - ssState.cycleStartTs;
+      }
+      updateSlideshowPlayButtonUI();
+    }
+
+    function toggleManual100Crop() {
+      ssState.manualCropLock = !ssState.manualCropLock;
+      const btnTxt = document.getElementById('ssManualCropText');
+      if (ssState.manualCropLock) {
+        // Jump straight to 100% crop phase (3.2s mark in cycle)
+        ssState.cycleStartTs = performance.now() - 3200;
+        ssState.pausedElapsedMs = 3200;
+        if (btnTxt) btnTxt.textContent = 'Ansamblu 1×';
+      } else {
+        // Jump back to full-frame overview (0.4s mark)
+        ssState.cycleStartTs = performance.now() - 400;
+        ssState.pausedElapsedMs = 400;
+        if (btnTxt) btnTxt.textContent = 'Crop 100%';
+      }
+    }
+
+    function selectSlideshowImage(index) {
+      ssState.manualCropLock = false;
+      const btnTxt = document.getElementById('ssManualCropText');
+      if (btnTxt) btnTxt.textContent = 'Crop 100%';
+      loadSlideshowSlide(index, false);
+    }
+
+    function nextSlideshowImage() {
+      const nextIdx = (ssState.currentIndex + 1) % astroGalleryItems.length;
+      selectSlideshowImage(nextIdx);
+    }
+
+    function prevSlideshowImage() {
+      const prevIdx = (ssState.currentIndex - 1 + astroGalleryItems.length) % astroGalleryItems.length;
+      selectSlideshowImage(prevIdx);
+    }
+
+    function loadSlideshowSlide(index, isInitial = false) {
+      ssState.currentIndex = index;
+      ssState.cycleStartTs = performance.now();
+      ssState.pausedElapsedMs = 0;
+
+      const item = astroGalleryItems[index];
+      const layerA = document.getElementById('ssLayerA');
+      const layerB = document.getElementById('ssLayerB');
+      const imgA = document.getElementById('ssImgA');
+      const imgB = document.getElementById('ssImgB');
+
+      if (isInitial) {
+        ssState.activeLayer = 'A';
+        imgA.src = item.hd;
+        imgA.style.transform = 'scale(1) translate3d(0%, 0%, 0)';
+        layerA.className = 'ss-stage-layer active-layer';
+        layerB.className = 'ss-stage-layer fading-layer';
+      } else {
+        // Cross-fade between Layer A and Layer B
+        if (ssState.activeLayer === 'A') {
+          ssState.activeLayer = 'B';
+          imgB.src = item.hd;
+          imgB.style.transform = 'scale(1) translate3d(0%, 0%, 0)';
+          layerB.className = 'ss-stage-layer active-layer';
+          layerA.className = 'ss-stage-layer fading-layer';
+        } else {
+          ssState.activeLayer = 'A';
+          imgA.src = item.hd;
+          imgA.style.transform = 'scale(1) translate3d(0%, 0%, 0)';
+          layerA.className = 'ss-stage-layer active-layer';
+          layerB.className = 'ss-stage-layer fading-layer';
+        }
+      }
+
+      // Preload next image HD in background for zero-lag transition
+      const nextItem = astroGalleryItems[(index + 1) % astroGalleryItems.length];
+      const preloadImg = new Image();
+      preloadImg.src = nextItem.hd;
+
+      // Update HUD Metadata & Download link
+      document.getElementById('ssCounterBadge').textContent = `${index + 1} / ${astroGalleryItems.length}`;
+      document.getElementById('ssTitle').textContent = item.title;
+      document.getElementById('ssMetaSubtitle').textContent = `${item.badge} • ${item.dims}`;
+      document.getElementById('ssDescText').textContent = item.desc;
+      document.getElementById('ssMiniMapImg').src = item.thumb;
+
+      const dlBtn = document.getElementById('ssDownloadBtn');
+      if (dlBtn) {
+        dlBtn.href = item.orig;
+        dlBtn.setAttribute('download', item.downloadName);
+      }
+
+      // Highlight active thumbnail in bottom strip
+      astroGalleryItems.forEach((_, idx) => {
+        const tBtn = document.getElementById('ssThumbBtn_' + idx);
+        if (tBtn) {
+          if (idx === index) {
+            tBtn.className = 'relative w-14 h-10 sm:w-16 sm:h-11 rounded-lg overflow-hidden border-2 border-sky-400 opacity-100 scale-105 shadow-lg shadow-sky-500/30 shrink-0 cursor-pointer transition';
+            tBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+          } else {
+            tBtn.className = 'relative w-14 h-10 sm:w-16 sm:h-11 rounded-lg overflow-hidden border-2 border-transparent opacity-55 hover:opacity-100 shrink-0 cursor-pointer transition';
+          }
+        }
+      });
+    }
+
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function updateSlideshowAnimationFrame(ts) {
+      const item = astroGalleryItems[ssState.currentIndex];
+      if (!item) return;
+
+      const elapsed = ssState.isPlaying
+        ? (ts - ssState.cycleStartTs)
+        : ssState.pausedElapsedMs;
+
+      const dur = ssState.cycleDurationMs; // 6000 ms
+      const progressPct = Math.min(100, Math.max(0, (elapsed / dur) * 100));
+      const progBar = document.getElementById('ssCycleProgressBar');
+      if (progBar) progBar.style.width = `${progressPct.toFixed(1)}%`;
+
+      // Advance to next image when cycle completes
+      if (ssState.isPlaying && !ssState.manualCropLock && elapsed >= dur) {
+        nextSlideshowImage();
+        return;
+      }
+
+      // Compute Multi-Stage Zoom, 100% Crop & Slow Pan coordinates:
+      // Stage 1 (0.0s -> 1.2s): Full-frame overview (scale 1.00 -> 1.14, center 50%, 50%)
+      // Stage 2 (1.2s -> 2.5s): Smooth Zoom into 100% Crop (scale 1.14 -> item.cropZoom) to (startX, startY)
+      // Stage 3 (2.5s -> 5.4s): Slow Pan at 100% Crop from (startX, startY) -> (endX, endY)
+      // Stage 4 (5.4s -> 6.0s): Hold / Gentle glide into cross-fade
+      let scale = 1.0;
+      let fx = 50.0;
+      let fy = 50.0;
+      let phaseText = '🌌 CADRU COMPLET — VEDERE DE ANSAMBLU';
+      let mobilePhase = '🌌 CADRU COMPLET (1.0×)';
+      let isCropActive = false;
+
+      if (ssState.manualCropLock) {
+        // Manual 100% crop mode with slow gentle pan oscillation
+        const osc = 0.5 + 0.5 * Math.sin(ts * 0.0008);
+        scale = item.cropZoom;
+        fx = item.startX + (item.endX - item.startX) * osc;
+        fy = item.startY + (item.endY - item.startY) * osc;
+        phaseText = '🔬 CROP 100% ACTIV — DETALII LA NIVEL DE PIXEL';
+        mobilePhase = '🔬 CROP 100% ACTIV';
+        isCropActive = true;
+      } else if (elapsed < 1200) {
+        const p = Math.max(0, elapsed / 1200);
+        scale = 1.0 + 0.14 * easeInOutCubic(p);
+        fx = 50.0;
+        fy = 50.0;
+        phaseText = '🌌 CADRU COMPLET — VEDERE DE ANSAMBLU';
+        mobilePhase = '🌌 CADRU COMPLET';
+        isCropActive = false;
+      } else if (elapsed < 2500) {
+        const p = easeInOutCubic((elapsed - 1200) / 1300);
+        scale = 1.14 + (item.cropZoom - 1.14) * p;
+        fx = 50.0 + (item.startX - 50.0) * p;
+        fy = 50.0 + (item.startY - 50.0) * p;
+        phaseText = '🔍 ZOOM SPRE CROP 100% — FOCALIZARE PE NUCLEU';
+        mobilePhase = '🔍 ZOOM SPRE CROP 100%';
+        isCropActive = p > 0.55;
+      } else {
+        const p = easeInOutCubic(Math.min(1, (elapsed - 2500) / 3300));
+        scale = item.cropZoom;
+        fx = item.startX + (item.endX - item.startX) * p;
+        fy = item.startY + (item.endY - item.startY) * p;
+        phaseText = '🔬 CROP 100% & DERULARE — EXPLORARE DETALII FINE';
+        mobilePhase = '🔬 DERULARE LA CROP 100%';
+        isCropActive = true;
+      }
+
+      const activeImg = ssState.activeLayer === 'A'
+        ? document.getElementById('ssImgA')
+        : document.getElementById('ssImgB');
+
+      if (activeImg) {
+        const tx = 50.0 - fx;
+        const ty = 50.0 - fy;
+        activeImg.style.transform = `scale(${scale.toFixed(3)}) translate3d(${tx.toFixed(2)}%, ${ty.toFixed(2)}%, 0)`;
+      }
+
+      // Update HUD Phase Badge & Optical Reticle
+      const badge = document.getElementById('ssCropStatusBadge');
+      const pTextEl = document.getElementById('ssPhaseText');
+      const mPhaseEl = document.getElementById('ssMobilePhaseLabel');
+      const reticle = document.getElementById('ssOpticalReticle');
+      if (pTextEl && pTextEl.textContent !== phaseText) pTextEl.textContent = phaseText;
+      if (mPhaseEl && mPhaseEl.textContent !== mobilePhase) mPhaseEl.textContent = mobilePhase;
+      if (badge) badge.classList.toggle('crop-active', isCropActive);
+      if (reticle) reticle.style.opacity = isCropActive ? '1' : '0';
+
+      // Update Live Mini-Map Navigator Box
+      const mmBox = document.getElementById('ssMiniMapBox');
+      const zLbl = document.getElementById('ssZoomFactorLabel');
+      if (mmBox) {
+        const boxSize = Math.max(24, Math.min(96, 100 / scale));
+        const left = Math.max(2, Math.min(98 - boxSize, fx - boxSize / 2));
+        const top = Math.max(2, Math.min(98 - boxSize, fy - boxSize / 2));
+        mmBox.style.width = `${boxSize.toFixed(1)}%`;
+        mmBox.style.height = `${boxSize.toFixed(1)}%`;
+        mmBox.style.left = `${left.toFixed(1)}%`;
+        mmBox.style.top = `${top.toFixed(1)}%`;
+      }
+      if (zLbl) {
+        zLbl.textContent = isCropActive ? `CROP 100% (${scale.toFixed(1)}×)` : `ZOOM ${scale.toFixed(2)}×`;
+      }
     }
 
     window.addEventListener('resize', resizeBg);
     resizeBg();
     initDots();
+    renderAstroGalleryGrid();
     init3DTiltAndLiquidCaustics();
     updateCoolingSim(-10);
     updateSlide7Seeing(3.0);

@@ -248,35 +248,62 @@
     {
       "slide": 8,
       "id": "slide_08",
-      "title": "Încadrarea pe Cer (FOV 1.14°) și Concluzii",
+      "title": "Încadrarea pe Cer (FOV 1.14°) și Invitație în Galerie",
       "voice": "Charon",
       "model": "gemini-3.8-flash-tts",
       "default_file": "audio/slide_08.mp3",
-      "duration": 58.44,
+      "duration": 65.64,
       "segments": [
         {
           "index": 0,
           "subtitle": "Cu 1.36\"/px și FOV de 1.14° × 1.14°, sistemul este extrem de versatil pentru Deep-Sky.",
           "spoken": "Privind acum tabloul complet... <short pause> vedem cum această fereastră pătrată de unu virgulă paisprezece grade și rezoluția de unu virgulă treizeci și șase secunde de arc pe pixel ni se deschid către comorile cerului profund.",
           "start": 0.25,
-          "end": 20.7,
-          "duration": 20.45
+          "end": 19.4,
+          "duration": 19.15
         },
         {
           "index": 1,
           "subtitle": "Ținte ideale: Nebuloasa Orion (M42), Galaxia M51, M13, M27, nucleul Rozetei și complexe H-alpha.",
           "spoken": "În acest cadru încap la perfecție Marea Nebuloasă din Orion, roiul sclipitor M treisprezece din Hercule, sau brațele spirale ale galaxiei Vâltoarea, M cincizeci și unu.",
-          "start": 20.7,
-          "end": 35.71,
-          "duration": 15.01
+          "start": 19.4,
+          "end": 33.46,
+          "duration": 14.05
         },
         {
           "index": 2,
-          "subtitle": "Un echilibru optic remarcabil: f/3.8 rapid, 1.36\"/px eșantionare optimă și stele punctuale. Cer senin!",
-          "spoken": "Telescopul Newton de șase inci la șase sute de milimetri, corectorul de zero virgulă nouăzeci și cinci ori și camera răcită I-M-X cinci sute treizeci și trei alcătuiesc o armonie optică desăvârșită... <short pause> Cer senin, și nopți pline de stele!",
-          "start": 35.71,
-          "end": 58.04,
-          "duration": 22.33
+          "subtitle": "Pășește dincolo de formule: descoperă în galeria următoare lumina antică a universului, surprinsă de ochiul digital al telescopului!",
+          "spoken": "Iar acum... <short pause> după ce am descifrat împreună matematica din spatele oglinzilor și al pixelilor, te invit să pășești dincolo de formule. <short pause> Descoperă, în galeria care urmează, lumina antică ascunsă în întunericul etern al universului — fotoni care au călătorit mii de ani-lumină prin abisul cosmic, pentru a fi surprinși de ochiul digital al acestui telescop!",
+          "start": 33.46,
+          "end": 65.24,
+          "duration": 31.78
+        }
+      ]
+    },
+    {
+      "slide": 9,
+      "id": "slide_09",
+      "title": "Galeria Cerului Profund: Lumina Ascunsă în Întunericul Etern",
+      "voice": "Algenib",
+      "model": "gemini-3.8-flash-tts",
+      "default_file": "audio/slide_09.mp3",
+      "duration": 38.5,
+      "segments": [
+        {
+          "index": 0,
+          "subtitle": "Galeria Cerului Profund: peste 310 ore cumulate de integrare fotonică prin filtre SHO, OHS și Broadband.",
+          "spoken": "Bine ai venit în galeria cerului profund... <short pause> Aici sunt adunate peste trei sute de ore de lumină stelară, capturate în nopți senine de răbdare și pasiune.",
+          "start": 0.25,
+          "end": 16.7,
+          "duration": 16.45
+        },
+        {
+          "index": 1,
+          "subtitle": "Apasă pe „🎬 Pornește Slideshow 100% Crop” pentru proiecția cu zoom la nivel de pixel și coloană sonoră cosmică!",
+          "spoken": "Pornește proiecția cinematografică pentru a călători în interiorul fiecărei nebuloase, până la detalii de o sută la sută la nivel de pixel... <short pause> și lasă-te purtat de armonia sonoră a cosmosului. Cer senin!",
+          "start": 16.7,
+          "end": 38.1,
+          "duration": 21.4
         }
       ]
     }
